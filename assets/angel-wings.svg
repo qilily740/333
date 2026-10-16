@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 130">
+<defs>
+ <filter id="paper" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000" flood-opacity=".09"/></filter>
+ <path id="outline" d="M98 91c-5-12-21-19-38-33C45 45 31 30 23 37c-9 8-4 23 4 34-9-5-12 7-6 18 3 6 9 11 15 14-7 1-5 10 3 13 16 7 43 0 55-12 5-5 6-9 4-13Z"/>
+ <path id="star" d="m0-6 1.8 4 4.3.3-3.3 2.9 1.1 4.3L0 3.2l-3.9 2.3 1.1-4.3-3.3-2.9 4.3-.3Z"/>
+ <g id="wing" filter="url(#paper)">
+  <use href="#outline" fill="#fafafa" stroke="#d4d4d4" stroke-width="5" stroke-linejoin="round"/>
+  <use href="#outline" fill="#fafafa" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M27 71q6 9 15 14M36 103q10 4 21 2" fill="none" stroke="#d9d9d9" stroke-width="1.2" stroke-linecap="round"/>
+  <use href="#star" transform="translate(37 57) rotate(-10)" fill="#c4c4c4"/>
+  <use href="#star" transform="translate(60 91) scale(.8)" fill="#dedede"/>
+  <use href="#star" transform="translate(78 86) scale(.55)" fill="#bebebe"/>
+  <circle cx="38" cy="90" r=".8" fill="#ccc"/><circle cx="50" cy="72" r=".8" fill="#ccc"/>
+ </g>
+</defs><use href="#wing"/><use href="#wing" transform="translate(240 0) scale(-1 1)"/>
+</svg>

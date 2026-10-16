@@ -1,0 +1,3 @@
+Administrative-region names: GeoNames admin1CodesASCII, downloaded 2026-10-12 (CC BY 4.0). https://download.geonames.org/export/dump/readme.txt
+Chinese region labels: Unicode CLDR subdivisions/zh.xml; English names: Unicode CLDR subdivisions/en.xml (Unicode License). https://github.com/unicode-org/cldr/tree/main/common/subdivisions
+Each region's time zone is selected from GeoNames cities500 by the largest summed populated-place population in that region. Regions without mapped places fall back to the app's country time zone. CLDR Chinese labels are included where available; English remains as a reference and fallback.
