@@ -40,6 +40,9 @@ state.activeOfflineThreads=state.activeOfflineThreads&&typeof state.activeOfflin
 for(const invite of Object.values(state.invitations))if(invite?.status==='generating'){invite.status='generation_failed';invite.updatedAt=Date.now();if(invite.offlineThreadKey&&!state.messages?.[invite.offlineThreadKey]?.length)delete state.messages[invite.offlineThreadKey];delete invite.offlineThreadKey}
 state.users=(Array.isArray(state.users)?state.users:[]).map(u=>typeof u==='string'?{name:u,nickname:'',gender:'',birthday:'',details:'',avatar:''}:{name:'',nickname:'',gender:'',birthday:'',details:'',avatar:'',...u}).filter(u=>!['我','另一个我'].includes(u.name));
 const chars=(Array.isArray(state.characters)?state.characters:[]).filter(c=>!/^char 0[1-4]$/i.test(c.name||''));
+const irisAssistant=chars.find(character=>character.builtinRole==='iris-assistant');
+if(irisAssistant)Object.assign(irisAssistant,{name:'伊里斯',gender:'',birthday:'2026-10-9',avatar:'assets/iris-app-icon-512.png',initial:'伊'});
+else chars.push({builtinRole:'iris-assistant',name:'伊里斯',nickname:'',gender:'',birthday:'2026-10-9',details:'',avatar:'assets/iris-app-icon-512.png',initial:'伊',color:'#ededed'});
 state.characters=chars;
 state.char=chars.length?Math.max(0,Math.min(state.char,chars.length-1)):-1;
 state.user=state.users.length?Math.max(0,Math.min(state.user,state.users.length-1)):-1;
@@ -884,7 +887,8 @@ function renderConversation(user,character,conversationItems=messages(),videoCal
   const invite=message.invitationId?state.invitations[message.invitationId]:null,inviteMarkup=!state.offline&&!message.mine&&invite&&String(invite.messageId)===String(message.id)?renderInvitationEntry(invite,character):'';
   return `<div class="message ${message.mine?'mine':''} ${previousSame?'is-grouped':''} ${groupClass}${hasReplyControls?' has-reply-variants':''} ${selected?'is-selected':''} ${messageSelectionMode?'selection-mode':''} message-type-${esc(type)}${type==='image'&&message.imageDescription?' message-image-description':''}" data-message-index="${index}">${actionPanel}${messageAvatar}<div class="message-content"><div class="message-bubble-line">${message.mine?timestamp:''}${deliveryStatus?`<div class="message-delivery-anchor">${content}${deliveryStatus}</div>`:content}${message.mine?'':timestamp}</div>${message.translation?`<div class="bubble-translation">${esc(message.translation)}</div>`:''}${replyControls}${inviteMarkup}</div>${messageSelectionMode?`<span class="message-selection-check" aria-hidden="true">${selected?'✓':''}</span>`:''}</div>`;
  }).join('');
- return rendered+(messageSelectionMode&&messageSelectionThreadKey===threadKey?`<div class="message-selection-bar"><span>已选 ${selectedMessageIndices.size} 条</span><button type="button" data-selection-cancel>取消</button><button type="button" data-selection-delete ${selectedMessageIndices.size?'':'disabled'}>删除所选</button></div>`:'');
+ const welcomeGuide=!videoCall&&!state.irisWelcomeChoice?`<article class="iris-welcome-message" aria-label="伊里斯的欢迎消息"><div class="iris-welcome-identity"><img src="assets/iris-app-icon-192.png" alt=""><span><strong>伊里斯</strong><small>伊里斯小助手</small></span></div><div class="iris-welcome-paper"><p>欢迎来到 Iris。需要我带你认识一下各个按键的功能吗？</p><div class="iris-welcome-actions"><button type="button" data-iris-welcome-choice="needed">需要</button><button type="button" data-iris-welcome-choice="not-needed">暂时不需要</button></div></div></article>`:'';
+ return rendered+welcomeGuide+(messageSelectionMode&&messageSelectionThreadKey===threadKey?`<div class="message-selection-bar"><span>已选 ${selectedMessageIndices.size} 条</span><button type="button" data-selection-cancel>取消</button><button type="button" data-selection-delete ${selectedMessageIndices.size?'':'disabled'}>删除所选</button></div>`:'');
 }
 function openMessageEditor(index){
  const message=messages()[index];if(!message||message.type&&message.type!=='text'){toast('目前只能编辑文字消息');return}
@@ -931,6 +935,7 @@ function bindConversationMedia(container=$('#conversation')){
   container.addEventListener('contextmenu',event=>{const target=event.target instanceof Element?event.target:null,message=target?.closest('.message[data-message-index]');if(!message||target.closest('button,a,input,textarea'))return;event.preventDefault();cancelLongPress();activeMessageActionIndex=Number(message.dataset.messageIndex);render()});
    container.addEventListener('click',event=>{if(longPressDidTrigger){longPressDidTrigger=false;event.preventDefault();event.stopPropagation();return}const target=event.target instanceof Element?event.target:null;if(!target)return;
    const userWalletAvatar=target.closest('[data-chat-user-wallet]');if(userWalletAvatar){event.preventDefault();event.stopPropagation();showChatUserWallet(Number(userWalletAvatar.dataset.chatUserWallet));return}
+   const welcomeChoice=target.closest('[data-iris-welcome-choice]');if(welcomeChoice){event.preventDefault();event.stopPropagation();if(state.irisWelcomeChoice)return;state.irisWelcomeChoice=welcomeChoice.dataset.irisWelcomeChoice;if(state.irisWelcomeChoice==='needed'){state.irisGuideOrbHidden=false;state.irisGuideReminderDismissed=false}save();render();syncIrisGuideUI();if(state.irisWelcomeChoice==='needed')toast('点击伊里斯悬浮球，查看各个按键的功能');return}
    const invitationEnvelope=target.closest('.role-invitation-envelope');if(invitationEnvelope){event.preventDefault();event.stopPropagation();if(messageSelectionMode){const message=invitationEnvelope.closest('.message[data-message-index]');if(message)toggleMessageSelection(Number(message.dataset.messageIndex));return}void toggleRoleInvitationLetter(invitationEnvelope.closest('.role-invitation'));return}
    const invitationButton=target.closest('[data-invitation-action]');if(invitationButton){event.preventDefault();event.stopPropagation();void handleRoleInvitation(invitationButton.dataset.invitationId,invitationButton.dataset.invitationAction);return}
    const stageFold=target.closest('[data-offline-stage-fold]');if(stageFold){event.preventDefault();event.stopPropagation();const foldKey=stageFold.dataset.offlineStageFold;if(offlineExpandedStageFolds.has(foldKey))offlineExpandedStageFolds.delete(foldKey);else offlineExpandedStageFolds.add(foldKey);render();return}
@@ -1013,6 +1018,143 @@ function keepLatestSmsMessageVisible(duration=0){
 }
 function render(){const c=chars[state.char];if(c){if(typeof c.offlineMode!=='boolean')c.offlineMode=false;state.offline=c.offlineMode;}if(!state.offline||offlineStageFoldStateThreadKey!==key()){offlineExpandedStageFolds.clear();offlineStageFoldStateThreadKey=state.offline?key():''}if(state.offline&&reconcileOfflineStageMemory(key(),messages())){const bound=currentRoleChatSettings().userIndex,userIndex=Number.isInteger(bound)?bound:state.user;void maybeUpdateOfflineStageMemory(state.char,userIndex,key(),messages())}if(messageSelectionMode&&messageSelectionThreadKey!==key()){messageSelectionMode=false;selectedMessageIndices.clear();messageSelectionThreadKey=key()}const roleSettings=currentRoleChatSettings(),boundIndex=roleSettings.userIndex,user=state.users[Number.isInteger(boundIndex)?boundIndex:state.user];renderHeaderAvatars();$('#chatTitle').innerHTML=`${state.offline?'Offline':'Chat'}${c?.name?`<span class="chat-character-name">${esc(c.name)}</span>`:''}`;updateChatReplyIndicator();updateComposerAction();$('#chatTitle').setAttribute('aria-label',state.offline?'Open offline settings':'Open chat settings');document.documentElement.style.setProperty('--surface',state.offline?state.settings.offlineSurface:(state.settings.surface||'#f4f4f4'));const modeButton=$('[data-nav="2"]');modeButton.innerHTML=icon(state.offline?'online':'dockStory')+`<span>${state.offline?'Online':'Offline'}</span>`;modeButton.setAttribute('aria-label',state.offline?'Switch to online':'Switch to offline');modeButton.title=state.offline?'Switch to online':'Switch to offline';modeButton.classList.toggle('is-current',state.offline);$('[data-nav="1"]').classList.toggle('is-current',!state.offline);$('#conversation').classList.toggle('is-offline-story',state.offline);applyBeautifyCss();updateChatConversation(renderConversation(user,c)+(chatReplyTyping.has(key())?replyTypingMarkup(c):'')+renderOfflineStreamingMarkup(c));if(!state.offline&&pendingReplyKeys.has(key())&&!chatReplyInFlight.has(key()))scheduleChatReply(false,key());if(!state.offline)resumeUnblockProactiveChat(state.char);if(videoCallActive)renderVideoCallMessages();}
 
+let irisGuideOpen=false,irisGuidePanelOpen=false,irisGuidePractice=false,irisGuideSteps=[],irisGuideStep=0,irisGuideObserver=null,irisGuideFrame=0;
+const irisGuideSeenKeys=new Set(Array.isArray(state.irisGuideSeenKeys)?state.irisGuideSeenKeys:[]);
+function markIrisGuideSeen(step){if(!step?.key||irisGuideSeenKeys.has(step.key))return;irisGuideSeenKeys.add(step.key);state.irisGuideSeenKeys=[...irisGuideSeenKeys];save()}
+function positionIrisGuideOrb(){
+ const root=document.querySelector('.iris-guide-widget');if(!root||root.hidden)return;
+ const ball=root.querySelector('.iris-guide-fab'),size=ball.getBoundingClientRect().width||54,pos=state.irisGuidePosition;
+ if(pos){const x=pos.edge==='left'?8:Math.max(8,innerWidth-size-8),y=Math.max(8,Math.min(innerHeight-size-8,pos.y*(innerHeight-size)));Object.assign(ball.style,{left:`${x}px`,top:`${y}px`,right:'auto',bottom:'auto'});}
+ const r=ball.getBoundingClientRect();
+ for(const selector of ['.iris-guide-panel','.iris-guide-reminder']){const box=root.querySelector(selector);if(box.hidden)continue;const b=box.getBoundingClientRect(),x=Math.max(8,Math.min(innerWidth-b.width-8,r.left+r.width/2-b.width/2)),y=r.top>b.height+20?r.top-b.height-12:Math.min(innerHeight-b.height-8,r.bottom+12);Object.assign(box.style,{left:`${x}px`,top:`${Math.max(8,y)}px`,right:'auto',bottom:'auto'});}
+}
+function bindIrisGuideDrag(root){
+ const ball=root.querySelector('.iris-guide-fab');let drag=null;
+ ball.addEventListener('pointerdown',event=>{if(event.button!==0)return;const r=ball.getBoundingClientRect();drag={id:event.pointerId,x:event.clientX,y:event.clientY,left:r.left,top:r.top,moved:false};ball.setPointerCapture(event.pointerId)});
+ ball.addEventListener('pointermove',event=>{if(!drag||drag.id!==event.pointerId)return;const dx=event.clientX-drag.x,dy=event.clientY-drag.y;if(Math.hypot(dx,dy)>5)drag.moved=true;if(!drag.moved)return;Object.assign(ball.style,{left:`${Math.max(8,Math.min(innerWidth-ball.offsetWidth-8,drag.left+dx))}px`,top:`${Math.max(8,Math.min(innerHeight-ball.offsetHeight-8,drag.top+dy))}px`,right:'auto',bottom:'auto'});});
+ const finish=event=>{if(!drag||drag.id!==event.pointerId)return;const moved=drag.moved;drag=null;if(moved){root.dataset.suppressOrbClick='true';const r=ball.getBoundingClientRect();state.irisGuidePosition={edge:r.left+r.width/2<innerWidth/2?'left':'right',y:r.top/Math.max(1,innerHeight-r.height)};save();positionIrisGuideOrb();setTimeout(()=>delete root.dataset.suppressOrbClick,300)}};
+ ball.addEventListener('pointerup',finish);ball.addEventListener('pointercancel',finish);window.addEventListener('resize',positionIrisGuideOrb);
+}
+function irisGuideInfo(element){return window.IrisGuideContent.get(element)}
+function irisGuideCanEnter(element){return irisGuideInfo(element).navigation}
+function irisGuideScope(){
+ const dialogs=[...document.querySelectorAll('dialog[open]')];if(dialogs.length)return dialogs.at(-1);
+ const call=$('#videoCallScreen');if(call&&irisGuideVisible(call))return call;
+ if(!$('#sheet').hidden)return $('#sheet');
+ const emoji=$('#emojiInlinePanel');if(emoji&&!emoji.hidden)return emoji;
+ if(!$('#settingsScreen').hidden)return $('#settingsScreen');
+ if(!$('#featureScreen').hidden){const feature=$('#featureScreen'),layers=[...feature.querySelectorAll('.reading-overlay,[role="dialog"],.reading-copyright-welcome')].filter(irisGuideVisible);return layers.at(-1)||feature;}
+ return document.querySelector('.phone');
+}
+function irisGuideVisible(element){
+ if(!element||element.hidden||!element.isConnected||element.closest('.iris-guide-widget,[aria-hidden="true"]'))return false;
+ const style=getComputedStyle(element),rect=element.getBoundingClientRect();return style.display!=='none'&&style.visibility!=='hidden'&&rect.width>0&&rect.height>0;
+}
+function collectIrisGuideSteps(){
+ const scope=irisGuideScope(),selector='button,input:not([type="hidden"]),textarea,select,summary,[role="button"],[role="tab"],[data-forum-open-post],[data-r-note],[data-image-preview]';
+ const pageKeys=new Set();
+ return [...scope.querySelectorAll(selector)].filter(button=>irisGuideVisible(button)||button.matches('input[type="checkbox"],input[type="radio"]')&&!button.hidden&&irisGuideVisible(button.closest('label'))).map(button=>({button,target:button.matches('input[type="checkbox"],input[type="radio"]')?button.closest('label')||button:button,...irisGuideInfo(button)})).filter(step=>{if(irisGuideSeenKeys.has(step.key)||pageKeys.has(step.key))return false;pageKeys.add(step.key);return true});
+}
+function revealIrisGuideStep(){
+ const step=irisGuideSteps[irisGuideStep],button=step?.target||step?.button;if(!button)return;
+ for(let parent=button.parentElement;parent&&parent!==document.body;parent=parent.parentElement){
+  const style=getComputedStyle(parent);if(!/(auto|scroll)/.test(style.overflowY)||parent.scrollHeight<=parent.clientHeight)continue;
+  const target=button.getBoundingClientRect(),box=parent.getBoundingClientRect();
+  if(target.top<box.top+8||target.bottom>box.bottom-8)parent.scrollTop+=target.top+target.height/2-box.top-box.height/2;
+ }
+ positionIrisGuideTour();
+}
+function refreshIrisGuideSteps(){
+ irisGuideSteps=collectIrisGuideSteps();irisGuideStep=0;
+ if(!irisGuideSteps.length){irisGuideOpen=true;irisGuidePractice=true;syncIrisGuideUI();toast('此页没有尚未介绍的按键，可直接操作或进入其他类目');return}
+ irisGuidePractice=false;irisGuideOpen=true;syncIrisGuideUI();revealIrisGuideStep();
+}
+function useIrisGuideControl(){
+ const step=irisGuideSteps[irisGuideStep],button=step?.button;if(!button||!button.isConnected||button.disabled)return;
+ const navigation=step.navigation;
+ irisGuidePractice=true;syncIrisGuideUI();
+ if(button.matches('input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),textarea,select'))button.focus();else button.click();
+ requestAnimationFrame(()=>{syncIrisGuideUI();if(navigation)refreshIrisGuideSteps()});
+}
+function queueIrisGuideSync(){if(irisGuideFrame)return;irisGuideFrame=requestAnimationFrame(()=>{irisGuideFrame=0;syncIrisGuideUI()})}
+function positionIrisGuideTour(){
+ const root=document.querySelector('.iris-guide-widget'),tour=root?.querySelector('.iris-guide-tour'),step=irisGuideSteps[irisGuideStep];
+ if(!tour||tour.hidden||!step||!step.button.isConnected)return;
+ Object.assign(step,irisGuideInfo(step.button));
+ const rect=(step.target||step.button).getBoundingClientRect(),spot=tour.querySelector('.iris-guide-spotlight'),card=tour.querySelector('.iris-guide-tour-card'),viewport=tour.getBoundingClientRect();
+ const left=Math.max(viewport.left+4,rect.left-5),top=Math.max(viewport.top+4,rect.top-5),right=Math.min(viewport.right-4,rect.right+5),bottom=Math.min(viewport.bottom-4,rect.bottom+5);
+ Object.assign(spot.style,{left:`${left}px`,top:`${top}px`,width:`${Math.max(0,right-left)}px`,height:`${Math.max(0,bottom-top)}px`});
+ tour.querySelector('[data-guide-tour-title]').textContent=step.title;
+ tour.querySelector('[data-guide-tour-description]').textContent=step.description;
+ const behavior=tour.querySelector('[data-guide-behavior]'),api=tour.querySelector('[data-guide-api]');
+ behavior.hidden=!step.behavior;behavior.textContent=step.behavior?`操作方式：${step.behavior}`:'';
+ api.hidden=!step.api;api.textContent=step.api?`API 提示：${step.api}`:'';
+ tour.querySelector('[data-guide-tour-count]').textContent=`${irisGuideStep+1} / ${irisGuideSteps.length}`;
+ tour.querySelector('[data-guide-action="tour-back"]').disabled=irisGuideStep===0;
+ tour.querySelector('[data-guide-action="tour-next"]').textContent=irisGuideStep===irisGuideSteps.length-1?'完成':'下一个';
+ const enter=card.querySelector('[data-guide-action="use-control"]');
+ enter.disabled=Boolean(step.button.disabled);enter.textContent=enter.disabled?'当前不可用，请先完成前置条件':step.navigation?'进入此页面继续介绍':step.button.matches('input,textarea,select')?'填写或调整此项':'使用此按键';
+ const scope=irisGuideScope(),footer=scope.matches('dialog,#sheet,#settingsScreen,#featureScreen')?null:document.querySelector('.phone>.bottom'),footerRect=footer?.getBoundingClientRect(),gap=18;
+ const limit=footerRect&&footerRect.height>0?Math.min(viewport.bottom-gap,footerRect.top-gap):viewport.bottom-gap;
+ const upper={top:viewport.top+gap,bottom:Math.min(limit,top-gap)},lower={top:Math.max(viewport.top+gap,bottom+gap),bottom:limit};
+ const region=upper.bottom-upper.top>lower.bottom-lower.top?upper:lower;
+ card.style.bottom='auto';card.style.maxHeight=`${Math.max(48,region.bottom-region.top)}px`;
+ const height=card.getBoundingClientRect().height;
+ card.style.top=`${Math.max(region.top,region.top+(region.bottom-region.top-height)/2)}px`;
+ markIrisGuideSeen(step);
+}
+
+function closeIrisGuideTour(){irisGuideOpen=false;irisGuidePractice=false;irisGuidePanelOpen=false;syncIrisGuideUI()}
+function startIrisGuideTour(){irisGuidePanelOpen=false;irisGuideOpen=true;irisGuidePractice=false;refreshIrisGuideSteps()}
+function handleIrisGuideAction(event){
+ const root=document.querySelector('.iris-guide-widget'),target=event.target instanceof Element?event.target:null;if(!target)return;
+ const action=target.closest('[data-guide-action]')?.dataset.guideAction;
+ if(action==='use-control'){useIrisGuideControl();return}
+ if(action==='restart-guide'){irisGuideSeenKeys.clear();state.irisGuideSeenKeys=[];save();startIrisGuideTour();return}
+ if(action==='resume-guide'){refreshIrisGuideSteps();return}
+ if(action==='dismiss-reminder'){state.irisGuideReminderDismissed=true;save()}
+ else if(action==='view-functions'){startIrisGuideTour();return}
+ else if(action==='hide-orb'){state.irisGuideOrbHidden=true;irisGuideOpen=false;irisGuidePractice=false;irisGuidePanelOpen=false;save()}
+ else if(action==='exit-tour'){closeIrisGuideTour();return}
+ else if(action==='tour-back'){irisGuideStep=Math.max(0,irisGuideStep-1);revealIrisGuideStep();return}
+ else if(action==='tour-next'){if(irisGuideStep>=irisGuideSteps.length-1)closeIrisGuideTour();else{irisGuideStep++;revealIrisGuideStep()}return}
+ else if(target.closest('.iris-guide-fab')){if(root.dataset.suppressOrbClick)return;state.irisGuideReminderDismissed=true;save();irisGuidePanelOpen=!irisGuidePanelOpen}
+ syncIrisGuideUI();
+}
+function syncIrisGuideUI(){
+ let root=document.querySelector('.iris-guide-widget');
+ if(!root){
+  root=document.createElement('div');root.className='iris-guide-widget';
+  root.innerHTML=`<button type="button" class="iris-guide-fab" aria-label="打开伊里斯按键功能面板"><img src="assets/iris-app-icon-192.png" alt=""></button>
+  <div class="iris-guide-reminder" hidden><button type="button" class="iris-guide-reminder-close" data-guide-action="dismiss-reminder" aria-label="关闭提醒">×</button><img src="assets/iris-app-icon-192.png" alt=""><span><strong>伊里斯</strong><small>点击悬浮球，查看各个按键的功能。</small></span></div>
+  <section class="iris-guide-panel" hidden aria-label="伊里斯功能面板"><header><img src="assets/iris-app-icon-192.png" alt=""><span><strong>伊里斯</strong><small>按键功能说明</small></span></header><button type="button" data-guide-action="view-functions">查看未介绍的按键 <span>↗</span></button><button type="button" data-guide-action="restart-guide">重新介绍全部按键</button><button type="button" class="iris-guide-hide" data-guide-action="hide-orb">关闭悬浮球</button></section>
+  <div class="iris-guide-tour" hidden><div class="iris-guide-spotlight"></div><section class="iris-guide-tour-card" aria-label="按键功能介绍" aria-live="polite"><header><span>伊里斯 · 按键说明</span><button type="button" data-guide-action="exit-tour" aria-label="退出功能介绍">×</button></header><small data-guide-tour-count></small><strong data-guide-tour-title></strong><p data-guide-tour-description></p><div class="iris-guide-facts"><p data-guide-behavior hidden></p><p data-guide-api hidden></p></div><button type="button" class="iris-guide-enter-category" data-guide-action="use-control"></button><small class="iris-guide-operation-note">使用按键会执行实际操作；操作完成后可继续介绍。</small><footer><button type="button" data-guide-action="tour-back">上一个</button><button type="button" data-guide-action="tour-next">下一个</button></footer></section></div>
+  <aside class="iris-guide-practice" hidden aria-label="正在操作当前功能"><span>可以操作当前页面</span><button type="button" data-guide-action="resume-guide">继续介绍当前页面</button><button type="button" data-guide-action="exit-tour" aria-label="退出介绍">×</button></aside>`;
+  document.body.append(root);bindIrisGuideDrag(root);root.addEventListener('click',handleIrisGuideAction);
+ }
+ if(!irisGuideObserver){
+  irisGuideObserver=new MutationObserver(records=>{
+   const current=document.querySelector('.iris-guide-widget');
+   if(records.every(record=>current?.contains(record.target)))return;
+   if(irisGuideOpen||irisGuidePractice||records.some(record=>record.attributeName==='open'))queueIrisGuideSync();
+  });
+  irisGuideObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open','hidden','disabled']});
+  window.addEventListener('resize',queueIrisGuideSync);window.addEventListener('scroll',()=>{if(irisGuideOpen&&!irisGuidePractice)positionIrisGuideTour()},true);
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&irisGuideOpen)closeIrisGuideTour()});
+ }
+ const enabled=state.irisWelcomeChoice==='needed'&&!state.irisGuideOrbHidden;
+ const dialogs=[...document.querySelectorAll('dialog[open]')],host=enabled&&dialogs.length?dialogs.at(-1):document.body;
+ if(root.parentElement!==host)host.append(root);
+ root.hidden=!enabled;
+ if(irisGuideOpen&&!irisGuidePractice&&(!irisGuideSteps[irisGuideStep]?.button.isConnected||!irisGuideVisible(irisGuideSteps[irisGuideStep]?.target||irisGuideSteps[irisGuideStep]?.button))){irisGuideSteps=collectIrisGuideSteps();irisGuideStep=0;if(!irisGuideSteps.length)irisGuidePractice=true}
+ root.querySelector('.iris-guide-fab').hidden=!enabled||irisGuideOpen;
+ root.querySelector('.iris-guide-reminder').hidden=!enabled||Boolean(state.irisGuideReminderDismissed)||irisGuidePanelOpen||irisGuideOpen;
+ root.querySelector('.iris-guide-panel').hidden=!enabled||!irisGuidePanelOpen||irisGuideOpen;
+ root.querySelector('.iris-guide-tour').hidden=!enabled||!irisGuideOpen||irisGuidePractice;
+ root.querySelector('.iris-guide-practice').hidden=!enabled||!irisGuideOpen||!irisGuidePractice;
+ if(enabled&&irisGuideOpen&&!irisGuidePractice)positionIrisGuideTour();
+ if(enabled&&!irisGuideOpen)positionIrisGuideOrb();
+}
 function stopVideoCallCamera(){if(videoCallFrameTimer)clearInterval(videoCallFrameTimer);videoCallFrameTimer=null;videoCallFrameBuffer=[];videoCallStream?.getTracks().forEach(track=>track.stop());videoCallStream=null;const video=document.querySelector('#videoCallScreen [data-call-video]');if(video)video.srcObject=null}
 function setVideoCallReplyState(hasReply){videoCallHasReply=hasReply;document.querySelector('#videoCallReturn')?.classList.toggle('has-reply',hasReply)}
 function closeVideoCall(){stopVideoCallCamera();videoCallActive=false;videoCallThread=[];videoCallPinnedToBottom=true;setVideoCallReplyState(false);if(videoCallReturnPositioner)window.removeEventListener('resize',videoCallReturnPositioner);videoCallReturnPositioner=null;document.querySelector('#videoCallScreen')?.remove();document.querySelector('#videoCallReturn')?.remove()}
@@ -1428,7 +1570,7 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='3.7.0';
+const APP_VERSION='4.0.0';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
 try{const saved=localStorage.getItem('iris-installed-version'),requested=window.IRIS_RELEASE;if(saved&&compareAppVersions(saved,INSTALLED_APP_VERSION)>0)INSTALLED_APP_VERSION=saved;if(requested&&compareAppVersions(requested,INSTALLED_APP_VERSION)>=0){INSTALLED_APP_VERSION=requested;localStorage.setItem('iris-installed-version',requested)}else localStorage.setItem('iris-installed-version',INSTALLED_APP_VERSION)}catch{}
@@ -3152,7 +3294,7 @@ document.querySelectorAll('[data-nav]').forEach(button=>button.onclick=[toggleDo
 document.querySelectorAll('[data-dock-feature]').forEach(button=>button.onclick=()=>{const featureName=button.dataset.dockFeature;closeDockFeatures();openFeaturePage(featureName)});
 function closeDockFeatures(){const menu=$('#dockFeatureMenu'),trigger=$('.dock-add');if(menu)menu.hidden=true;if(trigger)trigger.setAttribute('aria-expanded','false')}
 function toggleDockFeatures(){const menu=$('#dockFeatureMenu'),trigger=$('.dock-add');menu.hidden=!menu.hidden;trigger.setAttribute('aria-expanded',String(!menu.hidden))}
-function dismissFeatureMenusOutside(event){const path=event.composedPath(),hasAction=selector=>path.some(node=>node instanceof Element&&node.matches(selector)),dockTrigger=$('.dock-add'),composerTrigger=$('#inputFunctions');if(!path.includes(dockTrigger)&&!hasAction('#dockFeatureMenu [data-dock-feature]'))closeDockFeatures();if(!path.includes(composerTrigger)&&!hasAction('#quickFeatures [data-quick]'))closeFeatureMenu()}
+function dismissFeatureMenusOutside(event){if(event.target instanceof Element&&event.target.closest('.iris-guide-widget'))return;const path=event.composedPath(),hasAction=selector=>path.some(node=>node instanceof Element&&node.matches(selector)),dockTrigger=$('.dock-add'),composerTrigger=$('#inputFunctions');if(!path.includes(dockTrigger)&&!hasAction('#dockFeatureMenu [data-dock-feature]'))closeDockFeatures();if(!path.includes(composerTrigger)&&!hasAction('#quickFeatures [data-quick]'))closeFeatureMenu()}
 document.addEventListener('pointerdown',dismissFeatureMenusOutside,true);
 document.addEventListener('click',dismissFeatureMenusOutside,true);
 document.addEventListener('click',event=>{const path=event.composedPath(),panel=$('#emojiInlinePanel'),emojiButton=$('#emoji');if(emojiPickerOpen&&!path.includes(panel)&&!path.includes(emojiButton))closeEmojiPicker()});
@@ -3196,6 +3338,7 @@ function showAuthorNoticeOnFirstOpen(){
  draw();dialog.showModal();
 }
 showAuthorNoticeOnFirstOpen();
+syncIrisGuideUI();
 
 // iOS pans the visual viewport as well as resizing it when the keyboard opens.
 // Apply its origin and height together, without delaying compensation a frame.
