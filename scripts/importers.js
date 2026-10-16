@@ -37,48 +37,11 @@ const CharacterImport = (() => {
     if(/非二元|non[\s_-]?binary/i.test(gender))return'Non-binary';
     return gender;
   }
-  const aliases={name:['name','charname','charactername','名字','姓名','角色名','名称'],nickname:['nickname','网名','昵称'],gender:['gender','sex','性别'],birthday:['birthday','birthdate','dateofbirth','dob','生日','出生日期']};
-  function normalizeWorldBook(root,body=root) {
-    const book=body?.character_book||root?.character_book||body?.worldBook||body?.worldbook||body?.lorebook||root?.worldBook||root?.worldbook||root?.lorebook;
-    let entries=Array.isArray(book)?book:book?.entries;
-    if(entries&& !Array.isArray(entries)&&typeof entries==='object')entries=Object.values(entries);
-    if(!Array.isArray(entries))return [];
-    return entries.filter(entry=>entry&&typeof entry==='object').map((entry,index)=>{
-      const rawKeys=entry.keys??entry.keywords??entry.triggers??[];
-      const keys=(Array.isArray(rawKeys)?rawKeys:String(rawKeys||'').split(/[,，\n]/)).map(key=>String(key).trim()).filter(Boolean);
-      return {
-        id:String(entry.id??entry.uid??`world-${index+1}`),
-        name:String(entry.comment??entry.name??entry.title??`条目 ${index+1}`),
-        keys,
-        content:String(entry.content??entry.text??entry.description??''),
-        enabled:entry.enabled!==false&&entry.disabled!==true,
-        constant:Boolean(entry.constant),
-        selective:Boolean(entry.selective)
-      };
-    }).filter(entry=>entry.content||entry.keys.length);
-  }
-  const normalizedKey=k=>k.toLowerCase().replace(/[\s_\-]/g,'');
-  function findField(root,keys,depth=0) {
-    if(!root||typeof root!=='object'||depth>8)return '';
-    for(const [key,value] of Object.entries(root)){if(keys.includes(normalizedKey(key))&&(typeof value==='string'||typeof value==='number'))return String(value)}
-    for(const value of Object.values(root)){const found=findField(value,keys,depth+1);if(found)return found}return '';
-  }
+  const pick=(text,names)=>{const regex=new RegExp(`(?:^|[\\n|;；,，])\\s*(?:[-*#>]+\\s*)?(?:${names.join('|')})\\s*(?:[:：=]\\s*|\\s+)([^\\n|;；,，]+)`,'i');return(text.match(regex)||[])[1]?.trim()||''};
   function fromText(text) {
-    const source=normalizeNewlines(text).trim(),pick=(names)=>{const regex=new RegExp(`(?:^|[\\n|;；,，])\\s*(?:[-*#>]+\\s*)?(?:${names.join('|')})\\s*(?:[:：=]\\s*|\\s+)([^\\n|;；,，]+)`,'i');return(source.match(regex)||[])[1]?.trim()||''};
-    const birthday=pick(['生日','出生日期','出生年月日','birthday','birthdate','birth_date','date of birth','date_of_birth','dob']),age=ageFromText(pick(['年龄','岁数','周岁','age']))??ageFromText(source);
-    return {name:pick(['角色名','姓名','名字','名称','character name','char_name','name']),nickname:pick(['网名','昵称','nickname']),gender:normalizeGender(pick(['性别','gender','sex'])),birthday:birthdayWithAge(birthday,age),details:source};
-  }
-  function fromJSON(root) {
-    if(Array.isArray(root)){if(root.length!==1)throw Error('请每次导入一张角色卡');root=root[0]}
-    if(!root||typeof root!=='object')throw Error('JSON 中未找到角色资料');
-    const body=root.data&&typeof root.data==='object'?root.data:root;
-    const descriptions=['description','personality','scenario','first_mes','mes_example','creator_notes','details','具体信息','角色设定','描述'];
-    const sections=descriptions.map(k=>typeof body[k]==='string'?body[k]:'').filter(Boolean);
-    const details=normalizeNewlines(sections.join('\n\n')||JSON.stringify(body,null,2));
-    const textFields=fromText(details);const result={details};
-    for(const [key,keys] of Object.entries(aliases))result[key]=findField(body,keys)||textFields[key]||'';
-    const age=ageFromText(findField(body,['age','年龄','岁数','周岁'])||'')??ageFromText(details);
-    result.gender=normalizeGender(result.gender);result.birthday=birthdayWithAge(result.birthday||textFields.birthday,age);result.worldBook=normalizeWorldBook(root,body);return result;
+    const source=normalizeNewlines(text).trim();
+    const birthday=pick(source,['生日','出生日期','出生年月日','birthday','birthdate','birth_date','date of birth','date_of_birth','dob']),age=ageFromText(pick(source,['年龄','岁数','周岁','age']))??ageFromText(source);
+    return {name:pick(source,['角色名','姓名','名字','名称','character name','char_name','name']),nickname:pick(source,['网名','昵称','nickname']),gender:normalizeGender(pick(source,['性别','gender','sex'])),birthday:birthdayWithAge(birthday,age),details:source};
   }
   function xmlText(xml) {
     if(typeof DOMParser!=='undefined'){
@@ -107,39 +70,18 @@ const CharacterImport = (() => {
       at+=46+nameLen+extraLen+commentLen;
     }throw Error('DOCX 中没有正文');
   }
-  function b64JSON(value) {const raw=atob(value.trim());const bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));return JSON.parse(utf8.decode(bytes))}
-  async function pngData(bytes) {
-    const sig=[137,80,78,71,13,10,26,10];if(!sig.every((v,i)=>bytes[i]===v))throw Error('PNG 文件无效');
-    const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);const chunks=[];
-    for(let at=8;at+12<=bytes.length;){const size=view.getUint32(at),type=utf8.decode(bytes.subarray(at+4,at+8));if(at+12+size>bytes.length)throw Error('PNG 文件不完整');
-      if(['tEXt','zTXt','iTXt'].includes(type)){
-        const data=bytes.subarray(at+8,at+8+size);const zero=data.indexOf(0);
-        if(zero>=0){const key=utf8.decode(data.subarray(0,zero));let value='';
-          if(type==='tEXt')value=utf8.decode(data.subarray(zero+1));
-          if(type==='zTXt'&&data[zero+1]===0)value=utf8.decode(await inflate(data.subarray(zero+2),'deflate'));
-          if(type==='iTXt'){let p=zero+3;const langEnd=data.indexOf(0,p);const translatedEnd=data.indexOf(0,langEnd+1);if(langEnd>=0&&translatedEnd>=0){const content=data.subarray(translatedEnd+1);value=utf8.decode(data[zero+1]===1?await inflate(content,'deflate'):content)}}
-          if(value)chunks.push({key,value});
-        }
-      }
-      at+=size+12;if(type==='IEND')break;
-    }
-    for(const chunk of chunks.sort((a,b)=>(b.key==='ccv3')-(a.key==='ccv3'))){if(/^(chara|ccv3|character|description|comment)$/i.test(chunk.key)){try{return fromJSON(JSON.parse(chunk.value))}catch{}try{return fromJSON(b64JSON(chunk.value))}catch{}}}
-    return null;
-  }
   async function portrait(file) {
     const url=URL.createObjectURL(file);try{const image=new Image();await new Promise((yes,no)=>{image.onload=yes;image.onerror=no;image.src=url});const canvas=document.createElement('canvas');canvas.width=canvas.height=256;const edge=Math.min(image.naturalWidth,image.naturalHeight);canvas.getContext('2d').drawImage(image,(image.naturalWidth-edge)/2,(image.naturalHeight-edge)/2,edge,edge,0,0,256,256);return canvas.toDataURL('image/jpeg',.85)}finally{URL.revokeObjectURL(url)}
   }
   async function parse(file) {
     if(file.size>12*1024*1024)throw Error('请选择小于 12 MB 的角色文件');
-    const ext=file.name.split('.').pop().toLowerCase();const bytes=new Uint8Array(await file.arrayBuffer());let result,note='';
-    if(ext==='json'){try{result=fromJSON(JSON.parse(decodeText(bytes)))}catch(e){throw Error('JSON 导入失败：'+e.message)}}
-    else if(ext==='txt')result=fromText(decodeText(bytes));
+    const ext=file.name.split('.').pop().toLowerCase();const bytes=new Uint8Array(await file.arrayBuffer());let result;
+    if(ext==='txt')result=fromText(decodeText(bytes));
     else if(ext==='docx')result=fromText(await docxText(bytes));
-    else if(ext==='png'){result=await pngData(bytes);if(!result){result={};note='图片未嵌入角色资料，已设为头像，请手动补充信息。'}result.avatar=await portrait(file)}
-    else throw Error('支持 JSON、PNG、TXT、DOCX 格式');
+    else throw Error('支持 TXT、DOCX 格式');
     if((result.details||'').length>100000)throw Error('角色设定过长，请控制在 10 万字以内');
-    return {character:{gender:'',birthday:'',details:'',avatar:'',color:'#ededed',initial:'',...result,gender:normalizeGender(result.gender),nickname:'',name:result.name||file.name.replace(/\.[^.]+$/,'')},note};
+    return {character:{gender:'',birthday:'',details:'',avatar:'',color:'#ededed',initial:'',...result,gender:normalizeGender(result.gender),nickname:result.nickname||'',name:result.name||file.name.replace(/\.[^.]+$/,'')}};
   }
-  return {parse,fromText,fromJSON,normalizeDate,birthdayWithAge,ageFromText,normalizeWorldBook,docxText,pngData,portrait};
+  return {parse,fromText,normalizeDate,birthdayWithAge,ageFromText,docxText,portrait};
 })();
 if(typeof module!=='undefined')module.exports=CharacterImport;

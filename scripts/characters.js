@@ -70,11 +70,11 @@ function characterHeader(title) {
 function bindCharacterClose() {characterDialog.querySelector('.profile-close').onclick=()=>characterDialog.close()}
 function drawCharacterList(scrollTop=characterDialog.querySelector('.character-list')?.scrollTop||0) {
   characterDialog.innerHTML=characterHeader('my characters')+`
-    <div class="character-list${characterDrafts.length?'':' is-empty'}" aria-label="角色列表">${characterDrafts.length?'':`<div class="empty-characters"><span>${icon('user')}</span><strong>还没有角色</strong><small>导入角色卡，或手动新建一个</small></div>`}${characterDrafts.map((c,i)=>`<div class="character-row"><button type="button" class="character-row-main" data-role="${i}">${avatar(c)}<span class="character-row-info"><strong><span class="roster-name">${esc(c.name||'未命名角色')}</span></strong><small>${esc([c.gender,c.birthday].filter(Boolean).join(' · ')||'点击查看角色资料')}</small>${c.phoneNumber?`<small class="roster-phone">${esc([c.phoneCarrier,c.phoneNumber].filter(Boolean).join(' '))}</small>`:''}</span>${state.char===i?'<span class="character-current">当前</span>':icon('arrow')}</button>${c.phoneNumber?'':`<button type="button" class="character-phone-action" data-character-phone="${i}" ${characterPhonePending.has(i)?'disabled':''}>${characterPhonePending.has(i)?'开通中…':'开通号码'}</button>`}<button type="button" class="character-row-delete" data-delete-role="${i}" aria-label="删除${esc(c.name||'未命名角色')}" ${characterPhonePending.size?'disabled':''}>删除</button></div>`).join('')}</div>
+    <div class="character-list${characterDrafts.length?'':' is-empty'}" aria-label="角色列表">${characterDrafts.length?'':`<div class="empty-characters"><span>${icon('user')}</span><strong>还没有角色</strong><small>手动新建一个角色</small></div>`}${characterDrafts.map((c,i)=>`<div class="character-row"><button type="button" class="character-row-main" data-role="${i}">${avatar(c)}<span class="character-row-info"><strong><span class="roster-name">${esc(c.name||'未命名角色')}</span></strong><small>${esc([c.gender,c.birthday].filter(Boolean).join(' · ')||'点击查看角色资料')}</small>${c.phoneNumber?`<small class="roster-phone">${esc([c.phoneCarrier,c.phoneNumber].filter(Boolean).join(' '))}</small>`:''}</span>${state.char===i?'<span class="character-current">当前</span>':icon('arrow')}</button>${c.phoneNumber?'':`<button type="button" class="character-phone-action" data-character-phone="${i}" ${characterPhonePending.has(i)?'disabled':''}>${characterPhonePending.has(i)?'开通中…':'开通号码'}</button>`}<button type="button" class="character-row-delete" data-delete-role="${i}" aria-label="删除${esc(c.name||'未命名角色')}" ${characterPhonePending.size?'disabled':''}>删除</button></div>`).join('')}</div>
     <div class="character-import-actions"><button type="button" id="importCharacter">${icon('plus')}<span>导入角色</span></button><button type="button" id="newCharacter">手动新建</button></div>
     <button type="button" class="character-header-arrange" id="arrangeHeaderAvatars">编辑顶部头像排列</button>
-    <input id="characterFile" type="file" accept=".json,.png,.txt,.docx" hidden>
-    <p class="character-formats">JSON / PNG / TXT / DOCX</p><p class="character-feedback" role="status">${esc(characterImportNote||'选择角色，确认后切换')}</p>`;
+    <input id="characterFile" type="file" accept=".txt,.docx" hidden>
+    <p class="character-formats">TXT / DOCX</p><p class="character-feedback" role="status">${esc(characterImportNote||'选择角色，确认后切换')}</p>`;
   bindCharacterClose();
   document.querySelector('.character-list').scrollTop=scrollTop;
   document.getElementById('characterBack').hidden=true;
@@ -103,13 +103,7 @@ function drawCharacterList(scrollTop=characterDialog.querySelector('.character-l
     try{
       const imported=await CharacterImport.parse(file);
       if(characterDrafts!==session)return;
-      const sameName=characterDrafts.findIndex(role=>(role.name||'').trim().toLocaleLowerCase()===(imported.character.name||'').trim().toLocaleLowerCase());
-      if(imported.character.worldBook?.length&&sameName>=0&&!(characterDrafts[sameName].worldBook?.length)){
-        characterDrafts[sameName].worldBook=imported.character.worldBook;
-        characterImportNote=imported.note||'世界书条目已同步到已有角色。';drawCharacterEditor(sameName);
-      }else{
-        characterDrafts.push(imported.character);characterImportNote=imported.note||'资料已识别，可补充或修改后确认。';drawCharacterEditor(characterDrafts.length-1);
-      }
+      characterDrafts.push(imported.character);characterImportNote='资料已识别，可补充或修改后确认。';drawCharacterEditor(characterDrafts.length-1);
     }catch(error){if(characterDrafts===session)characterNotice(error.message||'文件无法读取，请检查格式')}
     finally{characterPending--;button.disabled=false;event.target.value=''}
   };
