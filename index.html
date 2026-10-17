@@ -13,16 +13,25 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
 <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css"></noscript>
 <link rel="preload" href="assets/fonts/iris-kai.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="apple-touch-icon" sizes="180x180" href="assets/iris-app-icon-180.png">
 <title>Iris</title>
-<script>(()=>{const v=new URLSearchParams(location.search).get('iris-release');window.IRIS_RELEASE=v;const suffix=v?'?iris-release='+encodeURIComponent(v):'';document.write('<link rel="stylesheet" href="style.css'+suffix+'">')})();</script>
+<style>
+#irisBootScreen{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:#fff;color:#222;opacity:1;visibility:visible;transition:opacity .24s ease,visibility .24s ease}
+#irisBootScreen[hidden]{display:none}
+#irisBootScreen.is-ready{opacity:0;visibility:hidden;pointer-events:none}
+.iris-boot-mark{font:italic 42px/1 "Snell Roundhand","Apple Chancery",cursive;letter-spacing:-1.5px}
+.iris-boot-rule{width:34px;height:1px;margin:18px auto 0;background:#d8d8d8;transform-origin:left;animation:iris-boot-progress 1.2s ease-in-out infinite alternate}
+@keyframes iris-boot-progress{from{transform:scaleX(.25);opacity:.45}to{transform:scaleX(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){#irisBootScreen,.iris-boot-rule{transition:none;animation:none}}
+</style>
+<script>(()=>{const v=new URLSearchParams(location.search).get('iris-release');window.IRIS_RELEASE=v;const suffix=v?'?iris-release='+encodeURIComponent(v):'';window.IRIS_STYLES_READY=new Promise(resolve=>{const link=document.createElement('link');link.rel='preload';link.as='style';link.href='style.css'+suffix;link.onload=()=>{link.onload=null;link.rel='stylesheet';requestAnimationFrame(()=>resolve())};link.onerror=resolve;document.head.append(link)})})();</script>
+<script>(()=>{const load=href=>{const link=document.createElement('link');link.rel='preload';link.as='style';link.href=href;link.onload=()=>{link.onload=null;link.rel='stylesheet'};link.onerror=()=>link.remove();document.head.append(link)};load('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');load('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');load('https://fontsapi.zeoseven.com/292/main/result.css')})();</script>
 </head>
 <body>
+<div id="irisBootScreen" role="status" aria-label="正在打开 Iris"><div><div class="iris-boot-mark">Iris</div><div class="iris-boot-rule"></div></div></div>
 <main class="phone">
 <header class="topbar"><h1 id="chatTitle" role="button" tabindex="0" aria-label="Open settings">Chat</h1><div class="top-actions"><button class="avatar-stack" id="characters" aria-label="切换角色"></button><button class="icon-button settings-button" id="settings" aria-label="打开设置"></button></div></header>
 <section class="conversation" id="conversation" aria-label="聊天记录" aria-live="polite"></section>

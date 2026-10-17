@@ -3,6 +3,17 @@
   const legacyKey = 'iris-v1';
   const databaseName = 'iris-local-data';
   const storeName = 'app-state';
+  const scripts = ['scripts/mini-theater.js', 'scripts/role-invitations.js', 'scripts/forum-core.js', 'scripts/market-core.js', 'scripts/perfumery-core.js', 'scripts/reading-core.js', 'scripts/reading-search.js', 'scripts/reading-content.js', 'scripts/backup-core.js', 'scripts/guide-content.js', 'scripts/app.js', 'scripts/forum.js', 'scripts/market.js', 'scripts/perfumery.js', 'scripts/reading-import.js', 'scripts/reading.js', 'scripts/profiles.js', 'scripts/importers.js', 'scripts/characters.js'];
+
+  // Fetch the application bundle while IndexedDB is opening so storage latency
+  // does not delay the start of every script request.
+  for (const src of scripts) {
+    const preload = document.createElement('link');
+    preload.rel = 'preload';
+    preload.as = 'script';
+    preload.href = `${src}${query}`;
+    document.head.append(preload);
+  }
 
   const readLegacyState = () => {
     try {
@@ -92,7 +103,7 @@
 
   load().then(async saved => {
     window.IRIS_BOOT_STATE = saved && typeof saved === 'object' ? saved : {};
-    await Promise.all(['scripts/mini-theater.js', 'scripts/role-invitations.js', 'scripts/forum-core.js', 'scripts/market-core.js', 'scripts/perfumery-core.js', 'scripts/reading-core.js', 'scripts/reading-search.js', 'scripts/reading-content.js', 'scripts/backup-core.js', 'scripts/guide-content.js', 'scripts/app.js', 'scripts/forum.js', 'scripts/market.js', 'scripts/perfumery.js', 'scripts/reading-import.js', 'scripts/reading.js', 'scripts/profiles.js', 'scripts/importers.js', 'scripts/characters.js'].map(loadScript));
+    await Promise.all(scripts.map(loadScript));
   }).catch(error => {
     console.error('Iris startup failed', error);
     window.IRIS_BOOT_STATE = {};

@@ -113,3 +113,13 @@ test('draft settings, automatic settings and API metadata are not confused', () 
   const fetch = info(new Element('button', { id: 'fetchModels', type: 'button' }, apiForm));
   assert.doesNotMatch(fetch.behavior, /保存.*提交/);
 });
+
+test('floating guide covers the redaction button and every panel control', () => {
+  assert.match(info(control('data-quick', '打码')).description, /角色、用户或双方姓名/);
+  const panel = new Element('form', { 'data-offline-redaction-form': '' });
+  assert.match(info(panel).description, /消息原文.*保持不变/);
+  assert.match(info(new Element('input', { name: 'target', type: 'radio', value: 'both' }, panel)).description, /角色姓名.*用户姓名/);
+  assert.match(info(new Element('select', { name: 'style' }, panel)).description, /自定义替换内容/);
+  assert.match(info(new Element('input', { name: 'custom' }, panel)).description, /40 个字符/);
+  assert.match(info(new Element('button', { 'data-redaction-clear': '' }, panel)).description, /重新显示原文/);
+});
