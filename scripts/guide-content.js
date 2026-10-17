@@ -16,10 +16,10 @@
 #reply|请求或重新生成回复|让当前角色依据聊天记录和角色资料生成回复。如果已有上一轮回复，可生成另一版并保留已有版本。此操作需要可用的聊天接口和模型，会发送当前功能需要的上下文。
 #closeInput,[data-quick="Exit"]|返回底部导航|收起扩展输入功能，恢复底部胶囊导航。输入栏和导航显示方式会切换，角色及用户资料不会因此删除。|进入
 [data-quick="语音"]|语音消息|填写语音卡片的时长和对应文字，确认后发送给当前角色。消息会显示时长与波形，点击卡片可以展开文字内容。|进入
-[data-quick="视频"]|视频通话|打开当前角色的视频通话功能。摄像头需要浏览器授权，画面理解还需要支持图片的模型；可在通话内控制摄像头、切换方向和请求角色回应。|进入
+[data-quick="视频"]|视频通话|打开当前角色的视频通话功能，线上与线下都使用视频通话接口。发送文字后自动请求角色回应；摄像头开启时附带发送时的画面，理解画面需要支持图片的模型。|进入
 [data-quick="图片"]|图片消息|选择图片后，可决定直接发送图片给支持视觉的模型，或先提供文字描述。两种发送方式传递的信息不同，确认预览后再发送。|进入
 [data-quick="转账"]|聊天转账|打开虚构聊天中的转账面板，填写金额并确认接收对象。转账记录会进入对应聊天，后续是否接受由该功能的实际操作决定。|进入
-[data-quick="定位"]|分享位置|打开位置面板，可填写位置资料或使用浏览器定位。使用当前位置需要授权；确认要展示的地点后再发送。|进入
+[data-quick="定位"]|分享位置|打开位置面板时会自动尝试浏览器定位，可能请求定位授权。也可手动填写地点与坐标，确认后点击发送。|进入
 [data-quick="听歌"]|听歌入口|当前听歌功能尚未完成，点击会提示待开发。可以先使用其他已经开放的消息功能。
 [data-quick="阅读"]|阅读|进入书架、正文和阅读笔记功能。可以导入书籍、查找书目，或在正文中批注并与角色讨论选中的内容。|进入
 [data-dock-feature="worldbook"]|全局世界书|整理聊天使用的背景资料。可新建书本和条目、设置关键词及读取范围，并分别控制书本或条目是否启用。当前导入支持文本和文档格式。|进入
@@ -50,9 +50,9 @@
 [data-api-set-default]|默认接口|把这组接口设为默认。没有单独指定接口的功能会按现有路由规则使用默认配置，已单独指定的功能需另行核对。
 [data-model-select-all]|全选模型|选中当前模型列表里的全部可选模型，方便批量保留。确认其中包含你实际有权限使用的模型。
 [data-model-clear]|清空模型选择|取消当前模型列表的选择，便于重新挑选。完成选择后再按确认按键保存结果。
-[data-model-keep]|保留所选模型|把当前选择的模型保留到接口配置中。之后为功能分配模型时，从已保留的模型中选择。
+[data-model-keep]|保留所选模型|保留各地址下本次更改的模型选择，已有接口会立即保存；新建接口仍需返回后点击“保存配置”。之后可为功能分配保留的模型。
 [data-model-close]|关闭模型选择|返回接口配置页面。关闭前先按保留或确认按键处理需要保存的模型选择。|进入
-[data-model-delete-url]|删除模型来源|移除这条模型来源记录。先核对来源地址，避免移除仍在使用的配置。
+[data-model-delete-url]|删除模型来源|删除此地址对应的全部已保存接口配置，并清除它们的功能分配；若删除默认接口，会改用剩余的第一组配置。确认后立即保存。
 [data-model-url]|模型来源|选择或查看这一条模型服务来源，后续获取模型时使用对应地址和配置。|进入
 #importCharacter|导入角色|从文本或文档文件读取角色资料，导入后先检查名字、生日和具体设定，再确认保存。当前不支持角色卡图片及结构化角色卡文件导入。
 #newCharacter|手动新建角色|创建空白角色资料，自行填写名字、生日和角色设定。名字需要填写完整，确认使用后才会保存并切换角色。|进入
@@ -93,7 +93,7 @@
 [data-stage-memory-regenerate]|重新生成阶段摘要|根据所选轮次的故事内容重新整理阶段记忆。需要可用的摘要接口和模型，完成后检查生成结果是否符合真实情节。
 [data-stage-memory-save]|保存阶段记忆|保存当前编辑的阶段摘要。核对摘要覆盖轮次和事实内容，后续故事将把它作为记忆参考。
 [data-offline-stage-fold]|折叠的故事轮次|展开或收起已经整理过阶段记忆的故事内容，便于回看原文并核对摘要。|进入
-[data-offline-save-record]|保存线下记录|把需要保留的线下故事整理为记录。保存后可在线下记录分类中回看，重要内容仍建议另做备份。
+[data-offline-save-record]|保存线下记录|立即保存当前线下故事为记录，并清空当前会话、归档其阶段记忆。配置了线下总结接口时会后台整理总结，之后可在记录分类中回看。
 [data-record-review]|回看线下记录|打开这份保存的故事记录，核对记录名称及内容后阅读。|进入
 [data-record-delete]|删除线下记录|移除此份已保存的故事记录。请先确认对象并备份需要的内容，按页面提示继续。
 [data-offline-opening-next],[data-offline-opening-previous]|线下开场版本|查看已有的其他开场版本，或在对应位置请求生成新的开场。生成需要可用的故事接口；选择版本后核对时间、地点和故事衔接。
@@ -103,15 +103,15 @@
 [data-beautify-reset]|恢复默认美化|清除当前范围的自定义美化并恢复默认外观。想保留现有样式时先复制或导出，再执行恢复。
 [data-beautify-background-pick]|选择背景图片|从本地选择当前页面的背景图，图片处理成功后自动应用并保存，可再次选择或清除。
 [data-beautify-background-clear]|清除背景图片|移除当前范围的自定义背景，恢复页面原有背景显示。原图需要自行保存。
-[data-theme-new]|新建主题|创建一份可保存的主题配置。填写名称并配置样式后保存，之后可从主题列表重新选择。|进入
-[data-theme-choice]|选择主题|查看或应用这份主题。应用前核对作用页面及主题内容，显示效果以实际预览为准。
+[data-theme-new]|新建主题|新建角色心声面板美化。填写名称、样式代码和配套提示词，预览后点击“保存并使用”。|进入
+[data-theme-choice]|选择主题|立即选择并保存这份角色心声面板样式；自定义样式的配套提示词用于之后生成相应内容。
 [data-theme-edit]|编辑主题|打开已保存主题的名称和样式资料，修改后保存。先确认选中的主题，避免覆盖其他配置。|进入
 [data-theme-delete]|删除主题|从主题列表移除此配置。需要保留其样式时先备份，再确认删除。
-[data-theme-save]|保存主题|保存当前主题名称与样式。填写完成后核对作用范围，再提交保存。
+[data-theme-save]|保存主题|保存角色心声面板的名称、样式和配套提示词，并立即选用。名称和配套提示词不能为空，样式预览本身不会保存。
 [data-theme-back],[data-theme-return],[data-theme-topback]|返回主题列表|退出当前主题子页，回到主题列表或上一层。先保存需要保留的编辑。|进入
 [data-header-move]|移动顶部头像|把这张头像向指定方向移动一位，调整顶栏显示顺序。完成全部调整后使用保存按键。
 [data-header-upload]|上传顶部头像|选择用于顶栏的自定义图片，检查图片后保存排列配置。
-[data-header-characters]|从角色选择头像|从已有角色中选择顶栏需要显示的头像，之后可以继续调整顺序。|进入
+[data-header-characters]|切换聊天角色|离开头像排列面板并打开角色列表，用于切换聊天角色。此键不会保存尚未提交的头像排列；排列中的角色头像应使用每个位置的来源下拉框选择。|进入
 [data-header-save]|保存顶部头像排列|保存当前头像来源和顺序，返回聊天后查看顶栏效果。
 [data-location-current]|读取当前位置|请求浏览器定位授权并取得当前位置。结果可能受设备权限和定位精度影响，确认地点资料后再分享。
 [data-image-preview]|查看图片|打开图片预览，放大检查内容后再决定是否发送或继续其他操作。|进入
@@ -120,10 +120,10 @@
 [data-voice-toggle]|展开语音文字|展开这张语音卡片对应的文字内容及已有译文，再次点击收起。页面显示的波形与时长来自这条语音消息的资料。|进入
 [data-call-toggle]|通话设备开关|按当前按键标签开启或关闭对应的通话设备。关闭摄像头后不再提供新的画面，重新开启可能需要设备授权。
 [data-call-flip]|切换摄像头|在设备支持的摄像头方向之间切换。设备没有其他摄像头时可能无法切换，切换后核对预览画面。
-[data-call-reply],[data-call-retry]|请求通话回应|让角色依据当前通话内容及可用画面生成回应。需要配置模型，图片理解还要求模型支持视觉输入。
+[data-call-reply],[data-call-retry]|请求通话回应|重试未成功的通话回应，或重新生成最近一条用户消息的角色回复。重新生成成功后替换该轮旧回复，并沿用这条消息发送时的画面；不会重新拍摄当前画面。
 [data-call-return]|返回聊天并保留通话|收起视频通话界面并回到聊天，当前通话按原功能规则继续，可以通过通话返回入口再次打开。|进入
 #videoCallReturn|返回视频通话|重新打开正在进行的通话界面，查看画面与通话消息。是否仍在通话以界面显示的状态为准。|进入
-[data-call-close]|结束视频通话|结束当前通话并停止设备使用。需要保存的内容按通话结束后的记录和总结功能处理。
+[data-call-close]|结束视频通话|结束视频通话并关闭摄像头，自动将通话文字与回顾卡片保存到聊天；有文字交流且配置了通话总结接口时，会自动请求摘要。
 [data-call-summary]|查看通话记录|打开通话总结和消息明细，回看本次交流内容。总结用于辅助回顾，重要细节以实际消息为准。|进入
 [data-call-summary-delete]|删除通话记录|移除这份通话总结及对应记录。删除前核对通话对象和时间，重要资料先备份。
 [data-message-action="edit"]|编辑消息|修改这条文字消息，保存后更新聊天记录和后续上下文。只编辑实际需要改动的内容。|进入
@@ -142,7 +142,6 @@
 [data-sms-open]|打开短信会话|进入这名联系人与对应用户面具的短信记录。发送前核对会话上显示的身份。|进入
 [data-sms-user]|切换短信面具|选择用于查看短信的用户面具，不同身份的联系人与消息记录分别管理。|进入
 [data-sms-clear]|清空短信记录|删除当前选定范围的短信记录。核对会话和范围，先备份重要短信再执行。
-[data-sms-retry-user]|重试发送短信|再次尝试发送这条未成功的用户短信。重试前检查内容和连接状态，避免重复提交已经成功的消息。
 [data-sms-retry-blocked]|重试短信回复|重新请求之前未成功生成或提交的角色短信。需要可用接口，先检查失败原因和会话身份。
 [data-sms-action="translate"]|翻译短信|查看或请求当前短信的译文。译文用于辅助理解，含义仍需结合原文和上下文核对。
 [data-sms-reaction],[data-sms-reaction-choice]|短信回应表情|展开或选择对这条短信的表情回应。选中后只对应当前短信，不会自动发送一段新的文字消息。
@@ -207,7 +206,7 @@ open-profile-collection-form|创建主页合集|展开合集编辑表单，填�
  add('quick',`
 退出输入|返回底部导航|收起输入功能并恢复底部胶囊导航。此操作只切换界面，不会删除角色与聊天。|进入
 退出|返回底部导航|关闭当前输入界面，恢复底部导航。需要保留的消息请先发送或保存。|进入
-保存|保存线下故事|打开当前线下故事的保存流程，核对记录标题和内容后保存，之后可在线下记录中回看。|进入
+保存|保存线下故事|立即保存当前线下会话并清空聊天中的本次故事，已存档内容可在线下记录中回看。配置了线下总结接口时还会自动生成总结。
 删除|删除本次线下内容|删除当前尚未保存的线下会话，已保存的线下记录按原功能规则保留。先核对角色和内容，再按确认提示执行。
 清除聊天|清除当前线上聊天|清除当前角色与当前用户的线上消息，线下记录与其他角色聊天不属于此操作范围。重要聊天先备份，再确认删除。
 拉黑好友|拉黑或解除拉黑|切换当前角色的拉黑状态。拉黑后你仍可发送消息，角色首条回复显示发送失败后停止发送；取消拉黑后可能按配置主动联系。
@@ -251,7 +250,7 @@ open-profile-collection-form|创建主页合集|展开合集编辑表单，填�
   'm-buy':['购买商品','打开此商品的购买流程，核对规格、数量、地址和付款方式后再确认结算。',true],
   'm-gift':['赠送给角色','选择接收角色并核对商品规格，确认后进入虚构赠礼及订单流程。',true],
   'm-confirm-gift':['确认赠礼','提交当前选择的赠送对象和商品，检查订单、金额和收货资料后再确认。'],
-  'm-pick-role':['选择赠礼角色','把此角色设为当前赠礼接收对象。确认角色身份后再继续赠送。'],
+  'm-pick-role':['选择代付角色','选择结算页中准备请求代付的角色，同时切换该页显示的钱包对象。选择本身不请求代付；赠礼收礼人应在赠礼页的下拉框中选择。'],
   'm-checkout':['购物车结算','将已经勾选的购物车商品带入结算页，核对数量、规格及总价后继续。',true],
   'm-pay':['确认付款','按当前结算资料创建或支付虚构订单。先核对身份、总价、收货地址和付款方式，提交后会更新相应账户和订单。'],
   'm-role-pay':['请角色付款','请求当前角色对代付作出回应。需要对应的接口及角色资料，能否代付以角色的实际回应和功能规则为准。'],
@@ -263,7 +262,7 @@ open-profile-collection-form|创建主页合集|展开合集编辑表单，填�
   'm-cancel':['取消订单','取消这笔可取消的订单，资金和状态按现有订单规则处理。先核对订单对象与金额。'],
   'm-switch-user':['切换市场面具','切换当前购物身份，钱包、购物车和订单资料随所选面具变化。',true],
   'm-toggle-masks':['选择购物面具','展开当前可用的用户面具，再选择用于市场操作的身份。',true],
-  'm-wallet-toggle':['展开钱包','查看当前身份的钱包资料，注意余额显示所用币种与账户归属。',true],
+  'm-wallet-toggle':['生成或刷新角色钱包','为当前代付角色生成或刷新虚构钱包余额与最近交易。这会调用市场模型，并不是单纯展开已存资料。'],
   'm-wallet-retry':['重新读取钱包','重试当前未成功的钱包资料请求，先核对角色身份和接口状态。'],
   'm-edit-address':['编辑收货地址','打开这条收货资料，修改收件人、位置等内容后保存。',true],
   'm-delete-address':['删除收货地址','从地址列表移除此条资料。先核对收件人及地点，保留需要的资料后再删除。'],
@@ -288,22 +287,22 @@ open-profile-collection-form|创建主页合集|展开合集编辑表单，填�
   'r-note':['阅读笔记','打开这条阅读笔记或笔记编辑区，查看原文和自己的记录。',true],
   'r-open-notes':['笔记列表','查看当前书籍关联的批注与笔记，可通过定位入口返回对应原文。',true],
   'r-ask':['围绕选段讨论','先选中正文中的一段文字，再打开与此原文关联的记号。填写自己的想法后使用讨论按键请求角色回应，讨论需要可用接口。',true],
-  'r-share':['分享阅读内容','打开当前选段或阅读资料的分享选项，确认目标与分享内容后提交。',true],
+  'r-share':['带回角色聊天','把这条共读记号、原文及最近讨论直接作为用户消息写入对应角色的线上聊天，同一条记号不会重复写入。此键不弹出分享选择，也不自动请求角色回复。',true],
   'r-thought':['记录阅读感想','打开感想输入区，填写对当前内容的理解后保存。',true],
   'r-save-thought':['保存阅读感想','提交当前编辑的阅读感想，并与对应书籍或身份关联。保存前核对正文及内容。'],
   'r-remember':['保存共读记忆','在读后信已生成后，将本次共读内容按功能规则保存到角色记忆。先核对角色、用户及读后信，再确认加入记忆。'],
-  'r-manage':['管理书籍','进入书架管理，选择要整理的书籍后执行移动或删除等操作。',true],
+  'r-manage':['管理书籍','打开这一本书的资料编辑页，可修改书名与作者；书目尚无正文时可查找或导入正文，也可移出书架。',true],
   'r-move':['翻页或切换章节','根据当前排版方式向前或向后阅读。竖向阅读切换章节；横向排版按分页切换，到章节边缘时进入相邻章节。',true],
-  'r-delete':['删除阅读资料','删除当前选中的书籍或笔记资料。操作前核对对象和数量，需要保留的原文与笔记先备份。'],
+  'r-delete':['删除阅读资料','移出当前书籍，并删除这张用户面具下该书的共读记录。其他面具的资料不在本次删除范围内，执行前会要求确认。'],
   'r-clear-selection':['取消阅读选择','取消当前选段或管理选择，回到正常阅读状态。',true],
   'r-picker':['阅读对象选择','打开当前角色、用户或书籍的选择面板，选择后核对页面显示的对象。',true],
   'r-role-option':['选择共读角色','把这名角色设为当前共读对象，后续角色讨论依据这名角色的资料生成。'],
   'r-user-option':['选择阅读面具','切换阅读使用的用户身份，笔记与共读上下文以当前身份为准。'],
   'r-font-import':['导入阅读字体','从本地选择支持的字体文件，用于正文显示。导入后检查文字是否能正常显示。'],
   'r-catalog-add':['加入书架','把当前书目加入书架，书目资料与可阅读正文分别管理，之后按正文状态继续操作。'],
-  'r-catalog-content':['书目正文来源','查看或选择当前书目的正文来源，确认可访问及允许使用后再取得内容。',true],
+  'r-catalog-content':['书目正文来源','直接尝试从此书目的公开来源取得正文，成功后进入共读；需要已绑定共读角色，来源不提供全文时可能无法取得。',true],
   'r-letter':['请角色写读后信','全书阅读进度完成后，请角色根据本次共读内容写读后信。需要可用阅读接口；生成后核对共同选段、分歧和尚未解决的问题。'],
-  'r-attach-open':['选择阅读附件','打开本地文件选择器，把页面支持的资料作为阅读附件导入。选择后检查文件内容与导入结果。'],
+  'r-attach-open':['导入书籍正文','为尚无正文的书目选择本地书籍文件，解析后附加为这本书的正文。支持电子书、文本和文档等页面列出的格式，不是给讨论添加附件。'],
   'r-reveal':['揭晓阅读猜测','依据后来已经读到的证据，请角色回看之前的猜测并更新判断。需要可用接口，不会把尚未读到的后续内容直接当成已知事实。'],
   'r-copyright-accept':['确认阅读声明','阅读页面展示的版权与使用说明，符合条件并同意后再确认进入。'],
   'p-page':['经营分类','进入经营首页、货源、藏品、账本或其他分类，各页面显示当前店铺对应的资料。',true],
@@ -326,6 +325,7 @@ open-profile-collection-form|创建主页合集|展开合集编辑表单，填�
 
  define('[data-r-font-reset]','恢复默认阅读字体','取消当前导入字体，切回系统默认字体。字号、行距等其他排版参数按当前阅读设置保留。');
  const forms={
+  '.forum-search-form':['搜索论坛帖子','在当前世界已有帖子的正文、话题和显示作者中按关键词筛选，最多显示前四十条匹配，不调用模型。'],
   '[data-r-form="search"]': ['搜索书籍','按当前关键词在书架或所选在线来源中查询。先选择搜索范围，再填写书名、作者或书目标识；在线结果不一定有公开正文。'],
   '[data-r-form="metadata"]':['保存书籍资料','保存当前书籍的书名和作者等资料，先检查正文对应的书目是否正确。'],
   '[data-r-form="preferences"]':['保存阅读排版','保存字号与行距等当前排版参数，确认正文清晰可读后提交。'],
@@ -345,7 +345,7 @@ open-profile-collection-form|创建主页合集|展开合集编辑表单，填�
   '[data-form="profile-collection"]':['创建帖子合集','保存输入的合集名称，之后发布帖子时可以归入该合集。'],
   '.forum-comment-form':['发表评论','把填写的评论发布到当前帖子，提交前核对正在使用的身份、帖子内容和评论正文。'],
   '.forum-reply-form':['发送评论回复','把输入内容作为对当前评论的回复发送，先确认回复对象及上下文。'],
-  '[data-call-form]':['发送通话消息','把输入文字加入当前视频通话。核对内容后发送，角色回应使用配置的通话接口及可用画面。'],
+  '[data-call-form]':['发送通话消息','发送文字后自动调用视频通话接口请求角色回应。摄像头开启时一并截取发送时的画面；画面不持续上传。失败后可点击回复或重新生成按键重试。'],
   '#composer':['发送聊天消息','把输入内容发送给当前角色。先绑定用户面具并核对角色，之后可请求角色生成回复。'],
   '#messageEditForm,#smsMessageEditForm':['保存消息修改','把编辑后的文字保存到这条消息，后续上下文会依据实际保存的记录处理。保存前核对原文及译文。'],
   '#transferForm':['发送聊天转账','以人民币从当前虚构银行卡余额发起转账，核对金额、收款角色和备注后确认。消息会记录待回应的转账状态。'],
@@ -372,11 +372,13 @@ open-profile-collection-form|创建主页合集|展开合集编辑表单，填�
   'm-page':{home:['市场首页','浏览推荐、最近收藏与购买记录，从商品卡进入详情后再选择规格或购买。'],category:['商品分类','按类别及搜索关键词查找商品，可继续查看单件商品的详情与规格。'],cart:['购物车','勾选需要结算的商品，调整数量和规格后核对总价，再进入结算。'],orders:['订单列表','查看当前购物身份的订单和配送状态，选择具体订单后再确认收货或执行允许的操作。'],favorites:['商品收藏','集中查看当前面具收藏的商品，选择商品可进入详情，取消收藏不会自动删除订单。'],mine:['购物个人页','查看当前面具的账户、地址及购物资料，身份切换后资料随面具变化。']},
   'p-page':{home:['香水店铺','查看当前店铺资金、经营伙伴、日常经营和在库藏品，再选择需要的经营操作。'],sources:['私人货源','查看和寻访新货源，结合卖家资料、线索和鉴定后决定是否购入。'],collection:['在店藏品','查看已经购入或制作的香水，进入详情后可鉴定、寻买家或出售。'],atelier:['共同调香','选择角色并补充经历或主题，先邀请共同构思，再配置香调和瓶型制作作品。'],ledger:['经营账本','查看本金划转、成交成本、净收益和角色分红，也可进入经营契约核对约定。'],contract:['经营契约','阅读店铺的成本、收益及伙伴分配约定，核对经营者后再签署。']},
   'forum-page':{feed:['论坛首页','浏览当前世界的动态，可切换推荐、最新、热门及关注筛选。'],compose:['发布新帖','选择普通、更新、图片或投票帖子，填写内容与话题后以当前面具发布。'],bookmarks:['论坛收藏','查看当前身份收藏的帖子，进入详情后可继续阅读和评论。'],notifications:['论坛通知','查看回复、提及和其他论坛通知，点开后定位相关帖子或评论。'],members:['世界成员','管理加入当前世界的用户面具、角色和虚构网友，角色参与生成前需要先在这里加入。'],profile:['我的论坛主页','查看自己的公开资料、帖子与合集，也可进入资料编辑和世界管理。'],'profile-edit':['编辑论坛资料','修改当前论坛身份的头像、昵称和简介，完成后提交保存。'],search:['论坛搜索','填写关键词查找当前世界相关内容，核对搜索结果后进入帖子详情。'],'world-add':['创建论坛世界','为新世界填写名称、简介与背景，创建后再加入需要参与的身份和角色。']},
-  'r-drawer':{map:['共读轨迹','查看阅读过程中已留下的记录和关联内容，通过对应入口回到原文。'],predictions:['阅读猜测','记录你和角色基于已读内容的猜测，读到新证据后可以请求揭晓并更新判断。'],settings:['阅读排版','调整字号、行距、翻页方向和字体，确认正文可读后保存。']},
-  'r-search-mode':{local:['搜索我的书架','只在当前面具已经加入的书籍中查找，输入书名或作者后搜索。'],online:['联网查找书目','选择书目来源并输入关键词查找在线书目，取得正文前仍需确认来源公开提供且允许使用。']}
+  'r-drawer':{map:['共读轨迹','查看阅读过程中已留下的记录和关联内容，通过对应入口回到原文。'],predictions:['阅读猜测','记录你和角色基于已读内容的猜测，读到新证据后可以请求揭晓并更新判断。'],settings:['阅读排版','调整字号、行距、翻页方向和字体。拖动或选择后自动应用并保存，不需要另点保存。']},
+  'r-search-mode':{local:['搜索我的书架','只在当前面具书架中按书名或作者进行本地检索，不请求模型。切换搜索方式会清空原关键词。'],online:['联网查找书目','选择书目来源并输入关键词查找在线书目，取得正文前仍需确认来源公开提供且允许使用。']}
  };
  const fields={
-  'data-api-feature':['功能接口分配','为这一功能选择使用哪组已保存接口。设置后核对所选接口的地址、密钥和可用模型，再使用对应生成操作。'],
+  'data-header-role':['顶部头像来源','为这个顶栏位置选择默认字母或某个角色头像，选择后只更新排列草稿，需点击“保存排列”提交。'],
+  'data-forum-setting':['论坛成员设置','调整角色的参与方式、频率、权限或授权故事摘要。变更后自动保存；关闭私聊上下文授权可限制论坛生成读取私聊，授权故事摘要应仅填写允许公开使用的资料。'],
+  'data-api-feature':['功能接口分配','勾选后把这一功能分配给该组接口，并自动取消其他接口对此功能的分配；取消勾选则移除此处的明确分配，之后按默认接口与回退规则处理。更改自动保存。'],
   'data-api-feature-model':['功能模型分配','为这一功能指定具体模型。模型必须属于所选接口且具有所需能力，例如图片理解或长文本生成。'],
   'data-api-model-choice':['保留模型','勾选需要保留在接口配置中的模型，选好后使用保留或确认按键提交，避免选择无权限的模型。'],
   'data-api-profile':['接口资料字段','填写当前接口的资料，服务地址、密钥和模型应使用服务方提供的有效值。填写完后按页面要求保存，再获取或分配模型。'],
@@ -396,7 +398,7 @@ open-profile-collection-form|创建主页合集|展开合集编辑表单，填�
   'data-stage-memory-text':['阶段摘要正文','填写这一阶段已经实际发生的情节，核对覆盖轮次和人物认知后保存，不要把计划中的剧情写成既成事实。'],
   'data-offline-setting':['线下写作参数','为当前角色配置这一项写作选项。人称、字数、段落和推进方式分别控制不同方面，后续生成会依据启用设置执行。'],
   'data-offline-prompt-select':['选择故事提示词','选择本轮故事生成使用的提示词配置，使用前检查模板内容与支持的变量。'],
-  'data-offline-prompt-detail':['故事提示词正文','编辑当前故事模板，支持的变量会在请求时填入实际资料。保存前核对变量名称，未知变量不会自动得到内容。'],
+  'data-offline-prompt-detail':['故事提示词正文','编辑当前选中的故事模板，结束编辑并触发变更后自动保存。支持的变量会在请求时填入实际资料，未知变量不会自动得到内容。'],
   'data-offline-style-detail':['故事文风正文','编辑这一文风的具体写作要求，结束编辑并触发变更后自动保存；选用此文风会影响后续生成，已有故事不会自动重写。'],
   'data-custom-prompt-enabled':['启用额外要求','决定是否把当前保存的额外要求加入线下故事生成。关闭只停用读取，需要删除时使用删除按键。'],
   'data-draft-cot-enabled':['启用草稿思维设置','启用后按当前草稿配置组织线下生成；模型实际输出仍取决于所选接口与模型。调整前先阅读当前提示词。'],
@@ -412,7 +414,7 @@ open-profile-collection-form|创建主页合集|展开合集编辑表单，填�
   'data-regex-prop':['文字规则参数','填写规则名称、匹配表达式或替换内容。表达式语法会影响匹配范围，请先用下方样例试运行再启用。'],
   'data-regex-test-input':['规则测试原文','输入测试用文字，运行后检查哪些内容被替换。测试结果确认无误后再保存正式规则。'],
   'data-regex-test-lane':['规则测试范围','指定测试模拟页面显示还是模型上下文，从而核对不同开关下的实际处理效果。'],
-  'data-regex-test-target':['规则测试对象','指定测试文本来自用户还是角色，核对规则对这类文本是否应该生效。'],
+  'data-regex-test-target':['规则测试对象','指定测试文本来自用户还是角色，核对规则对这类文本是否应该生效。此选择只用于试运行，不修改正式规则的作用对象。'],
   'data-emoji-group-enabled':['表情分组开关','启用后允许当前角色使用该分组中的表情，关闭会停用这一组而不直接删除图片。'],
   'data-m-select':['选择结算商品','勾选这条购物车商品加入本次结算，取消勾选则保留在购物车但不参与本次付款。'],
   'data-r-chapter':['阅读章节目录','从目录中选定章节，切换到对应正文位置。跳转后核对章节名称再继续阅读。'],
@@ -446,7 +448,7 @@ semanticRecall|语义与关键词召回|结合当前话题寻找相关旧记忆�
 `);
  add('more-toggle',`
 bilingual|双语翻译|启用后按选定语言显示翻译内容。先选择源语言与目标语言，再检查译文是否符合原文和人物语气。
-autoExpand|自动展开附加内容|控制相关附加内容是否自动展开显示，具体对象以开关旁的页面说明为准。
+autoExpand|自动展开译文|打开聊天时默认显示消息的译文。此项只控制已有译文的展示，不会单独请求翻译。
 timeAwarenessEnabled|角色时间感知|让线上角色参考当前日期和时刻，结合时区设置理解双方当地时间。启用时间感知不会自动替角色发送消息。
 holidayAwarenessEnabled|节假日感知|允许角色参考功能取得的节假日资料，查证能力取决于接口和模型；无法核验的日期不应视为已确认事实。
 timezoneEnabled|双方时区|启用分别设置用户与角色时区，之后核对国家、地区及展示的时差，避免混淆双方当地日期。
@@ -458,7 +460,7 @@ userAgency|用户行动权限|选择是否允许模型代写用户行动或发�
 wordCount|故事篇幅|设置线下回复的目标字数，实际输出还受模型及接口长度限制影响，生成后按正文检查。
 paragraphCountMin|最少段落|设置故事回复期望的最少段落数，需与最多段落和篇幅要求配合，避免互相冲突。
 paragraphCountMax|最多段落|设置期望的最多段落数，不应小于最少段落，生成后检查实际分段。
-paragraphRequirement|段落要求|补充对段落长度、分段方式或对话排版的具体要求，保存前核对是否与文风要求冲突。
+paragraphRequirement|段落要求|补充对段落长度、分段方式或对话排版的要求，结束编辑并触发变更后自动保存，应避免与文风要求冲突。
 pacing|故事推进节奏|选择线下事件如何推进，后续生成按节奏要求继续故事，并以已经发生的情节作为前文。
 style|故事文风选择|选择后续线下生成使用的文风，完整内容可以在文风编辑中查看和修改。
 `);
@@ -466,17 +468,26 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
  function pageName(element){const parent=element.closest('.iris-market,.iris-reading,.iris-perfumery,[class*="forum-"],#characterDialog,#profileDialog,#settingsScreen,#sheet,#featureScreen');if(!parent)return'当前页面';if(parent.id==='characterDialog')return'角色资料';if(parent.id==='profileDialog')return'用户资料';if(parent.id==='settingsScreen')return'当前设置';if(parent.matches('[class*="forum-"]'))return'论坛';return'当前功能'}
  function behaviorFor(element,result){
   const form=element.form||element.closest('form');
+  if(element.matches('.reading-preferences input[type="range"]'))return '拖动滑杆立即更新正文和预览，并自动保存，不需要另点保存。';
+  if(element.matches('[data-r-preview]'))return '这是排版效果预览，不能编辑，不需要保存。';
+  if(element.matches('[data-r-save-thought]'))return '只保存当前想法到这条记号，不请求角色回应。';
+  if(element.matches('[data-r-share]'))return '直接写入对应角色的线上聊天，不需要额外确认或保存。';
+  if(element.matches('[data-header-role],[data-header-move],[data-header-upload]'))return '这里只调整排列草稿，完成后点击“保存排列”。';
+  if(element.matches('[data-model-select-all],[data-model-clear],[data-api-model-choice]'))return '只改变本次选择，点击“保留所选”才提交；直接关闭会放弃未提交的选择。';
+  if(element.matches('[data-theme-choice]'))return '点击后立即选用并保存。';
+  if(element.matches('[data-location-current]'))return '读取定位结果填入表单；仍需点击“发送位置”才会发送。';
   if(form?.matches('.market-search,.forum-search-form,[data-r-form="search"]'))return element.matches('input')?'填写关键词后点击“搜索”，不需要保存。':'点击后直接搜索并显示结果，不需要保存。';
-  if(element.matches('[data-api-feature],[data-api-feature-model],[data-api-set-default],[data-role-user],[data-memory-toggle],[data-memory-number],[data-more-toggle],[data-more-value],[data-emoji-group-enabled],[data-timezone-country],[data-timezone-region],[data-timezone-value],[data-timezone-reset],[data-worldbook-toggle],[data-worldbook-entry],[data-global-worldbook-book-enabled],[data-global-worldbook-enabled],[data-global-worldbook-scope],[data-offline-setting],[data-offline-style-detail],[data-custom-prompt-enabled],[data-draft-cot-enabled],[data-mini-theater-enabled]'))return '更改完成后自动记录；文字或数值输入在结束编辑、触发变更时保存，不需要另点保存。';
+  if(element.matches('[data-api-feature],[data-api-feature-model],[data-api-set-default],[data-role-user],[data-memory-toggle],[data-memory-number],[data-more-toggle],[data-more-value],[data-emoji-group-enabled],[data-timezone-country],[data-timezone-region],[data-timezone-value],[data-timezone-reset],[data-worldbook-toggle],[data-worldbook-entry],[data-global-worldbook-book-enabled],[data-global-worldbook-enabled],[data-global-worldbook-scope],[data-offline-setting],[data-offline-style-detail],[data-offline-prompt-select],[data-offline-prompt-detail],[data-forum-setting],[data-custom-prompt-enabled],[data-draft-cot-enabled],[data-mini-theater-enabled]'))return '更改完成后自动记录；文字或数值输入在结束编辑、触发变更时保存，不需要另点保存。';
   if(element.matches('[data-regex-enabled]'))return element.closest('[data-offline-regex-index="draft"]')?'新建规则的草稿需点击“保存”才会加入列表。':'已有规则的总开关更改后自动保存。';
   if(element.matches('[data-beautify-editor]'))return '输入时只更新预览；点击“应用样式”后才会正式应用并保存。';
   if(element.matches('[data-beautify-background-pick]'))return '选择图片后自动处理、应用并保存背景，不需要另点保存。';
   if(element.matches('[data-r-reading-direction],[data-r-font-choice],[data-r-font-import],[data-r-font-reset]'))return '选择或导入成功后自动应用并记录。';
   if(element.matches('[data-m-select],[data-m-qty],[data-m-favorite],[data-m-default-address],[data-r-filter],[data-r-search-mode],[data-r-public-only],[data-r-search-source]'))return '选择后直接更新当前状态或结果，不需要另点保存。';
   if(element.matches('[data-regex-test]'))return '直接试运行并显示替换前后的对比；试运行不会代替保存规则。';
-  if(element.matches('[data-regex-prop],[data-regex-target],[data-regex-context],[data-regex-display],[data-draft-cot-input],[data-mini-theater-prompt],[data-offline-extra-input],[data-offline-extra-name]'))return '正文或规则编辑完成后，点击这一项对应的“保存”。';
+  if(element.matches('[data-regex-prop],[data-regex-target],[data-regex-context],[data-regex-display],[data-draft-cot-input],[data-mini-theater-prompt],[data-offline-extra-input],[data-offline-extra-name],[data-stage-memory-text]'))return '正文或规则编辑完成后，点击这一项对应的“保存”。';
   if(element.matches('[data-user-phone-random]'))return '本地生成号码并立即保存到当前面具。';
-  if(result.navigation)return '点击后直接进入、展开或切换，不需要额外保存这次导航。';
+  if(result.navigation)return '点击后进入、展开或切换；这次页面切换本身不需要保存。';
+  if(element.matches('button')&&element.type!=='submit')return '';
   if(form?.matches('#apiForm,#characterForm,#profileForm,[data-user-phone-form],[data-memory-entry-form],[data-experience-form],[data-global-worldbook-form],[data-global-worldbook-book-form],[data-global-worldbook-rename-form],[data-role-worldbook-name-form],[data-role-worldbook-entry-form],[data-offline-prompt-form],[data-offline-style-form],[data-r-form="metadata"],[data-r-form="preferences"],.market-address-form,[data-form="profile"],[data-form="edit-world"]'))return element.matches('button')?'点击此表单的确认或保存按键后提交。':'这份表单需要使用对应的确认或保存按键提交。';
   if(form?.matches('#composer,.sms-composer,#voiceForm,#transferForm,#locationForm,#imageDescriptionForm,[data-call-form],.forum-comment-form,.forum-reply-form,.reflection-x-composer,[data-form="post"],[data-r-form="discussion"],[data-r-form="prediction"]'))return '填写后使用表单中的发送、发布或请求按键，不需要另外保存。';
   return '';
@@ -489,17 +500,32 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
   ['[data-m-wallet-toggle],[data-m-wallet-retry]','生成或刷新角色钱包会调用市场模型 API，参考角色资料及近期记录更新钱包；外币资料还可能联网查询汇率。'],
   ['[data-m-role-pay],[data-m-role-retry]','调用市场模型 API 请求角色作出代付决定；同意后是否付款还要通过余额和订单条件检查。'],
   ['[data-m-confirm-gift]','订单提交后会请求聊天模型 API，让收礼角色即时回应；下单与角色回应是两个步骤。'],
-  ['[data-m-pay]','个人钱包结算按本地订单规则执行；使用角色代付时会调用模型 API 请求角色决定。'],
+  ['[data-m-pay]','此键使用个人虚构钱包按本地订单规则结算，不调用模型 API。'],
+  ['[data-dock-feature="forum"],[data-forum-page="feed"],[data-forum-action="switch-world"]','当前世界为空、尚未尝试生成且接口可用时，进入论坛首页会自动调用论坛模型生成动态；已有内容时不会仅因浏览而自动刷新。'],
   ['[data-dock-feature="business"],[data-p-mask-option]','进入店铺时，如当天尚未尝试结算，会自动调用经营模型 API 生成当日经营摘要与收益。'],
-  ['[data-p-source],[data-p-buyers],[data-p-taste],[data-p-form="invite"] button,[data-p-form="help"] button,[data-p-form="negotiate"] button','此操作会调用经营模型 API 生成相应货源、买家或角色回应，需要先配置经营接口和模型。'],
+  ['[data-p-source],[data-p-buyers],[data-p-taste],[data-p-form="invite"] button,[data-p-form="help"] button,[data-p-form="negotiate"] button','此操作会调用经营模型 API 生成相应货源、买家或角色回应，需要先配置经营接口和模型；已有买家报价或试香结果会复用，不重复生成。'],
   ['[data-p-inspect],[data-p-certify],[data-p-buy],[data-p-sell]','按本地经营规则检查或结算；此按键本身不请求模型生成。费用和资金变化以页面显示为准。'],
   ['[data-forum-action="refresh"],[data-forum-action="interact"],[data-forum-action="invite-roles"],[data-forum-action="send-comment-role-replies"],[data-forum-action="role-new-post"]','会调用论坛模型 API 生成动态或角色互动，需要可用接口及对应世界成员资料。'],
-  ['[data-r-annotate],[data-r-reveal],[data-r-letter],[data-r-form="discussion"] button,[data-r-form="prediction"] button','会调用阅读模型 API 生成角色批注、讨论、猜测或读后信。请先为当前用户绑定共读角色并配置阅读接口。'],
-  ['#reply,.sms-reply,[data-call-reply],[data-call-retry],[data-sms-retry-blocked],.reflection-generate','会调用当前功能配置的模型 API 生成内容，需要有效地址、密钥和可用模型。视频画面理解还要求模型支持图片。'],
+  ['[data-r-annotate],[data-r-reveal],[data-r-letter],[data-r-form="discussion"] button:not([type="button"]),[data-r-form="prediction"] button:not([type="button"])','会调用阅读模型 API 生成角色批注、讨论、猜测或读后信。请先为当前用户绑定共读角色并配置阅读接口。'],
+  ['#reply','调用当前模式的聊天或线下故事模型 API；满足记忆整理条件时，还可能自动调用对应的总结接口。'],
+  ['[data-call-reply],[data-call-retry],[data-call-form] button:not([type="button"])','发送文字或请求回应会调用视频通话模型 API，线上与线下使用同一功能配置。请求附带该条消息发送时取得的画面；模型不支持图片时会提示并尝试纯文字回应。'],
+  ['.sms-reply,[data-sms-retry-blocked]','调用短信模型 API 生成角色短信，需要可用接口和绑定身份。'],
+  ['.reflection-generate','调用线上聊天模型 API 补全心声面板内容或缺失译文。'],
+  ['[data-call-close]','有通话文字且配置可用的通话总结接口时，结束通话会自动调用通话总结模型 API；未配置或生成失败时使用本地回顾。'],
+  ['[data-sms-action="translate"]','尚无译文时调用线上聊天模型 API 翻译；已有译文时仅切换显示，不再次请求。'],
+  ['[data-quick="保存"],[data-offline-save-record]','先在本地保存并清空当前线下会话；配置了线下总结接口时，会自动调用模型整理总结，成功后加入角色记忆。'],
+  ['[data-quick="拉黑好友"]','拉黑操作本身不调用模型；解除拉黑后，满足当前会话条件时会自动调用线上聊天模型生成主动消息。'],
+  ['[data-invitation-action]','接受或重试生成邀约开场会调用线下故事模型 API；拒绝邀请会发送拒绝消息并自动请求线上聊天回复。进入已生成的线下会话不重新生成开场。'],
+  ['[data-offline-opening-next],[data-offline-opening-previous],[data-reply-next],[data-reply-previous]','切换已有版本使用本地记录；需要生成新版本时会调用相应的聊天或线下故事模型 API。'],
+  ['[data-p-claim]','分红结算按本地规则执行，不请求模型生成；角色钱包币种不是人民币时需要联网取得汇率。'],
+  ['[data-r-save-thought],[data-r-share],[data-r-remember],[data-r-highlight]','本地保存或写入聊天与记忆，此按键不调用模型 API。'],
+  ['[data-r-online-page],[data-r-online-retry],[data-r-public-only]','联网请求公共书目来源，不调用你配置的模型 API；已有关键词时调整筛选会重新搜索。'],
+  ['[data-memory-toggle="autoSummary"],[data-memory-number="summaryEveryRounds"]','设置本身只在本地保存；满足启用、轮次及接口条件后，回复完成时会自动调用线上总结模型 API。'],
   ['[data-character-phone]','调用聊天模型 API，根据角色资料生成虚构运营商和号码。'],
   ['[data-stage-memory-regenerate]','调用线下摘要模型 API，根据指定轮次原文重新整理阶段记忆。'],
   ['[data-more-toggle="holidayAwarenessEnabled"]','开关本身自动保存；开启后的聊天会按每日查询规则调用模型 API 核验节假日与调休。'],
   ['[data-more-toggle="timeAwarenessEnabled"]','读取本地日期、时区和消息时间，此项本身不需要联网或额外模型请求。'],
+  ['#transferForm button:not([type="button"])','先在本地发起虚构转账；涉及角色币种折算时，后台可能联网查询汇率，此键不请求模型生成。'],
   ['#fetchModels,[data-model-url]','联网请求服务商的模型列表接口，需要有效地址及权限；这一步不生成聊天回复。'],
   ['[data-user-phone-random],[data-regex-test]','在本地处理，不调用模型 API。']
  ];
@@ -519,6 +545,8 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
   const parameter=element.getAttributeNames().find(name=>['data-more-value','data-timezone-country','data-timezone-region','data-timezone-value','data-memory-number','data-memory-toggle','data-offline-setting','data-regex-prop','data-regex-target','data-regex-context','data-regex-display'].includes(name));
   if(parameter)result.key+=':'+parameter+':'+element.getAttribute(parameter);
   if(element.matches('input,textarea,select')&&element.name)result.key+=':field:'+element.name;
+  if(parameter==='data-regex-target')result.key+=':'+element.value;
+  if(element.hasAttribute('data-forum-setting'))result.key+=':'+element.getAttribute('data-forum-setting')+':'+(element.getAttribute('data-permission')||'');
   result.behavior=behaviorFor(element,result);
   result.api=apiRules.find(([selector])=>element.matches(selector))?.[1]||'';
   if(element.disabled)result.description+=' 此按键当前不可用，请先完成页面要求的前置步骤，或等待正在进行的操作结束。';
