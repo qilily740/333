@@ -149,10 +149,24 @@ test('listening messages send without a model call and reroll replaces the previ
  send('接着说点别的');assert.match(f.content.querySelector('[data-music-reply]').innerHTML,/回复/);assert.doesNotMatch(f.content.querySelector('[data-music-reply]').innerHTML,/重 roll/);
 });
 
-test('expanding and collapsing listening chat keeps the draft, conversation and persistent audio',async()=>{
- const f=fixture();await flush();await f.audio[0].play();f.content.querySelector('[data-music-message]').value='尚未发送的文字';const src=f.audio[0].src;
- f.content.querySelector('[data-music-chat-expand]').click();assert.match(f.content.innerHTML,/music-player-view is-chat-expanded/);assert.equal(f.content.querySelector('[data-music-message]').value,'尚未发送的文字');assert.equal(f.audio[0].paused,false);assert.equal(f.audio[0].src,src);
- f.content.querySelector('[data-music-chat-expand]').click();assert.doesNotMatch(f.content.innerHTML,/music-player-view is-chat-expanded/);assert.equal(f.content.querySelector('[data-music-message]').value,'尚未发送的文字');assert.equal(f.audio.length,1);assert.equal(f.requests.length,0);
+test('record chat entry opens a separate full chat view and back preserves playback and draft',async()=>{
+ const f=fixture(),headers=[];await flush();f.runtime.setHeader=value=>headers.push(value);
+ await f.audio[0].play();const src=f.audio[0].src;
+ assert.equal(f.content.querySelector('.music-discussion').hasAttribute('hidden'),true);
+ assert.match(f.content.querySelector('[data-music-chat-open]').innerHTML,/和角色甲一起聊/);
+ f.content.querySelector('[data-music-chat-open]').click();
+ assert.match(f.content.innerHTML,/music-player-view is-chat-expanded/);
+ assert.equal(f.content.querySelector('.music-discussion').hasAttribute('hidden'),false);
+ assert.equal(headers.at(-1).subtitle,'一起听聊天');
+ assert.equal(headers.at(-1).backLabel,'返回正在听');
+ f.content.querySelector('[data-music-message]').value='尚未发送的文字';
+ assert.equal(f.api.back(),true);
+ assert.equal(f.content.querySelector('.music-discussion').hasAttribute('hidden'),true);
+ assert.equal(headers.at(-1).subtitle,'正在听');
+ f.content.querySelector('[data-music-chat-open]').click();
+ assert.equal(f.content.querySelector('[data-music-message]').value,'尚未发送的文字');
+ assert.equal(f.audio[0].paused,false);assert.equal(f.audio[0].src,src);
+ assert.equal(f.audio.length,1);assert.equal(f.requests.length,0);
 });
 
 test('music header tracks categories and lyrics, and its back action preserves audio',async()=>{

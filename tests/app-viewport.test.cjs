@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const app=fs.readFileSync(require.resolve('../scripts/app.js'),'utf8');
 const source=app.slice(app.indexOf('(function bindAppViewport(){'),app.indexOf('// Restore an unfinished blocked-contact SMS'));
-function fixture(ios=true){
+function fixture(ios=true,safeBottom=0){
  const documentEvents={},windowEvents={},viewportEvents={},frames=[],properties={},focuses=[],scrolls=[];
  const style={setProperty(name,value){properties[name]=value}};
  const conversation={scrollHeight:900,clientHeight:500,scrollTop:400,isConnected:true};
@@ -12,10 +12,10 @@ function fixture(ios=true){
  class Textarea extends Input{}
  const add=(map,name,fn)=>(map[name]||=[]).push(fn);
  const viewport={height:844,offsetTop:0,addEventListener:(name,fn)=>add(viewportEvents,name,fn)};
- const document={activeElement:null,documentElement:{style},body:{append(){}},createElement:()=>({style:{},getBoundingClientRect:()=>({height:0}),remove(){}}),addEventListener:(name,fn)=>add(documentEvents,name,fn)};
+ const document={activeElement:null,documentElement:{style},body:{append(){}},createElement:()=>({style:{},getBoundingClientRect(){return {height:this.style.cssText.includes('height:100dvh')?0:safeBottom}},remove(){}}),addEventListener:(name,fn)=>add(documentEvents,name,fn)};
  const window={visualViewport:viewport,innerWidth:390,innerHeight:844,scrollX:0,scrollY:0,addEventListener:(name,fn)=>add(windowEvents,name,fn),scrollTo(x,y){scrolls.push([x,y]);this.scrollX=x;this.scrollY=y}};
  const input=new Textarea();
- const context=vm.createContext({document,window,navigator:{userAgent:ios?'iPhone':'Android',platform:'',maxTouchPoints:1},HTMLInputElement:Input,HTMLTextAreaElement:Textarea,matchMedia:()=>({matches:false}),requestAnimationFrame:fn=>(frames.push(fn),frames.length),cancelAnimationFrame(){},performance:{now:()=>0},setTimeout(){},getComputedStyle:()=>({overflowY:'visible'}),$:s=>s==='#conversation'?conversation:s==='#messageInput'?input:null,keepLatestChatMessageVisible(){},keepLatestSmsMessageVisible(){}});
+ const context=vm.createContext({document,window,navigator:{userAgent:ios?'iPhone':'Android',platform:'',maxTouchPoints:1},HTMLInputElement:Input,HTMLTextAreaElement:Textarea,matchMedia:()=>({matches:false}),requestAnimationFrame:fn=>(frames.push(fn),frames.length),cancelAnimationFrame(){},performance:{now:()=>0},setTimeout(){},getComputedStyle:()=>({overflowY:'visible',paddingBottom:safeBottom+'px'}),$:s=>s==='#conversation'?conversation:s==='#messageInput'?input:null,keepLatestChatMessageVisible(){},keepLatestSmsMessageVisible(){}});
  vm.runInContext(source,context);
  for(const frame of frames.splice(0))frame();
  const emit=(map,type,event={})=>{event.type=type;for(const fn of map[type]||[])fn(event)};
@@ -47,4 +47,19 @@ test('reopening the app with a stale visual viewport cannot create a bottom gap'
 test('rotation discards the old portrait keyboard height',()=>{
  const f=fixture();f.document.activeElement=f.input;f.viewport.height=510;f.emitViewport('resize');assert.equal(f.properties['--app-viewport-height'],'510px');
  f.window.innerWidth=844;f.window.innerHeight=390;f.viewport.height=390;f.emitWindow('resize');assert.equal(f.properties['--app-viewport-height'],'100dvh');assert.equal(f.properties['--app-viewport-top'],'0px');
+});
+
+for(const ios of [true,false])test(`${ios?'iOS':'Android'} safe area stays inside the shell through keyboard dismissal`,()=>{
+ const f=fixture(ios,34);
+ assert.equal(f.properties['--app-safe-bottom'],'34px');
+ assert.equal(f.properties['--app-safe-top'],'0px');
+ assert.equal(f.properties['--app-viewport-bottom'],'0px');
+ assert.match(f.properties['--app-bottom-gap'],/20px \+ var\(--app-safe-bottom/);
+ f.document.activeElement=f.input;f.viewport.height=510;f.viewport.offsetTop=20;f.emitViewport('resize');
+ assert.equal(f.properties['--app-viewport-bottom'],'314px');
+ assert.equal(f.properties['--app-bottom-gap'],'20px');
+ f.document.activeElement=null;f.emitViewport('scroll');
+ assert.equal(f.properties['--app-viewport-bottom'],'0px');
+ assert.equal(f.properties['--app-viewport-height'],'100dvh');
+ assert.match(f.properties['--app-bottom-gap'],/20px \+ var\(--app-safe-bottom/);
 });

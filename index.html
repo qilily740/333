@@ -10,12 +10,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
 <script>document.write('<link rel="manifest" href="'+(location.hostname.toLowerCase().endsWith('.github.io')?'config/manifest.webmanifest':'config/manifest-custom.webmanifest')+'">')</script>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css"></noscript>
-<link rel="preload" href="assets/fonts/iris-kai.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts/fonts.css?v=2">
+<link rel="preload" href="assets/fonts/great-vibes/great-vibes-regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="apple-touch-icon" sizes="180x180" href="assets/iris-app-icon-180.png">
 <title>Iris</title>
 <style>
@@ -28,8 +24,8 @@
 @keyframes iris-boot-ink{0%,8%{-webkit-mask-position:100% 0;mask-position:100% 0;color:#aaa;opacity:.35}42%,100%{-webkit-mask-position:0% 0;mask-position:0% 0;color:#222;opacity:1}}
 @media(prefers-reduced-motion:reduce){#irisBootScreen{transition:none}.iris-boot-mark{animation-duration:2.1s;animation-iteration-count:infinite}.iris-boot-rule{animation:none;transform:scaleX(.6);opacity:.7}}
 </style>
-<script>(()=>{const v=new URLSearchParams(location.search).get('iris-release');window.IRIS_RELEASE=v;const suffix=v?'?iris-release='+encodeURIComponent(v):'?v=5.3.7';window.IRIS_STYLES_READY=new Promise(resolve=>{const link=document.createElement('link');link.rel='preload';link.as='style';link.href='style.css'+suffix;link.onload=()=>{link.onload=null;link.rel='stylesheet';requestAnimationFrame(()=>resolve())};link.onerror=resolve;document.head.append(link)})})();</script>
-<script>(()=>{const load=href=>{const link=document.createElement('link');link.rel='preload';link.as='style';link.href=href;link.onload=()=>{link.onload=null;link.rel='stylesheet'};link.onerror=()=>link.remove();document.head.append(link)};load('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');load('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');load('https://fontsapi.zeoseven.com/292/main/result.css')})();</script>
+<script>(()=>{const v=new URLSearchParams(location.search).get('iris-release');window.IRIS_RELEASE=v;const suffix=v?'?iris-release='+encodeURIComponent(v):'?v=5.3.9';window.IRIS_STYLES_READY=new Promise(resolve=>{const link=document.createElement('link');link.rel='preload';link.as='style';link.href='style.css'+suffix;link.onload=()=>{link.onload=null;link.rel='stylesheet';requestAnimationFrame(()=>resolve())};link.onerror=resolve;document.head.append(link)})})();</script>
+
 </head>
 <body>
 <div id="irisBootScreen" role="status" aria-label="正在打开 Iris"><div><div class="iris-boot-mark">Iris</div><div class="iris-boot-rule"></div></div></div>
@@ -42,4 +38,4 @@
 <div class="toast" id="toast" role="status" hidden></div>
 <section class="settings-screen" id="settingsScreen" hidden aria-label="Settings"><header class="settings-topbar"><button type="button" id="closeSettings" aria-label="返回聊天">Settings</button></header><div class="settings-content" id="settingsContent"></div></section>
 <section class="feature-screen" id="featureScreen" hidden aria-label="功能页面"><header class="feature-page-topbar"><div id="featurePageTitle"></div></header><div class="feature-page-content" id="featurePageContent"></div></section>
-</main><dialog class="profile-dialog" id="profileDialog" tabindex="-1" aria-labelledby="profileTitle"></dialog><dialog class="profile-dialog character-dialog" id="characterDialog" tabindex="-1" aria-labelledby="characterTitle"></dialog><dialog class="api-model-dialog" id="apiModelsDialog" aria-label="选择 API 模型"></dialog><dialog class="author-notice-dialog" id="authorNoticeDialog" aria-label="Iris小手机使用须知"></dialog><script>const q=window.IRIS_RELEASE?'?iris-release='+encodeURIComponent(window.IRIS_RELEASE):'?v=5.3.7';const loader=document.createElement('script');loader.src='scripts/storage-bootstrap.js'+q;document.body.append(loader);</script></body></html>
+</main><dialog class="profile-dialog" id="profileDialog" tabindex="-1" aria-labelledby="profileTitle"></dialog><dialog class="profile-dialog character-dialog" id="characterDialog" tabindex="-1" aria-labelledby="characterTitle"></dialog><dialog class="api-model-dialog" id="apiModelsDialog" aria-label="选择 API 模型"></dialog><dialog class="author-notice-dialog" id="authorNoticeDialog" aria-label="Iris小手机使用须知"></dialog><script>const q=window.IRIS_RELEASE?'?iris-release='+encodeURIComponent(window.IRIS_RELEASE):'?v=5.3.9';const loader=document.createElement('script');loader.src='scripts/storage-bootstrap.js'+q;document.body.append(loader);</script></body></html>

@@ -1,0 +1,2793 @@
+{
+  "families": [
+    {
+      "family": "LXGW WenKai",
+      "weight": 300,
+      "effectiveCharacters": 13553,
+      "sampleMissing": ""
+    },
+    {
+      "family": "LXGW WenKai",
+      "weight": 400,
+      "effectiveCharacters": 46490,
+      "sampleMissing": ""
+    },
+    {
+      "family": "LXGW WenKai",
+      "weight": 700,
+      "effectiveCharacters": 13553,
+      "sampleMissing": ""
+    },
+    {
+      "family": "LXGW WenKai Mono",
+      "weight": 300,
+      "effectiveCharacters": 13553,
+      "sampleMissing": ""
+    },
+    {
+      "family": "LXGW WenKai Mono",
+      "weight": 400,
+      "effectiveCharacters": 13553,
+      "sampleMissing": ""
+    },
+    {
+      "family": "LXGW WenKai Mono",
+      "weight": 700,
+      "effectiveCharacters": 13553,
+      "sampleMissing": ""
+    },
+    {
+      "family": "Great Vibes",
+      "weight": 400,
+      "effectiveCharacters": 1081,
+      "sampleMissing": ""
+    },
+    {
+      "family": "Ma Shan Zheng",
+      "weight": 400,
+      "effectiveCharacters": 7015,
+      "sampleMissing": ""
+    }
+  ],
+  "originalDeclarationsWithAbsentGlyphs": [
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-4.woff2",
+      "count": 137
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-5.woff2",
+      "count": 18
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-6.woff2",
+      "count": 88
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-21.woff2",
+      "count": 25
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-85.woff2",
+      "count": 28
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-86.woff2",
+      "count": 30
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-87.woff2",
+      "count": 107
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-88.woff2",
+      "count": 67
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-89.woff2",
+      "count": 5
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-90.woff2",
+      "count": 55
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-91.woff2",
+      "count": 112
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-97.woff2",
+      "count": 113
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-98.woff2",
+      "count": 109
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-100.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-101.woff2",
+      "count": 16
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-102.woff2",
+      "count": 11
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-103.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-104.woff2",
+      "count": 3
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-106.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-107.woff2",
+      "count": 4
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-108.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-109.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-110.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-118.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-119.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-4.woff2",
+      "count": 130
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-5.woff2",
+      "count": 6
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-6.woff2",
+      "count": 46
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-21.woff2",
+      "count": 24
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-86.woff2",
+      "count": 24
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-87.woff2",
+      "count": 90
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-88.woff2",
+      "count": 54
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-89.woff2",
+      "count": 5
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-90.woff2",
+      "count": 31
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-91.woff2",
+      "count": 22
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-97.woff2",
+      "count": 68
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-100.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-101.woff2",
+      "count": 16
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-102.woff2",
+      "count": 9
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-103.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-104.woff2",
+      "count": 3
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-106.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-107.woff2",
+      "count": 3
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-108.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-109.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-110.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-118.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-4.woff2",
+      "count": 137
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-5.woff2",
+      "count": 18
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-6.woff2",
+      "count": 88
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-21.woff2",
+      "count": 25
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-85.woff2",
+      "count": 28
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-86.woff2",
+      "count": 30
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-87.woff2",
+      "count": 107
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-88.woff2",
+      "count": 67
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-89.woff2",
+      "count": 5
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-90.woff2",
+      "count": 55
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-91.woff2",
+      "count": 112
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-97.woff2",
+      "count": 113
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-98.woff2",
+      "count": 109
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-100.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-101.woff2",
+      "count": 16
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-102.woff2",
+      "count": 11
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-103.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-104.woff2",
+      "count": 3
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-106.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-107.woff2",
+      "count": 4
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-108.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-109.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-110.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-118.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-119.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-4.woff2",
+      "count": 137
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-5.woff2",
+      "count": 18
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-6.woff2",
+      "count": 88
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-21.woff2",
+      "count": 25
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-85.woff2",
+      "count": 28
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-86.woff2",
+      "count": 30
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-87.woff2",
+      "count": 107
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-88.woff2",
+      "count": 67
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-89.woff2",
+      "count": 5
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-90.woff2",
+      "count": 55
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-91.woff2",
+      "count": 112
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-97.woff2",
+      "count": 113
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-98.woff2",
+      "count": 109
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-100.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-101.woff2",
+      "count": 16
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-102.woff2",
+      "count": 11
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-103.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-104.woff2",
+      "count": 3
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-106.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-107.woff2",
+      "count": 4
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-108.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-109.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-110.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-118.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-119.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-4.woff2",
+      "count": 137
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-5.woff2",
+      "count": 18
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-6.woff2",
+      "count": 88
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-21.woff2",
+      "count": 25
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-85.woff2",
+      "count": 28
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-86.woff2",
+      "count": 30
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-87.woff2",
+      "count": 107
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-88.woff2",
+      "count": 67
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-89.woff2",
+      "count": 5
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-90.woff2",
+      "count": 55
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-91.woff2",
+      "count": 112
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-97.woff2",
+      "count": 113
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-98.woff2",
+      "count": 109
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-100.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-101.woff2",
+      "count": 16
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-102.woff2",
+      "count": 11
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-103.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-104.woff2",
+      "count": 3
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-106.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-107.woff2",
+      "count": 4
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-108.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-109.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-110.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-118.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-119.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-4.woff2",
+      "count": 137
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-5.woff2",
+      "count": 18
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-6.woff2",
+      "count": 88
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-21.woff2",
+      "count": 25
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-85.woff2",
+      "count": 28
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-86.woff2",
+      "count": 30
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-87.woff2",
+      "count": 107
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-88.woff2",
+      "count": 67
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-89.woff2",
+      "count": 5
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-90.woff2",
+      "count": 55
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-91.woff2",
+      "count": 112
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-97.woff2",
+      "count": 113
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-98.woff2",
+      "count": 109
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-100.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-101.woff2",
+      "count": 16
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-102.woff2",
+      "count": 11
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-103.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-104.woff2",
+      "count": 3
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-106.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-107.woff2",
+      "count": 4
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-108.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-109.woff2",
+      "count": 2
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-110.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-118.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-119.woff2",
+      "count": 1
+    },
+    {
+      "file": "lxgw-1.522/7d97ce5de9607ec7.woff2",
+      "count": 1
+    }
+  ],
+  "sourceFaces": 746,
+  "activeFaces": 724,
+  "correctedDeclarations": [
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-4.woff2",
+      "removedAbsentCodepoints": 137,
+      "sample": [
+        "0x1f1e9",
+        "0x1f1ea",
+        "0x1f1eb",
+        "0x1f1ec",
+        "0x1f1ed",
+        "0x1f1ee",
+        "0x1f1ef",
+        "0x1f1f0",
+        "0x1f1f1",
+        "0x1f1f2",
+        "0x1f1f3",
+        "0x1f1f4"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-5.woff2",
+      "removedAbsentCodepoints": 18,
+      "sample": [
+        "0xfee3",
+        "0xfef3",
+        "0xffe6",
+        "0xffe9",
+        "0xffeb",
+        "0xffed",
+        "0xfffc",
+        "0x1f004",
+        "0x1f192",
+        "0x1f193",
+        "0x1f194",
+        "0x1f195"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-6.woff2",
+      "removedAbsentCodepoints": 88,
+      "sample": [
+        "0xf0a7",
+        "0xf0b2",
+        "0xf0b7",
+        "0xf0c9",
+        "0xf0d8",
+        "0xf0da",
+        "0xf0dc",
+        "0xf0dd",
+        "0xf0e0",
+        "0xf0e6",
+        "0xf0eb",
+        "0xf0fc"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-21.woff2",
+      "removedAbsentCodepoints": 25,
+      "sample": [
+        "0xa001",
+        "0xa007",
+        "0xa025",
+        "0xa046",
+        "0xa047",
+        "0xa057",
+        "0xa072",
+        "0xa078",
+        "0xa079",
+        "0xa083",
+        "0xa085",
+        "0xa100"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-85.woff2",
+      "removedAbsentCodepoints": 28,
+      "sample": [
+        "0x3164",
+        "0x3186",
+        "0x318d",
+        "0x3192",
+        "0x3196",
+        "0x3197",
+        "0x3198",
+        "0x319e",
+        "0x319f",
+        "0x3395",
+        "0x3434",
+        "0x34dc"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-86.woff2",
+      "removedAbsentCodepoints": 30,
+      "sample": [
+        "0x279c",
+        "0x279f",
+        "0x27a0",
+        "0x27a2",
+        "0x27a4",
+        "0x27a5",
+        "0x27a8",
+        "0x27b0",
+        "0x27b2",
+        "0x27b3",
+        "0x27b9",
+        "0x27e8"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-87.woff2",
+      "removedAbsentCodepoints": 107,
+      "sample": [
+        "0x2650",
+        "0x2651",
+        "0x2652",
+        "0x2653",
+        "0x2654",
+        "0x2655",
+        "0x2658",
+        "0x265a",
+        "0x265b",
+        "0x265d",
+        "0x265e",
+        "0x266b"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-88.woff2",
+      "removedAbsentCodepoints": 67,
+      "sample": [
+        "0x2580",
+        "0x2590",
+        "0x2591",
+        "0x2592",
+        "0x25a3",
+        "0x25a9",
+        "0x25ac",
+        "0x25ad",
+        "0x25b0",
+        "0x25b4",
+        "0x25b5",
+        "0x25b8"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-89.woff2",
+      "removedAbsentCodepoints": 5,
+      "sample": [
+        "0x23e9",
+        "0x23f0",
+        "0x23f3",
+        "0x2445",
+        "0x2449"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-90.woff2",
+      "removedAbsentCodepoints": 55,
+      "sample": [
+        "0x207b",
+        "0x207c",
+        "0x207d",
+        "0x207e",
+        "0x207f",
+        "0x208c",
+        "0x208d",
+        "0x208e",
+        "0x2092",
+        "0x20aa",
+        "0x20ad",
+        "0x20af"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-91.woff2",
+      "removedAbsentCodepoints": 112,
+      "sample": [
+        "0x1d34",
+        "0x1d35",
+        "0x1d38",
+        "0x1d39",
+        "0x1d3a",
+        "0x1d3c",
+        "0x1d3f",
+        "0x1d40",
+        "0x1d49",
+        "0x1d4e",
+        "0x1d4f",
+        "0x1d52"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-97.woff2",
+      "removedAbsentCodepoints": 113,
+      "sample": [
+        "0x2ae",
+        "0x2af",
+        "0x2b0",
+        "0x2b1",
+        "0x2b2",
+        "0x2b3",
+        "0x2b5",
+        "0x2b6",
+        "0x2b7",
+        "0x2b8",
+        "0x2b9",
+        "0x2ba"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-98.woff2",
+      "removedAbsentCodepoints": 109,
+      "sample": [
+        "0x194",
+        "0x19a",
+        "0x19b",
+        "0x19d",
+        "0x1a0",
+        "0x1a1",
+        "0x1a3",
+        "0x1a4",
+        "0x1aa",
+        "0x1ac",
+        "0x1ad",
+        "0x1af"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-100.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xe608"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-101.woff2",
+      "removedAbsentCodepoints": 16,
+      "sample": [
+        "0x926",
+        "0x928",
+        "0x939",
+        "0x93f",
+        "0x940",
+        "0x94d",
+        "0xe17",
+        "0xe22",
+        "0xe44",
+        "0x2764",
+        "0xe606",
+        "0xe607"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-102.woff2",
+      "removedAbsentCodepoints": 11,
+      "sample": [
+        "0x627",
+        "0x628",
+        "0x629",
+        "0x639",
+        "0x644",
+        "0x64a",
+        "0x3448",
+        "0x3449",
+        "0xe60b",
+        "0xe610",
+        "0xf012b"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-103.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0x631",
+        "0xfffd"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-104.woff2",
+      "removedAbsentCodepoints": 3,
+      "sample": [
+        "0xe600",
+        "0xe60f",
+        "0xe611"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-106.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0xe601",
+        "0xe603"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-107.woff2",
+      "removedAbsentCodepoints": 4,
+      "sample": [
+        "0x200b",
+        "0xe602",
+        "0xe604",
+        "0xe605"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-108.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xe715"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-109.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0xe675",
+        "0xe6b9"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-110.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xfeff"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-118.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xd"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-light-subset-119.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0x1ec7"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-4.woff2",
+      "removedAbsentCodepoints": 130,
+      "sample": [
+        "0x1f1e9",
+        "0x1f1ea",
+        "0x1f1eb",
+        "0x1f1ec",
+        "0x1f1ed",
+        "0x1f1ee",
+        "0x1f1ef",
+        "0x1f1f0",
+        "0x1f1f1",
+        "0x1f1f2",
+        "0x1f1f3",
+        "0x1f1f4"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-5.woff2",
+      "removedAbsentCodepoints": 6,
+      "sample": [
+        "0xfee3",
+        "0xfef3",
+        "0x1f004",
+        "0x1f1e6",
+        "0x1f1e7",
+        "0x1f1e8"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-6.woff2",
+      "removedAbsentCodepoints": 46,
+      "sample": [
+        "0xf0a7",
+        "0xf0b2",
+        "0xf0b7",
+        "0xf0c9",
+        "0xf0d8",
+        "0xf0da",
+        "0xf0dc",
+        "0xf0dd",
+        "0xf0e0",
+        "0xf0e6",
+        "0xf0eb",
+        "0xf0fc"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-21.woff2",
+      "removedAbsentCodepoints": 24,
+      "sample": [
+        "0xa001",
+        "0xa007",
+        "0xa025",
+        "0xa046",
+        "0xa047",
+        "0xa057",
+        "0xa072",
+        "0xa078",
+        "0xa079",
+        "0xa083",
+        "0xa085",
+        "0xa100"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-86.woff2",
+      "removedAbsentCodepoints": 24,
+      "sample": [
+        "0x279c",
+        "0x279f",
+        "0x27a0",
+        "0x27a2",
+        "0x27a4",
+        "0x27a5",
+        "0x27a8",
+        "0x27b0",
+        "0x27b2",
+        "0x27b3",
+        "0x27b9",
+        "0x27f6"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-87.woff2",
+      "removedAbsentCodepoints": 90,
+      "sample": [
+        "0x2650",
+        "0x2651",
+        "0x2652",
+        "0x2653",
+        "0x2654",
+        "0x2655",
+        "0x2658",
+        "0x265a",
+        "0x265b",
+        "0x265d",
+        "0x265e",
+        "0x2693"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-88.woff2",
+      "removedAbsentCodepoints": 54,
+      "sample": [
+        "0x25ac",
+        "0x25ad",
+        "0x25b0",
+        "0x25b4",
+        "0x25b5",
+        "0x25b8",
+        "0x25b9",
+        "0x25ba",
+        "0x25bb",
+        "0x25be",
+        "0x25bf",
+        "0x25c2"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-89.woff2",
+      "removedAbsentCodepoints": 5,
+      "sample": [
+        "0x23e9",
+        "0x23f0",
+        "0x23f3",
+        "0x2445",
+        "0x2449"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-90.woff2",
+      "removedAbsentCodepoints": 31,
+      "sample": [
+        "0x20db",
+        "0x20e0",
+        "0x20e3",
+        "0x2133",
+        "0x2139",
+        "0x21a0",
+        "0x21a9",
+        "0x21aa",
+        "0x21af",
+        "0x21b3",
+        "0x21b5",
+        "0x21ba"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-91.woff2",
+      "removedAbsentCodepoints": 22,
+      "sample": [
+        "0x1d4e",
+        "0x1d55",
+        "0x1d5e",
+        "0x1dc4",
+        "0x1dc5",
+        "0x200c",
+        "0x200d",
+        "0x200e",
+        "0x200f",
+        "0x2023",
+        "0x2028",
+        "0x202a"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-97.woff2",
+      "removedAbsentCodepoints": 68,
+      "sample": [
+        "0x2b1",
+        "0x2b5",
+        "0x2b6",
+        "0x2bf",
+        "0x2c2",
+        "0x2c3",
+        "0x2ee",
+        "0x2f2",
+        "0x2f4",
+        "0x2f5",
+        "0x2f6",
+        "0x2f9"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-100.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xe608"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-101.woff2",
+      "removedAbsentCodepoints": 16,
+      "sample": [
+        "0x926",
+        "0x928",
+        "0x939",
+        "0x93f",
+        "0x940",
+        "0x94d",
+        "0xe17",
+        "0xe22",
+        "0xe44",
+        "0x2764",
+        "0xe606",
+        "0xe607"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-102.woff2",
+      "removedAbsentCodepoints": 9,
+      "sample": [
+        "0x627",
+        "0x628",
+        "0x629",
+        "0x639",
+        "0x644",
+        "0x64a",
+        "0xe60b",
+        "0xe610",
+        "0xf012b"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-103.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0x631"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-104.woff2",
+      "removedAbsentCodepoints": 3,
+      "sample": [
+        "0xe600",
+        "0xe60f",
+        "0xe611"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-106.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0xe601",
+        "0xe603"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-107.woff2",
+      "removedAbsentCodepoints": 3,
+      "sample": [
+        "0xe602",
+        "0xe604",
+        "0xe605"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-108.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xe715"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-109.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0xe675",
+        "0xe6b9"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-110.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xfeff"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-regular-subset-118.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xd"
+      ],
+      "omittedEmptyFace": true
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-4.woff2",
+      "removedAbsentCodepoints": 137,
+      "sample": [
+        "0x1f1e9",
+        "0x1f1ea",
+        "0x1f1eb",
+        "0x1f1ec",
+        "0x1f1ed",
+        "0x1f1ee",
+        "0x1f1ef",
+        "0x1f1f0",
+        "0x1f1f1",
+        "0x1f1f2",
+        "0x1f1f3",
+        "0x1f1f4"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-5.woff2",
+      "removedAbsentCodepoints": 18,
+      "sample": [
+        "0xfee3",
+        "0xfef3",
+        "0xffe6",
+        "0xffe9",
+        "0xffeb",
+        "0xffed",
+        "0xfffc",
+        "0x1f004",
+        "0x1f192",
+        "0x1f193",
+        "0x1f194",
+        "0x1f195"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-6.woff2",
+      "removedAbsentCodepoints": 88,
+      "sample": [
+        "0xf0a7",
+        "0xf0b2",
+        "0xf0b7",
+        "0xf0c9",
+        "0xf0d8",
+        "0xf0da",
+        "0xf0dc",
+        "0xf0dd",
+        "0xf0e0",
+        "0xf0e6",
+        "0xf0eb",
+        "0xf0fc"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-21.woff2",
+      "removedAbsentCodepoints": 25,
+      "sample": [
+        "0xa001",
+        "0xa007",
+        "0xa025",
+        "0xa046",
+        "0xa047",
+        "0xa057",
+        "0xa072",
+        "0xa078",
+        "0xa079",
+        "0xa083",
+        "0xa085",
+        "0xa100"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-85.woff2",
+      "removedAbsentCodepoints": 28,
+      "sample": [
+        "0x3164",
+        "0x3186",
+        "0x318d",
+        "0x3192",
+        "0x3196",
+        "0x3197",
+        "0x3198",
+        "0x319e",
+        "0x319f",
+        "0x3395",
+        "0x3434",
+        "0x34dc"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-86.woff2",
+      "removedAbsentCodepoints": 30,
+      "sample": [
+        "0x279c",
+        "0x279f",
+        "0x27a0",
+        "0x27a2",
+        "0x27a4",
+        "0x27a5",
+        "0x27a8",
+        "0x27b0",
+        "0x27b2",
+        "0x27b3",
+        "0x27b9",
+        "0x27e8"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-87.woff2",
+      "removedAbsentCodepoints": 107,
+      "sample": [
+        "0x2650",
+        "0x2651",
+        "0x2652",
+        "0x2653",
+        "0x2654",
+        "0x2655",
+        "0x2658",
+        "0x265a",
+        "0x265b",
+        "0x265d",
+        "0x265e",
+        "0x266b"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-88.woff2",
+      "removedAbsentCodepoints": 67,
+      "sample": [
+        "0x2580",
+        "0x2590",
+        "0x2591",
+        "0x2592",
+        "0x25a3",
+        "0x25a9",
+        "0x25ac",
+        "0x25ad",
+        "0x25b0",
+        "0x25b4",
+        "0x25b5",
+        "0x25b8"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-89.woff2",
+      "removedAbsentCodepoints": 5,
+      "sample": [
+        "0x23e9",
+        "0x23f0",
+        "0x23f3",
+        "0x2445",
+        "0x2449"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-90.woff2",
+      "removedAbsentCodepoints": 55,
+      "sample": [
+        "0x207b",
+        "0x207c",
+        "0x207d",
+        "0x207e",
+        "0x207f",
+        "0x208c",
+        "0x208d",
+        "0x208e",
+        "0x2092",
+        "0x20aa",
+        "0x20ad",
+        "0x20af"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-91.woff2",
+      "removedAbsentCodepoints": 112,
+      "sample": [
+        "0x1d34",
+        "0x1d35",
+        "0x1d38",
+        "0x1d39",
+        "0x1d3a",
+        "0x1d3c",
+        "0x1d3f",
+        "0x1d40",
+        "0x1d49",
+        "0x1d4e",
+        "0x1d4f",
+        "0x1d52"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-97.woff2",
+      "removedAbsentCodepoints": 113,
+      "sample": [
+        "0x2ae",
+        "0x2af",
+        "0x2b0",
+        "0x2b1",
+        "0x2b2",
+        "0x2b3",
+        "0x2b5",
+        "0x2b6",
+        "0x2b7",
+        "0x2b8",
+        "0x2b9",
+        "0x2ba"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-98.woff2",
+      "removedAbsentCodepoints": 109,
+      "sample": [
+        "0x194",
+        "0x19a",
+        "0x19b",
+        "0x19d",
+        "0x1a0",
+        "0x1a1",
+        "0x1a3",
+        "0x1a4",
+        "0x1aa",
+        "0x1ac",
+        "0x1ad",
+        "0x1af"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-100.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xe608"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-101.woff2",
+      "removedAbsentCodepoints": 16,
+      "sample": [
+        "0x926",
+        "0x928",
+        "0x939",
+        "0x93f",
+        "0x940",
+        "0x94d",
+        "0xe17",
+        "0xe22",
+        "0xe44",
+        "0x2764",
+        "0xe606",
+        "0xe607"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-102.woff2",
+      "removedAbsentCodepoints": 11,
+      "sample": [
+        "0x627",
+        "0x628",
+        "0x629",
+        "0x639",
+        "0x644",
+        "0x64a",
+        "0x3448",
+        "0x3449",
+        "0xe60b",
+        "0xe610",
+        "0xf012b"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-103.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0x631",
+        "0xfffd"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-104.woff2",
+      "removedAbsentCodepoints": 3,
+      "sample": [
+        "0xe600",
+        "0xe60f",
+        "0xe611"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-106.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0xe601",
+        "0xe603"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-107.woff2",
+      "removedAbsentCodepoints": 4,
+      "sample": [
+        "0x200b",
+        "0xe602",
+        "0xe604",
+        "0xe605"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-108.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xe715"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-109.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0xe675",
+        "0xe6b9"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-110.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xfeff"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-118.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xd"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkai-bold-subset-119.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0x1ec7"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-4.woff2",
+      "removedAbsentCodepoints": 137,
+      "sample": [
+        "0x1f1e9",
+        "0x1f1ea",
+        "0x1f1eb",
+        "0x1f1ec",
+        "0x1f1ed",
+        "0x1f1ee",
+        "0x1f1ef",
+        "0x1f1f0",
+        "0x1f1f1",
+        "0x1f1f2",
+        "0x1f1f3",
+        "0x1f1f4"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-5.woff2",
+      "removedAbsentCodepoints": 18,
+      "sample": [
+        "0xfee3",
+        "0xfef3",
+        "0xffe6",
+        "0xffe9",
+        "0xffeb",
+        "0xffed",
+        "0xfffc",
+        "0x1f004",
+        "0x1f192",
+        "0x1f193",
+        "0x1f194",
+        "0x1f195"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-6.woff2",
+      "removedAbsentCodepoints": 88,
+      "sample": [
+        "0xf0a7",
+        "0xf0b2",
+        "0xf0b7",
+        "0xf0c9",
+        "0xf0d8",
+        "0xf0da",
+        "0xf0dc",
+        "0xf0dd",
+        "0xf0e0",
+        "0xf0e6",
+        "0xf0eb",
+        "0xf0fc"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-21.woff2",
+      "removedAbsentCodepoints": 25,
+      "sample": [
+        "0xa001",
+        "0xa007",
+        "0xa025",
+        "0xa046",
+        "0xa047",
+        "0xa057",
+        "0xa072",
+        "0xa078",
+        "0xa079",
+        "0xa083",
+        "0xa085",
+        "0xa100"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-85.woff2",
+      "removedAbsentCodepoints": 28,
+      "sample": [
+        "0x3164",
+        "0x3186",
+        "0x318d",
+        "0x3192",
+        "0x3196",
+        "0x3197",
+        "0x3198",
+        "0x319e",
+        "0x319f",
+        "0x3395",
+        "0x3434",
+        "0x34dc"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-86.woff2",
+      "removedAbsentCodepoints": 30,
+      "sample": [
+        "0x279c",
+        "0x279f",
+        "0x27a0",
+        "0x27a2",
+        "0x27a4",
+        "0x27a5",
+        "0x27a8",
+        "0x27b0",
+        "0x27b2",
+        "0x27b3",
+        "0x27b9",
+        "0x27e8"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-87.woff2",
+      "removedAbsentCodepoints": 107,
+      "sample": [
+        "0x2650",
+        "0x2651",
+        "0x2652",
+        "0x2653",
+        "0x2654",
+        "0x2655",
+        "0x2658",
+        "0x265a",
+        "0x265b",
+        "0x265d",
+        "0x265e",
+        "0x266b"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-88.woff2",
+      "removedAbsentCodepoints": 67,
+      "sample": [
+        "0x2580",
+        "0x2590",
+        "0x2591",
+        "0x2592",
+        "0x25a3",
+        "0x25a9",
+        "0x25ac",
+        "0x25ad",
+        "0x25b0",
+        "0x25b4",
+        "0x25b5",
+        "0x25b8"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-89.woff2",
+      "removedAbsentCodepoints": 5,
+      "sample": [
+        "0x23e9",
+        "0x23f0",
+        "0x23f3",
+        "0x2445",
+        "0x2449"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-90.woff2",
+      "removedAbsentCodepoints": 55,
+      "sample": [
+        "0x207b",
+        "0x207c",
+        "0x207d",
+        "0x207e",
+        "0x207f",
+        "0x208c",
+        "0x208d",
+        "0x208e",
+        "0x2092",
+        "0x20aa",
+        "0x20ad",
+        "0x20af"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-91.woff2",
+      "removedAbsentCodepoints": 112,
+      "sample": [
+        "0x1d34",
+        "0x1d35",
+        "0x1d38",
+        "0x1d39",
+        "0x1d3a",
+        "0x1d3c",
+        "0x1d3f",
+        "0x1d40",
+        "0x1d49",
+        "0x1d4e",
+        "0x1d4f",
+        "0x1d52"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-97.woff2",
+      "removedAbsentCodepoints": 113,
+      "sample": [
+        "0x2ae",
+        "0x2af",
+        "0x2b0",
+        "0x2b1",
+        "0x2b2",
+        "0x2b3",
+        "0x2b5",
+        "0x2b6",
+        "0x2b7",
+        "0x2b8",
+        "0x2b9",
+        "0x2ba"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-98.woff2",
+      "removedAbsentCodepoints": 109,
+      "sample": [
+        "0x194",
+        "0x19a",
+        "0x19b",
+        "0x19d",
+        "0x1a0",
+        "0x1a1",
+        "0x1a3",
+        "0x1a4",
+        "0x1aa",
+        "0x1ac",
+        "0x1ad",
+        "0x1af"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-100.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xe608"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-101.woff2",
+      "removedAbsentCodepoints": 16,
+      "sample": [
+        "0x926",
+        "0x928",
+        "0x939",
+        "0x93f",
+        "0x940",
+        "0x94d",
+        "0xe17",
+        "0xe22",
+        "0xe44",
+        "0x2764",
+        "0xe606",
+        "0xe607"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-102.woff2",
+      "removedAbsentCodepoints": 11,
+      "sample": [
+        "0x627",
+        "0x628",
+        "0x629",
+        "0x639",
+        "0x644",
+        "0x64a",
+        "0x3448",
+        "0x3449",
+        "0xe60b",
+        "0xe610",
+        "0xf012b"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-103.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0x631",
+        "0xfffd"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-104.woff2",
+      "removedAbsentCodepoints": 3,
+      "sample": [
+        "0xe600",
+        "0xe60f",
+        "0xe611"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-106.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0xe601",
+        "0xe603"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-107.woff2",
+      "removedAbsentCodepoints": 4,
+      "sample": [
+        "0x200b",
+        "0xe602",
+        "0xe604",
+        "0xe605"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-108.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xe715"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-109.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0xe675",
+        "0xe6b9"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-110.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xfeff"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-118.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xd"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-light-subset-119.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0x1ec7"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-4.woff2",
+      "removedAbsentCodepoints": 137,
+      "sample": [
+        "0x1f1e9",
+        "0x1f1ea",
+        "0x1f1eb",
+        "0x1f1ec",
+        "0x1f1ed",
+        "0x1f1ee",
+        "0x1f1ef",
+        "0x1f1f0",
+        "0x1f1f1",
+        "0x1f1f2",
+        "0x1f1f3",
+        "0x1f1f4"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-5.woff2",
+      "removedAbsentCodepoints": 18,
+      "sample": [
+        "0xfee3",
+        "0xfef3",
+        "0xffe6",
+        "0xffe9",
+        "0xffeb",
+        "0xffed",
+        "0xfffc",
+        "0x1f004",
+        "0x1f192",
+        "0x1f193",
+        "0x1f194",
+        "0x1f195"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-6.woff2",
+      "removedAbsentCodepoints": 88,
+      "sample": [
+        "0xf0a7",
+        "0xf0b2",
+        "0xf0b7",
+        "0xf0c9",
+        "0xf0d8",
+        "0xf0da",
+        "0xf0dc",
+        "0xf0dd",
+        "0xf0e0",
+        "0xf0e6",
+        "0xf0eb",
+        "0xf0fc"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-21.woff2",
+      "removedAbsentCodepoints": 25,
+      "sample": [
+        "0xa001",
+        "0xa007",
+        "0xa025",
+        "0xa046",
+        "0xa047",
+        "0xa057",
+        "0xa072",
+        "0xa078",
+        "0xa079",
+        "0xa083",
+        "0xa085",
+        "0xa100"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-85.woff2",
+      "removedAbsentCodepoints": 28,
+      "sample": [
+        "0x3164",
+        "0x3186",
+        "0x318d",
+        "0x3192",
+        "0x3196",
+        "0x3197",
+        "0x3198",
+        "0x319e",
+        "0x319f",
+        "0x3395",
+        "0x3434",
+        "0x34dc"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-86.woff2",
+      "removedAbsentCodepoints": 30,
+      "sample": [
+        "0x279c",
+        "0x279f",
+        "0x27a0",
+        "0x27a2",
+        "0x27a4",
+        "0x27a5",
+        "0x27a8",
+        "0x27b0",
+        "0x27b2",
+        "0x27b3",
+        "0x27b9",
+        "0x27e8"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-87.woff2",
+      "removedAbsentCodepoints": 107,
+      "sample": [
+        "0x2650",
+        "0x2651",
+        "0x2652",
+        "0x2653",
+        "0x2654",
+        "0x2655",
+        "0x2658",
+        "0x265a",
+        "0x265b",
+        "0x265d",
+        "0x265e",
+        "0x266b"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-88.woff2",
+      "removedAbsentCodepoints": 67,
+      "sample": [
+        "0x2580",
+        "0x2590",
+        "0x2591",
+        "0x2592",
+        "0x25a3",
+        "0x25a9",
+        "0x25ac",
+        "0x25ad",
+        "0x25b0",
+        "0x25b4",
+        "0x25b5",
+        "0x25b8"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-89.woff2",
+      "removedAbsentCodepoints": 5,
+      "sample": [
+        "0x23e9",
+        "0x23f0",
+        "0x23f3",
+        "0x2445",
+        "0x2449"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-90.woff2",
+      "removedAbsentCodepoints": 55,
+      "sample": [
+        "0x207b",
+        "0x207c",
+        "0x207d",
+        "0x207e",
+        "0x207f",
+        "0x208c",
+        "0x208d",
+        "0x208e",
+        "0x2092",
+        "0x20aa",
+        "0x20ad",
+        "0x20af"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-91.woff2",
+      "removedAbsentCodepoints": 112,
+      "sample": [
+        "0x1d34",
+        "0x1d35",
+        "0x1d38",
+        "0x1d39",
+        "0x1d3a",
+        "0x1d3c",
+        "0x1d3f",
+        "0x1d40",
+        "0x1d49",
+        "0x1d4e",
+        "0x1d4f",
+        "0x1d52"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-97.woff2",
+      "removedAbsentCodepoints": 113,
+      "sample": [
+        "0x2ae",
+        "0x2af",
+        "0x2b0",
+        "0x2b1",
+        "0x2b2",
+        "0x2b3",
+        "0x2b5",
+        "0x2b6",
+        "0x2b7",
+        "0x2b8",
+        "0x2b9",
+        "0x2ba"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-98.woff2",
+      "removedAbsentCodepoints": 109,
+      "sample": [
+        "0x194",
+        "0x19a",
+        "0x19b",
+        "0x19d",
+        "0x1a0",
+        "0x1a1",
+        "0x1a3",
+        "0x1a4",
+        "0x1aa",
+        "0x1ac",
+        "0x1ad",
+        "0x1af"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-100.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xe608"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-101.woff2",
+      "removedAbsentCodepoints": 16,
+      "sample": [
+        "0x926",
+        "0x928",
+        "0x939",
+        "0x93f",
+        "0x940",
+        "0x94d",
+        "0xe17",
+        "0xe22",
+        "0xe44",
+        "0x2764",
+        "0xe606",
+        "0xe607"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-102.woff2",
+      "removedAbsentCodepoints": 11,
+      "sample": [
+        "0x627",
+        "0x628",
+        "0x629",
+        "0x639",
+        "0x644",
+        "0x64a",
+        "0x3448",
+        "0x3449",
+        "0xe60b",
+        "0xe610",
+        "0xf012b"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-103.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0x631",
+        "0xfffd"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-104.woff2",
+      "removedAbsentCodepoints": 3,
+      "sample": [
+        "0xe600",
+        "0xe60f",
+        "0xe611"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-106.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0xe601",
+        "0xe603"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-107.woff2",
+      "removedAbsentCodepoints": 4,
+      "sample": [
+        "0x200b",
+        "0xe602",
+        "0xe604",
+        "0xe605"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-108.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xe715"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-109.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0xe675",
+        "0xe6b9"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-110.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xfeff"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-118.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xd"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-regular-subset-119.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0x1ec7"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-4.woff2",
+      "removedAbsentCodepoints": 137,
+      "sample": [
+        "0x1f1e9",
+        "0x1f1ea",
+        "0x1f1eb",
+        "0x1f1ec",
+        "0x1f1ed",
+        "0x1f1ee",
+        "0x1f1ef",
+        "0x1f1f0",
+        "0x1f1f1",
+        "0x1f1f2",
+        "0x1f1f3",
+        "0x1f1f4"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-5.woff2",
+      "removedAbsentCodepoints": 18,
+      "sample": [
+        "0xfee3",
+        "0xfef3",
+        "0xffe6",
+        "0xffe9",
+        "0xffeb",
+        "0xffed",
+        "0xfffc",
+        "0x1f004",
+        "0x1f192",
+        "0x1f193",
+        "0x1f194",
+        "0x1f195"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-6.woff2",
+      "removedAbsentCodepoints": 88,
+      "sample": [
+        "0xf0a7",
+        "0xf0b2",
+        "0xf0b7",
+        "0xf0c9",
+        "0xf0d8",
+        "0xf0da",
+        "0xf0dc",
+        "0xf0dd",
+        "0xf0e0",
+        "0xf0e6",
+        "0xf0eb",
+        "0xf0fc"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-21.woff2",
+      "removedAbsentCodepoints": 25,
+      "sample": [
+        "0xa001",
+        "0xa007",
+        "0xa025",
+        "0xa046",
+        "0xa047",
+        "0xa057",
+        "0xa072",
+        "0xa078",
+        "0xa079",
+        "0xa083",
+        "0xa085",
+        "0xa100"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-85.woff2",
+      "removedAbsentCodepoints": 28,
+      "sample": [
+        "0x3164",
+        "0x3186",
+        "0x318d",
+        "0x3192",
+        "0x3196",
+        "0x3197",
+        "0x3198",
+        "0x319e",
+        "0x319f",
+        "0x3395",
+        "0x3434",
+        "0x34dc"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-86.woff2",
+      "removedAbsentCodepoints": 30,
+      "sample": [
+        "0x279c",
+        "0x279f",
+        "0x27a0",
+        "0x27a2",
+        "0x27a4",
+        "0x27a5",
+        "0x27a8",
+        "0x27b0",
+        "0x27b2",
+        "0x27b3",
+        "0x27b9",
+        "0x27e8"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-87.woff2",
+      "removedAbsentCodepoints": 107,
+      "sample": [
+        "0x2650",
+        "0x2651",
+        "0x2652",
+        "0x2653",
+        "0x2654",
+        "0x2655",
+        "0x2658",
+        "0x265a",
+        "0x265b",
+        "0x265d",
+        "0x265e",
+        "0x266b"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-88.woff2",
+      "removedAbsentCodepoints": 67,
+      "sample": [
+        "0x2580",
+        "0x2590",
+        "0x2591",
+        "0x2592",
+        "0x25a3",
+        "0x25a9",
+        "0x25ac",
+        "0x25ad",
+        "0x25b0",
+        "0x25b4",
+        "0x25b5",
+        "0x25b8"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-89.woff2",
+      "removedAbsentCodepoints": 5,
+      "sample": [
+        "0x23e9",
+        "0x23f0",
+        "0x23f3",
+        "0x2445",
+        "0x2449"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-90.woff2",
+      "removedAbsentCodepoints": 55,
+      "sample": [
+        "0x207b",
+        "0x207c",
+        "0x207d",
+        "0x207e",
+        "0x207f",
+        "0x208c",
+        "0x208d",
+        "0x208e",
+        "0x2092",
+        "0x20aa",
+        "0x20ad",
+        "0x20af"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-91.woff2",
+      "removedAbsentCodepoints": 112,
+      "sample": [
+        "0x1d34",
+        "0x1d35",
+        "0x1d38",
+        "0x1d39",
+        "0x1d3a",
+        "0x1d3c",
+        "0x1d3f",
+        "0x1d40",
+        "0x1d49",
+        "0x1d4e",
+        "0x1d4f",
+        "0x1d52"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-97.woff2",
+      "removedAbsentCodepoints": 113,
+      "sample": [
+        "0x2ae",
+        "0x2af",
+        "0x2b0",
+        "0x2b1",
+        "0x2b2",
+        "0x2b3",
+        "0x2b5",
+        "0x2b6",
+        "0x2b7",
+        "0x2b8",
+        "0x2b9",
+        "0x2ba"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-98.woff2",
+      "removedAbsentCodepoints": 109,
+      "sample": [
+        "0x194",
+        "0x19a",
+        "0x19b",
+        "0x19d",
+        "0x1a0",
+        "0x1a1",
+        "0x1a3",
+        "0x1a4",
+        "0x1aa",
+        "0x1ac",
+        "0x1ad",
+        "0x1af"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-100.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xe608"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-101.woff2",
+      "removedAbsentCodepoints": 16,
+      "sample": [
+        "0x926",
+        "0x928",
+        "0x939",
+        "0x93f",
+        "0x940",
+        "0x94d",
+        "0xe17",
+        "0xe22",
+        "0xe44",
+        "0x2764",
+        "0xe606",
+        "0xe607"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-102.woff2",
+      "removedAbsentCodepoints": 11,
+      "sample": [
+        "0x627",
+        "0x628",
+        "0x629",
+        "0x639",
+        "0x644",
+        "0x64a",
+        "0x3448",
+        "0x3449",
+        "0xe60b",
+        "0xe610",
+        "0xf012b"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-103.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0x631",
+        "0xfffd"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-104.woff2",
+      "removedAbsentCodepoints": 3,
+      "sample": [
+        "0xe600",
+        "0xe60f",
+        "0xe611"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-106.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0xe601",
+        "0xe603"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-107.woff2",
+      "removedAbsentCodepoints": 4,
+      "sample": [
+        "0x200b",
+        "0xe602",
+        "0xe604",
+        "0xe605"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-108.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xe715"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-109.woff2",
+      "removedAbsentCodepoints": 2,
+      "sample": [
+        "0xe675",
+        "0xe6b9"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-110.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xfeff"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-118.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0xd"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-legacy/lxgwwenkaimono-bold-subset-119.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0x1ec7"
+      ],
+      "omittedEmptyFace": false
+    },
+    {
+      "file": "lxgw-1.522/7d97ce5de9607ec7.woff2",
+      "removedAbsentCodepoints": 1,
+      "sample": [
+        "0x0"
+      ],
+      "omittedEmptyFace": false
+    }
+  ],
+  "remainingDeclaredMissingGlyphs": 0
+}
