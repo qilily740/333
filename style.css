@@ -8,7 +8,7 @@
 .avatar-stack .avatar{font-family:"Snell Roundhand","Apple Chancery","URW Chancery L",cursive;font-size:21px;font-style:italic;font-weight:500}.quick-item>span:last-child{background:#fff;padding:5px 8px;border-radius:12px;box-shadow:0 2px 12px #0000000c}.quick-item>.quick-icon{display:grid;place-items:center;padding:0;background:transparent;box-shadow:none}.quick-item>.quick-icon svg{width:38px;height:38px;padding:10px;border-radius:50%;background:#f0f0f0;stroke-width:1.4}.quick-exit>.quick-icon svg{background:#333;color:#fff;transform:rotate(180deg)}
 
 
-#emoji.is-send{width:28px;height:28px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:#e2e2e2;color:#363636}#emoji.is-send svg{width:15px;height:15px}.bottom:has(.composer:not([hidden])){padding-top:10px;padding-bottom:var(--app-composer-bottom-gap,calc(15px + env(safe-area-inset-bottom,0px)))}.bottom:has(.composer:not([hidden])) .composer{min-height:0}
+#emoji.is-send{width:28px;height:28px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:#e2e2e2;color:#363636}#emoji.is-send svg{width:15px;height:15px}.bottom:has(.composer:not([hidden])){padding-top:10px;padding-bottom:var(--app-composer-bottom-gap,0px)}.bottom:has(.composer:not([hidden])) .composer{min-height:0}
 
 .quick-features{max-height:65dvh;overflow-y:auto;overscroll-behavior:contain}
 /* Original centered personal file */
@@ -3645,11 +3645,12 @@ body{top:0;bottom:0;height:auto}
 html[data-ios-standalone]{height:var(--app-wallpaper-height,100vh)}
 html[data-ios-standalone] body{position:static;bottom:auto;height:var(--app-wallpaper-height,100vh);background:transparent}
 html[data-ios-standalone] .phone{bottom:auto;height:var(--app-viewport-height,100vh)}
+html body .phone:has(#settingsScreen:not([hidden]))::before,html body .phone:has(#featureScreen:not([hidden]))::before{display:none!important}
 dialog[open]::backdrop{box-shadow:0 var(--app-safe-bottom,env(safe-area-inset-bottom,0px)) 0 var(--app-safe-bottom,env(safe-area-inset-bottom,0px)) rgb(0 0 0 / .32)}
 body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;pointer-events:none!important}
 
 /* Compact playlist panel: the header stays visible while the contents scroll. */
-.music-dialog.music-playlist-dialog[open]{display:flex!important;flex-direction:column;width:min(400px,calc(100vw - 32px));height:auto;max-height:min(460px,calc(var(--app-viewport-height,100dvh) * .64),calc(var(--app-viewport-height,100dvh) - 32px));top:calc(var(--app-viewport-top,0px) + var(--app-viewport-height,100dvh) / 2);overflow:hidden}
+.music-dialog.music-playlist-dialog[open]{display:flex!important;flex-direction:column;width:min(400px,calc(100vw - 32px));height:auto;max-height:min(380px,calc(var(--app-viewport-height,100dvh) * .52),calc(var(--app-viewport-height,100dvh) - 32px));top:calc(var(--app-viewport-top,0px) + var(--app-viewport-height,100dvh) / 2);overflow:hidden}
 .music-dialog.music-playlist-dialog>header{position:relative;flex:none;padding:13px 18px 10px}
 .music-dialog.music-playlist-dialog>header h2{margin:0;font-size:30px;line-height:1.2}
 .music-dialog.music-playlist-dialog>.music-dialog-body{flex:0 1 auto;min-height:0;max-height:none;overflow-x:hidden;overflow-y:auto;padding:12px 18px 16px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
@@ -3659,6 +3660,25 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .music-playlist-dialog .music-cloud-playlist-head img{width:52px;height:52px;min-width:52px;max-width:52px;max-height:52px;flex-basis:52px;aspect-ratio:1}
 .music-playlist-dialog .music-cloud-playlist-actions{padding:10px 0}
 .music-playlist-dialog .music-net-song-list article>button:first-child{padding:9px 0}
+.music-net-song-list .music-song-favorited{display:block;flex:0 0 46px;width:46px;box-sizing:border-box;overflow:hidden;color:#999;font-size:9px;line-height:1.3;text-align:center;white-space:nowrap}
+.music-dialog.music-queue-dialog[open]{max-height:min(56dvh,calc(var(--app-viewport-height,100dvh) - 40px))}
+.music-dialog.music-queue-dialog>.music-dialog-body{max-height:min(48dvh,calc(var(--app-viewport-height,100dvh) - 112px));overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+
+/* Dedicated full-page listening conversation. */
+#featureScreen:has(.music-chat-fullscreen)>.feature-page-topbar{display:none}
+#featurePageContent:has(.music-chat-fullscreen){display:flex;flex-direction:column;min-height:0;padding:0;overflow:hidden}
+.music-chat-fullscreen{display:flex;flex:1;flex-direction:column;width:100%;max-width:none;min-height:0;margin:0;overflow:hidden}
+.music-chat-page-header{display:flex;flex:none;align-items:center;justify-content:space-between;min-height:44px;padding:0 4px;border-bottom:1px solid #eee;color:#555;font-size:13px}
+.music-chat-page-header button{width:34px;height:38px;padding:0;text-align:left;color:#777;font-size:28px;line-height:1}
+.music-chat-page-header i{width:34px}
+.music-chat-page-body{display:flex;flex:1;flex-direction:column;min-height:0;padding:0 var(--app-page-gutter);overflow:hidden}
+.music-chat-page-body>.music-discussion{display:flex;flex:1;flex-direction:column;min-height:0;margin:0;padding:12px 0 var(--app-bottom-gap,calc(20px + env(safe-area-inset-bottom,0px)));overflow:hidden;border:0}
+.music-chat-page-body>.music-discussion>header{flex:none;padding:4px 0 12px;border-bottom:1px solid #eee}
+.music-chat-page-body .music-messages{flex:1;min-height:0;max-height:none;margin:12px 0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.music-chat-page-body .music-chat-composer{flex:none}
+.music-dialog.music-edit-dialog[open]{max-height:min(70dvh,calc(var(--app-viewport-height,100dvh) - 40px))}
+.music-dialog.music-edit-dialog>.music-dialog-body{max-height:min(62dvh,calc(var(--app-viewport-height,100dvh) - 110px));overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:14px 20px 18px}
+.music-edit-dialog textarea[name="lyrics"]{height:92px;min-height:92px;max-height:120px}
 
 /* Let page backgrounds and scroll surfaces reach the shell edges. Keep the
    original content gutters inside those surfaces instead of clipping at them. */
