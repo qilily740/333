@@ -177,3 +177,25 @@ test('existing invitation cards repair missing album art and open with the accep
  const app=fs.readFileSync(require.resolve('../scripts/app.js'),'utf8');let opened=0;const context=vm.createContext({messages:()=>thread,window:{IrisMusic:{ready:()=>true,acceptRoleInvite:()=>{opened++;return true}}},save(){},render(){},toast(){}});
  vm.runInContext(app.slice(app.indexOf('function handleMusicInviteAction('),app.indexOf('function renderMessageContent(')),context);context.handleMusicInviteAction(0,'accept');assert.equal(opened,1);assert.equal(thread[0].musicInviteStatus,'accepted');context.handleMusicInviteAction(0,'open');assert.equal(opened,2);
 });
+
+test('synced playlists load their real songs, cache details and retain the collect action until saved',async()=>{
+ let reads=0;const f=fixture({getToken:async()=> 'account-token',me:async()=>({user:{nickname:'用户'}}),playlist:async(id,token)=>{reads++;assert.equal(id,'77');assert.equal(token,'account-token');return{playlist:{id,name:'同步歌单',trackCount:2,detailsVersion:2,tracks:[{id:'701',name:'第一首',artist:'歌手甲',cover:'https://img.invalid/701.jpg'},{id:'702',name:'第二首',artist:'歌手乙'}]}}}});await flush();
+ f.state.music.netEaseByUser['user-a'].playlists=[{id:'77',name:'同步歌单',trackCount:2}];f.content.querySelector('[data-music-tab="library"]').click();f.content.querySelector('[data-library-pane="playlists"]').click();f.content.querySelector('[data-net-playlist]').click();await flush();
+ let dialog=f.body.children.at(-1),body=dialog.querySelector('.music-dialog-body');assert.match(dialog.className,/music-playlist-dialog/);assert.ok(dialog.querySelector('[data-music-dialog-close]'));assert.match(body.innerHTML,/第一首/);assert.match(body.innerHTML,/第二首/);assert.ok(body.querySelector('[data-net-save-playlist]'));assert.equal(f.state.music.netEaseByUser['user-a'].songs['701'].artist,'歌手甲');
+ dialog.close();f.content.querySelector('[data-net-playlist]').click();await flush();dialog=f.body.children.at(-1);assert.ok(dialog.querySelector('[data-net-save-playlist]'));assert.equal(reads,1);assert.equal(f.notices.length,0);
+});
+
+test('a failed playlist read can retry and does not cache a false empty playlist',async()=>{
+ let reads=0;const f=fixture({getToken:async()=>'',playlist:async()=>{if(++reads===1)throw Error('网易云暂不可用');return{playlist:{id:'77',name:'恢复的歌单',trackCount:1,detailsVersion:2,tracks:[{id:'701',name:'真实歌曲'}]}}}});await flush();f.content.querySelector('[data-music-tab="library"]').click();f.state.music.netEaseByUser['user-a'].playlists=[{id:'77',name:'歌单'}];f.content.querySelector('[data-library-pane="playlists"]').click();f.content.querySelector('[data-net-playlist]').click();await flush();
+ const dialog=f.body.children.at(-1);let body=dialog.querySelector('.music-dialog-body');assert.match(body.innerHTML,/网易云暂不可用/);assert.equal(f.state.music.netEaseByUser['user-a'].playlistDetails['77'],undefined);body.querySelector('[data-playlist-retry]').click();await flush();assert.match(body.innerHTML,/真实歌曲/);assert.equal(reads,2);
+});
+
+test('playlist details arriving after an account switch are discarded',async()=>{
+ let finish;const f=fixture({getToken:async()=>'',playlist:()=>new Promise(resolve=>finish=resolve)});await flush();f.content.querySelector('[data-music-tab="library"]').click();const previous=f.state.music.netEaseByUser['user-a'];previous.playlists=[{id:'77',name:'旧账号歌单'}];f.content.querySelector('[data-library-pane="playlists"]').click();f.content.querySelector('[data-net-playlist]').click();await flush();
+ f.select({userId:'user-b',roleId:'role-b',userName:'乙',roleName:'新角色'});f.api.render(f.runtime);await flush();finish({playlist:{id:'77',detailsVersion:2,tracks:[{id:'701',name:'旧账号歌曲'}]}});await flush();assert.equal(previous.playlistDetails['77'],undefined);assert.equal(f.state.music.netEaseByUser['user-b'].songs['701'],undefined);
+});
+
+test('resynchronizing refreshes playlist songs instead of reopening stale cached details',async()=>{
+ const f=fixture({getToken:async()=> 'token',me:async()=>({user:{nickname:'用户'}}),playlists:async()=>({playlists:[{id:'77',name:'更新的歌单',trackCount:1}]}),playlist:async()=>({playlist:{id:'77',name:'更新的歌单',trackCount:1,detailsVersion:2,tracks:[{id:'703',name:'新加入的歌'}]}})});await flush();const state=f.state.music.netEaseByUser['user-a'];state.playlists=[{id:'77',name:'歌单'}];state.playlistDetails['77']={id:'77',detailsVersion:2,tracks:[{id:'701',name:'旧歌曲'}]};
+ f.content.querySelector('[data-music-tab="library"]').click();f.content.querySelector('[data-library-pane="playlists"]').click();f.content.querySelector('[data-net-sync]').click();await flush();assert.equal(state.playlistDetails['77'],undefined);f.content.querySelector('[data-net-playlist]').click();await flush();const body=f.body.children.at(-1).querySelector('.music-dialog-body');assert.match(body.innerHTML,/新加入的歌/);assert.doesNotMatch(body.innerHTML,/旧歌曲/);
+});

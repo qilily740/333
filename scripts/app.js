@@ -1886,7 +1886,7 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='5.2.9';
+const APP_VERSION='5.3.0';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
 try{const rawSaved=localStorage.getItem('iris-installed-version'),rawRequested=window.IRIS_RELEASE,saved=/^\d+(?:\.\d+){1,2}$/.test(rawSaved||'')?rawSaved:'',requested=/^\d+(?:\.\d+){1,2}$/.test(rawRequested||'')?rawRequested:'';if(saved&&compareAppVersions(saved,INSTALLED_APP_VERSION)>0)INSTALLED_APP_VERSION=saved;if(requested&&compareAppVersions(requested,INSTALLED_APP_VERSION)>=0)INSTALLED_APP_VERSION=requested;localStorage.setItem('iris-installed-version',INSTALLED_APP_VERSION)}catch{}
@@ -3700,7 +3700,7 @@ showAuthorNoticeOnFirstOpen();
 syncIrisGuideUI();
 
 // iOS pans the visual viewport as well as resizing it when the keyboard opens.
-// Apply its origin and height together, without delaying compensation a frame.
+// Compensate its origin and height while preventing whole-document focus scroll.
 (function bindAppViewport(){
  const viewport=window.visualViewport;
  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
@@ -3724,6 +3724,7 @@ syncIrisGuideUI();
   if(event.pointerType!=='touch'||!isTextEntry(input)||input.disabled||input.readOnly||document.activeElement===input)return;
   editableTouch={input,pointerId:event.pointerId,x:event.clientX,y:event.clientY,moved:false,wasReadOnly:input.readOnly};
   input.readOnly=true;
+  if(isIOS)event.preventDefault();
  },{capture:true});
  document.addEventListener('pointermove',event=>{
   const touch=editableTouch;
@@ -3737,6 +3738,11 @@ syncIrisGuideUI();
   const {input,moved,wasReadOnly}=touch;
   if(moved){suppressEditableClick={input,until:Date.now()+500};setTimeout(()=>{if(suppressEditableClick?.input===input)suppressEditableClick=null},500);if(document.activeElement===input)input.blur()}
   input.readOnly=wasReadOnly;
+  if(isIOS&&!moved&&event.type==='pointerup'&&input.isConnected){
+   event.preventDefault();avoidNativePan(input);input.focus({preventScroll:true});
+   // Suppress the later native click, which otherwise pans Safari after focus.
+   suppressEditableClick={input,until:Date.now()+500};
+  }
  }
  document.addEventListener('pointerup',finishEditableTouch,{capture:true});
  document.addEventListener('pointercancel',finishEditableTouch,{capture:true});
@@ -3744,10 +3750,10 @@ syncIrisGuideUI();
  function avoidNativePan(input){
   if(!isIOS||hiddenFocus.has(input))return;
   const opacity=input.style.opacity;hiddenFocus.set(input,opacity);input.style.opacity='0';
-  requestAnimationFrame(()=>{input.style.opacity=opacity;hiddenFocus.delete(input)});
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{input.style.opacity=opacity;hiddenFocus.delete(input)}));
  }
  // Invisible fields do not trigger Safari's native whole-page focus scroll.
- // Restore before painting the next frame; retain normal taps on an active field.
+ // Keep it transparent through focus; retain normal taps on an active field.
  document.addEventListener('pointerdown',event=>{
   const input=event.target;
   if(input instanceof HTMLInputElement&&input.type==='date')return;
@@ -3756,6 +3762,7 @@ syncIrisGuideUI();
   event.preventDefault();avoidNativePan(input);input.focus({preventScroll:true});
  },{capture:true});
  function sync(){
+  if(isIOS&&(window.scrollX||window.scrollY))window.scrollTo(0,0);
   const root=document.documentElement;
   const conversation=$('#conversation'),wasNearBottom=Boolean(conversation&&conversation.scrollHeight-conversation.clientHeight-conversation.scrollTop<48);
   root.style.setProperty('--app-viewport-height',`${viewport?.height||window.innerHeight}px`);
@@ -3794,6 +3801,7 @@ syncIrisGuideUI();
  viewport?.addEventListener('resize',sync);
  viewport?.addEventListener('scroll',sync);
  window.addEventListener('resize',sync);
+ window.addEventListener('scroll',sync,{passive:true});
  document.addEventListener('focusin',event=>{if(event.target instanceof HTMLInputElement&&event.target.type==='date')return;if(editable(event.target))avoidNativePan(event.target);if(event.target===$('#messageInput'))keepLatestChatMessageVisible(750);else if(event.target.matches?.('.sms-composer textarea'))keepLatestSmsMessageVisible(850);followKeyboard()});
  document.addEventListener('focusout',followKeyboard);
  window.addEventListener('orientationchange',()=>setTimeout(readSafeTop,250));
