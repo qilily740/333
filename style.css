@@ -8,7 +8,7 @@
 .avatar-stack .avatar{font-family:"Snell Roundhand","Apple Chancery","URW Chancery L",cursive;font-size:21px;font-style:italic;font-weight:500}.quick-item>span:last-child{background:#fff;padding:5px 8px;border-radius:12px;box-shadow:0 2px 12px #0000000c}.quick-item>.quick-icon{display:grid;place-items:center;padding:0;background:transparent;box-shadow:none}.quick-item>.quick-icon svg{width:38px;height:38px;padding:10px;border-radius:50%;background:#f0f0f0;stroke-width:1.4}.quick-exit>.quick-icon svg{background:#333;color:#fff;transform:rotate(180deg)}
 
 
-#emoji.is-send{width:28px;height:28px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:#e2e2e2;color:#363636}#emoji.is-send svg{width:15px;height:15px}.bottom:has(.composer:not([hidden])){padding-top:10px;padding-bottom:max(10px,env(safe-area-inset-bottom))}.bottom:has(.composer:not([hidden])) .composer{min-height:0}
+#emoji.is-send{width:28px;height:28px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:#e2e2e2;color:#363636}#emoji.is-send svg{width:15px;height:15px}.bottom:has(.composer:not([hidden])){padding-top:10px;padding-bottom:var(--app-bottom-gap,calc(10px + env(safe-area-inset-bottom,0px)))}.bottom:has(.composer:not([hidden])) .composer{min-height:0}
 
 .quick-features{max-height:65dvh;overflow-y:auto;overscroll-behavior:contain}
 /* Original centered personal file */
@@ -199,7 +199,7 @@
 .call-summary-transcript-empty{margin:0;padding:12px 0;color:#aaa;font-size:10px;line-height:1.7}
 
 /* Solid monochrome capsule navigation and separate add action. */
-.bottom:has(#dock:not([hidden])){padding-bottom:max(10px,env(safe-area-inset-bottom));flex-shrink:0}
+.bottom:has(#dock:not([hidden])){padding-bottom:var(--app-bottom-gap,calc(10px + env(safe-area-inset-bottom,0px)));flex-shrink:0}
 #dock{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:430px;margin:0 auto;transform:none}
 #dock{position:relative}
 .dock-feature-menu{right:0;bottom:calc(100% + 10px);left:auto;max-width:100%;align-items:stretch}
@@ -3510,7 +3510,7 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .music-player-top .music-player-controls [data-music-play]{width:46px;height:46px;font-size:21px}
 .music-player-top .music-invite-row{margin:7px 0 9px}
 .music-player-top .music-invite-row button{padding:7px 16px;font-size:10px}
-.music-player-view>.music-discussion{display:flex;flex-direction:column;flex:1;min-height:0;margin:0;padding:10px 0 10px;overflow:hidden}
+.music-player-view>.music-discussion{display:flex;flex-direction:column;flex:1;min-height:0;margin:0;padding:10px 0 var(--app-bottom-gap,calc(10px + env(safe-area-inset-bottom,0px)));overflow:hidden}
 .music-discussion>header{flex:none;min-height:25px;gap:12px}
 .music-discussion>header [data-music-chat-expand]{padding:4px 0;color:#888;font-size:10px;border-bottom:0}
 .music-player-view .music-messages{flex:1;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain;margin:7px 0 9px;padding:0 2px;scrollbar-width:thin}
@@ -3527,7 +3527,7 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .music-discussion>.music-retry{flex:none;align-self:flex-end;padding:5px;font-size:10px;color:#888}
 .music-page:has(.is-chat-expanded)>.music-tabs{display:none}
 .music-player-view.is-chat-expanded>.music-player-top{display:none}
-.music-player-view.is-chat-expanded>.music-discussion{padding-top:6px;padding-bottom:10px;border-top:0}
+.music-player-view.is-chat-expanded>.music-discussion{padding-top:6px;padding-bottom:var(--app-bottom-gap,calc(10px + env(safe-area-inset-bottom,0px)));border-top:0}
 .music-player-view.is-chat-expanded .music-discussion>header{padding:7px 0 12px;border-bottom:1px solid #eee}
 .music-player-view.is-chat-expanded .music-messages{margin-top:12px}
 .music-vinyl-label{inset:18%;border:3px solid #494949;box-shadow:0 0 0 2px #111}

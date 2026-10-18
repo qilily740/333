@@ -1,5 +1,5 @@
 {
-  "version": "5.3.4",
-  "release": "5.3.4",
-  "notes": "修复全局页面与弹窗遮罩未覆盖 Home Indicator 安全区"
+  "version": "5.3.5",
+  "release": "5.3.5",
+  "notes": "聊天与音乐输入区贴近键盘，底部导航安全留距优化"
 }
