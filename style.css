@@ -3611,3 +3611,5 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .music-dialog:not(.music-login-dialog) [data-music-dialog-close]{display:grid;place-items:center;flex:none;width:30px;height:30px;padding:0;border:0;outline:none;box-shadow:none;background:transparent;border-radius:0;line-height:1}
 .music-dialog:not(.music-login-dialog) [data-music-dialog-close]:focus-visible{outline:none;color:#222}
 @media(max-width:380px){.music-dialog:not(.music-login-dialog)[open]{width:calc(100vw - 28px);max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)}.music-dialog:not(.music-login-dialog)>header{padding:14px 18px 11px}.music-dialog:not(.music-login-dialog)>.music-dialog-body{padding:16px 18px 20px}}
+/* Keep chat top bars anchored while iOS animates the visual viewport for its keyboard. */
+.phone{top:0}
