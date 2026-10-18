@@ -1,20 +1,12 @@
 const NETEASE = 'https://music.163.com';
-const ALLOWED_ORIGINS = new Set([
-  'http://127.0.0.1:8766',
-  'https://iris-public.suri.us.ci',
-  'https://qilily740.github.io',
-]);
 const SESSION_TTL = 60 * 60 * 24 * 30;
 const QR_TTL = 60 * 5;
 
 function json(value, status = 200, origin = '') {
   const headers = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' };
-  if (origin && ALLOWED_ORIGINS.has(origin)) {
-    headers['access-control-allow-origin'] = origin;
-    headers['access-control-allow-methods'] = 'GET,POST,DELETE,OPTIONS';
-    headers['access-control-allow-headers'] = 'authorization,content-type';
-    headers.vary = 'Origin';
-  }
+  headers['access-control-allow-origin'] = '*';
+  headers['access-control-allow-methods'] = 'GET,POST,DELETE,OPTIONS';
+  headers['access-control-allow-headers'] = 'authorization,content-type';
   return new Response(JSON.stringify(value), { status, headers });
 }
 
@@ -100,13 +92,10 @@ async function route(request, env, url) {
   const path = url.pathname, origin = request.headers.get('origin') || '';
   if (request.method === 'OPTIONS') {
     const headers = new Headers();
-    if (origin && ALLOWED_ORIGINS.has(origin)) {
-      headers.set('access-control-allow-origin', origin);
-      headers.set('access-control-allow-methods', 'GET,POST,DELETE,OPTIONS');
-      headers.set('access-control-allow-headers', 'authorization,content-type');
-      headers.set('access-control-max-age', '86400');
-      headers.set('vary', 'Origin');
-    }
+    headers.set('access-control-allow-origin', '*');
+    headers.set('access-control-allow-methods', 'GET,POST,DELETE,OPTIONS');
+    headers.set('access-control-allow-headers', 'authorization,content-type');
+    headers.set('access-control-max-age', '86400');
     return new Response(null, { status: 204, headers });
   }
   if (request.method === 'GET' && path === '/health') return json({ ok: true, service: 'iris-music' }, 200, origin);
@@ -139,6 +128,7 @@ async function route(request, env, url) {
     }
     if (code === 800) { await env.MUSIC_STORE.delete('qr:' + id); return json({ status: 'expired' }, 200, origin); }
     if (code === 802) return json({ status: 'scanned' }, 200, origin);
+    if (code !== 801) throw new Error(result.data?.message || '网易云扫码状态请求失败（' + code + '）');
     return json({ status: 'waiting' }, 200, origin);
   }
 
@@ -227,8 +217,6 @@ export default {
   async fetch(request, env) {
     const origin = request.headers.get('origin') || '';
     const path = new URL(request.url).pathname;
-    if (origin && !ALLOWED_ORIGINS.has(origin)) return json({ error: '来源不允许' }, 403);
-    if (!origin && path !== '/health') return json({ error: '请求来源无效' }, 403);
     try { return await route(request, env, new URL(request.url)); }
     catch (error) { return json({ error: error?.message || '音乐服务暂时不可用' }, 502, origin); }
   },

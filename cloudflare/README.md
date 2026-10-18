@@ -1,6 +1,6 @@
 # Iris Music Worker
 
-This Worker is the fixed-origin server side for Iris Music. It exposes only named NetEase operations; it is not an arbitrary URL proxy.
+This Worker is the server side for Iris Music. It exposes only named NetEase operations; it is not an arbitrary URL proxy.
 
 ## Routes
 
@@ -14,9 +14,9 @@ This Worker is the fixed-origin server side for Iris Music. It exposes only name
 
 ## Cloudflare bindings
 
-Create one KV namespace and bind it as `MUSIC_STORE`. Set `SESSION_ENCRYPTION_KEY` as a Worker secret containing Base64 for exactly 32 random bytes. The Worker encrypts NetEase session cookies with AES-GCM before storing them in KV; the browser stores only an opaque Iris session token in a separate IndexedDB database that is not part of Iris exports. The production Worker URL is `https://iris-music-api.weishengrongqing.workers.dev`.
+Create one KV namespace and bind it as `MUSIC_STORE`. Set `SESSION_ENCRYPTION_KEY` as a Worker secret containing Base64 for exactly 32 random bytes. The Worker encrypts NetEase session cookies with AES-GCM before storing them in KV; the browser stores only an opaque Iris session token in a separate IndexedDB database that is not part of Iris exports. The production Worker URL is `https://iris-music-api.ideal-machine.workers.dev`.
 
-Bind the custom domain `music-api.iris-public.suri.us.ci` to the Worker after the parent zone `iris-public.suri.us.ci` is added to this Cloudflare account. The current account has no matching zone, so the app uses the Worker URL above until the zone is available. The app allows CORS only from the Iris custom domain and GitHub Pages origin.
+Bind the custom domain `music-api.iris-public.suri.us.ci` to the Worker after the parent zone `iris-public.suri.us.ci` is added to this Cloudflare account. The current account has no matching zone, so the app uses the Worker URL above until the zone is available. The API allows CORS from browser and local preview origins without ambient cookies. Account operations require the bearer session token; QR polling requires a random, expiring session ID. QR images are generated locally from the returned NetEase login URL.
 
 ## Limitations
 
