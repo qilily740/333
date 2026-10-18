@@ -1,4 +1,12 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),C=require('../scripts/music-core.js');
+const styles=fs.readFileSync(require.resolve('../style.css'),'utf8');
+test('record page scrolls in the page body, while expanded chat keeps its own message scroller',()=>{
+ assert.match(styles, /\.music-page-body:has\(\.music-player-view\)\{display:block;overflow-x:hidden;overflow-y:auto[^}]*touch-action:pan-y/);
+ assert.match(styles, /\.music-player-view\{display:flex;flex-direction:column;flex:none;min-height:100%;container-type:inline-size\}/);
+ assert.match(styles, /\.music-page-body:has\(\.music-player-view\.is-chat-expanded\)\{display:flex;overflow:hidden\}/);
+ assert.match(styles, /\.music-player-view \.music-messages\{[^}]*overflow-y:auto/);
+ assert.doesNotMatch(styles, /\.music-player-view:not\(\.is-chat-expanded\)\{overflow-y:auto/);
+});
 const attr=(tag,name)=>{const match=tag.match(new RegExp('(?:\\s|^)'+name+'(?:="([^"]*)")?(?=\\s|>|$)'));return match?match[1]||'':null};
 class Node{
  constructor(tag='div'){this.tag=tag;this.events={};this.attrs={};this.dataset={};this.style={setProperty(name,value){this[name]=value}};this.classList={toggle(){}};this._html='';this.nodes=new Map();this.hidden=false;this.value='';this.scrollHeight=0;this.clientHeight=100;this.scrollTop=0;this.offsetTop=0;this.open=false}

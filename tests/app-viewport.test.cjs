@@ -82,10 +82,37 @@ test('online and offline wallpapers fill a separate full-shell layer instead of 
  for(const tab of ['online','offline']){
   const css=vm.runInContext(`beautifyBackgroundRule('${tab}')`,context);
   assert.ok(css.includes(`.phone.${tab}::before{`));
-  assert.ok(css.includes('height:var(--app-wallpaper-height,100dvh)'));
-  assert.ok(css.includes('position:fixed;top:0;left:0;right:0'));
+  assert.ok(css.includes('position:fixed;inset:0;min-height:var(--app-wallpaper-height,100dvh)'));
   assert.ok(css.includes('background-size:cover!important'));
   assert.ok(css.includes('pointer-events:none'));
   assert.ok(!css.includes('background-size:contain'));
  }
+});
+
+test('the app declares viewport-fit once so the layout can cover the iOS safe areas',()=>{
+ const html=fs.readFileSync(require.resolve('../index.html'),'utf8'),matches=html.match(/<meta\s+name="viewport"/gi)||[];
+ assert.equal(matches.length,1);
+ assert.match(html.match(/<meta\s+name="viewport"[^>]*>/i)?.[0]||'',/width=device-width/);
+ assert.match(html.match(/<meta\s+name="viewport"[^>]*>/i)?.[0]||'',/viewport-fit=cover/);
+});
+
+test('Iris guide dragging uses the visual viewport and keeps the entire orb inside it',()=>{
+ const start=app.indexOf('function irisGuideViewportBounds(){'),end=app.indexOf('function irisGuideInfo(element)',start);
+ const handlers={},listeners={},view={offsetLeft:10,offsetTop:20,width:340,height:600,addEventListener(type,fn){listeners[type]=fn}};
+ const ball={style:{},offsetWidth:48,offsetHeight:48,addEventListener(type,fn){handlers[type]=fn},setPointerCapture(){},getBoundingClientRect(){return{left:Number.parseFloat(this.style.left)||40,top:Number.parseFloat(this.style.top)||50,width:48,height:48,right:(Number.parseFloat(this.style.left)||40)+48,bottom:(Number.parseFloat(this.style.top)||50)+48}}};
+ const root={hidden:false,dataset:{},querySelector(selector){if(selector==='.iris-guide-fab')return ball;return{hidden:true}},};
+ const context=vm.createContext({window:{visualViewport:view,innerWidth:390,innerHeight:844,addEventListener(type,fn){listeners['window:'+type]=fn}},document:{documentElement:{clientWidth:390,clientHeight:844},querySelector(){return root}},state:{irisGuidePosition:{edge:'right',y:1}},save(){},setTimeout(){}});
+ context.root=root;
+ vm.runInContext(app.slice(start,end),context);
+ vm.runInContext('bindIrisGuideDrag(root)',context);
+ vm.runInContext('positionIrisGuideOrb()',context);
+ assert.equal(ball.style.left,'294px');
+ assert.equal(ball.style.top,'564px');
+ handlers.pointerdown({button:0,pointerId:1,clientX:300,clientY:570});
+ handlers.pointermove({pointerId:1,clientX:300,clientY:900});
+ assert.equal(ball.style.top,'564px');
+ handlers.pointerup({pointerId:1});
+ assert.ok(context.state.irisGuidePosition.y<=1);
+ assert.equal(typeof listeners.resize,'function');
+ assert.equal(typeof listeners['window:resize'],'function');
 });
