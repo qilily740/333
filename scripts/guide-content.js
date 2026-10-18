@@ -594,7 +594,6 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
   ['[data-forum-action="refresh"],[data-forum-action="interact"],[data-forum-action="invite-roles"],[data-forum-action="send-comment-role-replies"],[data-forum-action="role-new-post"]','会调用论坛模型 API 生成动态或角色互动，需要可用接口及对应世界成员资料。'],
   ['[data-r-annotate],[data-r-reveal],[data-r-letter],[data-r-form="discussion"] button:not([type="button"]),[data-r-form="prediction"] button:not([type="button"])','会调用阅读模型 API 生成角色批注、讨论、猜测或读后信。请先为当前用户绑定共读角色并配置阅读接口。'],
   ['[data-music-find-lyrics],[data-music-link-form] button,[data-net-sync],[data-net-playlist],[data-role-song],[data-net-song]','通过配置的 CF 音乐服务查询网易云歌单、歌曲资料、歌词与可播放来源；不调用聊天模型。用户账号歌单按账号会话隔离，歌曲资料优先使用本机缓存，不上传本地音频。'],
-  ['[data-net-login]','扫码登录将网易云会话交给 Iris CF Worker 进行账号资料读取；会话在 Worker 侧 AES-GCM 加密存储，浏览器仅保存 Iris 随机会话令牌。退出登录会删除 Worker 会话与本地令牌。'],
   ['[data-music-reply],[data-music-invite],[data-music-retry]','角色交流会调用线上聊天API；歌曲音频只在本机播放，不上传给模型。结束一起听不请求API。'],
   ['#reply','调用当前模式的聊天或线下故事模型 API；满足记忆整理条件时，还可能自动调用对应的总结接口。'],
   ['[data-call-reply],[data-call-retry]','请求回应或重新生成会调用视频通话模型 API，线上与线下使用同一功能配置。请求附带消息发送时取得的画面；模型不支持图片时会提示并尝试纯文字回应。发送键本身不会调用模型。'],
