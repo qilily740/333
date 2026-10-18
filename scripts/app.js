@@ -1886,7 +1886,7 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='5.2.0';
+const APP_VERSION='5.2.1';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
 try{const rawSaved=localStorage.getItem('iris-installed-version'),rawRequested=window.IRIS_RELEASE,saved=/^\d+(?:\.\d+){1,2}$/.test(rawSaved||'')?rawSaved:'',requested=/^\d+(?:\.\d+){1,2}$/.test(rawRequested||'')?rawRequested:'';if(saved&&compareAppVersions(saved,INSTALLED_APP_VERSION)>0)INSTALLED_APP_VERSION=saved;if(requested&&compareAppVersions(requested,INSTALLED_APP_VERSION)>=0)INSTALLED_APP_VERSION=requested;localStorage.setItem('iris-installed-version',INSTALLED_APP_VERSION)}catch{}
@@ -3661,7 +3661,7 @@ $('#settings').onclick=openSettings;$('#closeSettings').onclick=settingsBack;
 $('#chatTitle').onclick=openModeSettings;$('#chatTitle').onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openModeSettings()}};
 $('#quickFeatures').addEventListener('click',event=>{const button=event.target.closest('[data-quick]');if(button)quickFeature(button.dataset.quick)});
 $('#composer').onsubmit=e=>{e.preventDefault();submitMessage()};$('#messageInput').onkeydown=e=>{if(!state.offline&&e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();$('#composer').requestSubmit()}};$('#reply').onclick=()=>requestChatReply(key(),latestReplyTurn()?.activeReplies.length?'reroll':'normal');document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!videoCallActive)closeSheet()});updateComposerAction();render();
-Promise.resolve(window.IRIS_STYLES_READY).catch(()=>{}).then(()=>requestAnimationFrame(()=>{const screen=document.getElementById('irisBootScreen');if(screen){screen.classList.add('is-ready');setTimeout(()=>screen.remove(),280)}}));
+Promise.resolve(window.IRIS_STYLES_READY).catch(()=>{}).then(async()=>{const startedAt=window.IRIS_BOOT_STARTED_AT||performance.now(),screen=document.getElementById('irisBootScreen'),images=[...document.querySelectorAll('#conversation img')].filter(image=>{const rect=image.getBoundingClientRect();return rect.bottom>0&&rect.top<innerHeight&&rect.width>0&&rect.height>0}),visibleImages=Promise.allSettled(images.map(image=>image.decode?image.decode():new Promise(resolve=>{image.addEventListener('load',resolve,{once:true});image.addEventListener('error',resolve,{once:true})}))),fonts=document.fonts?.ready||Promise.resolve();await Promise.race([Promise.all([visibleImages,fonts]),new Promise(resolve=>setTimeout(resolve,3500))]);await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));const remaining=Math.max(0,1500-(performance.now()-startedAt));setTimeout(()=>requestAnimationFrame(()=>{if(screen){screen.classList.add('is-ready');setTimeout(()=>screen.remove(),280)}}),remaining)});
 
 function showAuthorNoticeOnFirstOpen(){
  const dialog=$('#authorNoticeDialog');if(!dialog)return;
