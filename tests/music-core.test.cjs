@@ -40,3 +40,22 @@ test('cover-title annotations are normalized and the correct 234-second Rain Lov
 test('a healthy empty primary result still tries the alternate source',async()=>{
  const calls=[];const result=await C.findLyrics({title:'歌名',artist:'实际演唱者',duration:200},{retryDelay:0,fetcher:async address=>{calls.push(address);return address.includes('api.lyrics.ovh')?{ok:true,json:async()=>({lyrics:'备用文字'})}:address.includes('/api/get?')?{ok:false,status:404}:{ok:true,json:async()=>[]}}});assert.equal(result.source,'Lyrics.ovh');assert.ok(calls.some(address=>address.includes('api.lyrics.ovh')));
 });
+
+test('personal playlists isolate owners, deduplicate songs and retain imported track references',()=>{
+ const state={},a=C.createPlaylist(state,'a','晚安'),b=C.createPlaylist(state,'b','私人');
+ const local=C.add(state,'a',{title:'本地歌',kind:'local',mediaId:'audio-1'});
+ C.addToPlaylist(state,'a',a.id,{trackId:local.id});
+ C.addToPlaylist(state,'a',a.id,{trackId:local.id});
+ C.addToPlaylist(state,'a',a.id,{id:'123',name:'搜索歌曲',artist:'歌手',cover:'https://img.invalid/a.jpg'});
+ C.addToPlaylist(state,'a',a.id,{id:'123',name:'搜索歌曲'});
+ assert.equal(a.entries.length,2);assert.equal(a.entries[0].trackId,local.id);
+ assert.equal(a.entries[1].title,'搜索歌曲');assert.deepEqual(C.playlists(state,'b'),[b]);
+ assert.throws(()=>C.addToPlaylist(state,'b',a.id,{id:'123',name:'越界'}));
+ assert.throws(()=>C.addToPlaylist(state,'b',b.id,{trackId:local.id}));
+ assert.throws(()=>C.createPlaylist(state,'a','  '));
+ assert.equal(C.library(state,'a').length,1,'playlist changes must preserve audio library');
+});
+
+test('list loop wraps at each end while ordered playback still stops',()=>{
+ const songs=[{id:'a'},{id:'b'},{id:'c'}];assert.equal(C.next(songs,'c','repeat-all').id,'a');assert.equal(C.next(songs,'a','repeat-all',-1).id,'c');assert.equal(C.next(songs,'c','order'),null);assert.equal(C.next([{id:'a'}],'a','repeat-all').id,'a');assert.equal(C.next([],'a','repeat-all'),null);
+});
