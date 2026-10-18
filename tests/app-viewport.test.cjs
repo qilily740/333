@@ -63,3 +63,28 @@ for(const ios of [true,false])test(`${ios?'iOS':'Android'} safe area stays insid
  assert.equal(f.properties['--app-viewport-height'],'100dvh');
  assert.match(f.properties['--app-bottom-gap'],/20px \+ var\(--app-safe-bottom/);
 });
+
+for(const ios of [true,false])test(`${ios?'iOS':'Android'} wallpaper keeps its full height while the content follows the keyboard`,()=>{
+ const f=fixture(ios,34);
+ assert.equal(f.properties['--app-wallpaper-height'],'844px');
+ f.document.activeElement=f.input;f.window.innerHeight=510;f.viewport.height=510;f.emitViewport('resize');
+ assert.equal(f.properties['--app-viewport-height'],'510px');
+ assert.equal(f.properties['--app-wallpaper-height'],'844px');
+ f.document.activeElement=null;f.window.innerHeight=844;f.viewport.height=844;f.emitViewport('resize');
+ assert.equal(f.properties['--app-wallpaper-height'],'844px');
+ assert.equal(f.properties['--app-viewport-height'],'100dvh');
+});
+
+test('online and offline wallpapers fill a separate full-shell layer instead of letterboxing the resized shell',()=>{
+ const start=app.indexOf('function beautifyBackgroundRule('),end=app.indexOf('\n',start);
+ const context=vm.createContext({state:{settings:{beautifyBackgrounds:{online:'data:image/png;base64,online',offline:'data:image/png;base64,offline'}}},beautifyBackgroundRoots:{online:'.phone.online',offline:'.phone.offline'}});
+ vm.runInContext(app.slice(start,end),context);
+ for(const tab of ['online','offline']){
+  const css=vm.runInContext(`beautifyBackgroundRule('${tab}')`,context);
+  assert.ok(css.includes(`.phone.${tab}::before{`));
+  assert.ok(css.includes('height:var(--app-wallpaper-height,100%)'));
+  assert.ok(css.includes('background-size:cover!important'));
+  assert.ok(css.includes('pointer-events:none'));
+  assert.ok(!css.includes('background-size:contain'));
+ }
+});
