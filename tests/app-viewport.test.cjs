@@ -82,7 +82,8 @@ test('online and offline wallpapers fill a separate full-shell layer instead of 
  for(const tab of ['online','offline']){
   const css=vm.runInContext(`beautifyBackgroundRule('${tab}')`,context);
   assert.ok(css.includes(`.phone.${tab}::before{`));
-  assert.ok(css.includes('height:var(--app-wallpaper-height,100%)'));
+  assert.ok(css.includes('height:var(--app-wallpaper-height,100dvh)'));
+  assert.ok(css.includes('position:fixed;top:0;left:0;right:0'));
   assert.ok(css.includes('background-size:cover!important'));
   assert.ok(css.includes('pointer-events:none'));
   assert.ok(!css.includes('background-size:contain'));
