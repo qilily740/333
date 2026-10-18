@@ -3605,3 +3605,7 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .music-chat-invite button.music-chat-invite-song{display:flex;align-items:center;width:100%;box-sizing:border-box;border:0;border-radius:0;background:transparent;text-align:left;font-family:inherit;cursor:pointer}
 .music-chat-invite button.music-chat-invite-song:disabled{opacity:1;cursor:default}
 .music-chat-invite button.music-chat-invite-song:focus-visible{outline:1px solid #aaa;outline-offset:-4px;border-radius:6px}
+.music-history-dialog[open]{position:fixed;top:50%;left:50%;right:auto;bottom:auto;transform:translate(-50%,-50%);margin:0;display:block!important;width:min(440px,calc(100vw - 32px));height:auto;min-height:0;max-height:calc(100vh - 28px);max-height:calc(100dvh - 28px);box-sizing:border-box;padding:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.music-history-dialog>header{position:sticky;top:0;z-index:1;gap:18px;margin:0;padding:15px 22px 13px;background:#fff;border-bottom:1px solid #eee}
+.music-history-dialog>.music-dialog-body{display:block;flex:none;min-height:0;max-height:none;overflow:visible;padding:18px 22px 22px}
+@media(max-width:380px){.music-history-dialog[open]{width:calc(100vw - 28px);max-height:calc(100dvh - 24px)}.music-history-dialog>header{padding:13px 18px 11px}.music-history-dialog>.music-dialog-body{padding:15px 18px 19px}}
