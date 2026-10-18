@@ -1164,7 +1164,7 @@ let irisGuideOpen=false,irisGuidePanelOpen=false,irisGuidePractice=false,irisGui
 const irisGuideSeenKeys=new Set(Array.isArray(state.irisGuideSeenKeys)?state.irisGuideSeenKeys:[]);
 function markIrisGuideSeen(step){if(!step?.key||irisGuideSeenKeys.has(step.key))return;irisGuideSeenKeys.add(step.key);state.irisGuideSeenKeys=[...irisGuideSeenKeys];save()}
 function irisGuideViewportBounds(){
- const viewport=window.visualViewport,left=viewport?.offsetLeft||0,top=viewport?.offsetTop||0;
+ const viewport=window.IRIS_APP_VIEWPORT||window.visualViewport,left=viewport?.offsetLeft||0,top=viewport?.offsetTop||0;
  const width=viewport?.width||document.documentElement.clientWidth||window.innerWidth;
  const height=viewport?.height||document.documentElement.clientHeight||window.innerHeight;
  return{left,top,right:left+width,bottom:top+height,width,height};
@@ -1894,7 +1894,7 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='5.4.2';
+const APP_VERSION='5.4.3';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
 try{const rawSaved=localStorage.getItem('iris-installed-version'),rawRequested=window.IRIS_RELEASE,saved=/^\d+(?:\.\d+){1,2}$/.test(rawSaved||'')?rawSaved:'',requested=/^\d+(?:\.\d+){1,2}$/.test(rawRequested||'')?rawRequested:'';if(saved&&compareAppVersions(saved,INSTALLED_APP_VERSION)>0)INSTALLED_APP_VERSION=saved;if(requested&&compareAppVersions(requested,INSTALLED_APP_VERSION)>=0)INSTALLED_APP_VERSION=requested;localStorage.setItem('iris-installed-version',INSTALLED_APP_VERSION)}catch{}
@@ -3744,10 +3744,15 @@ syncIrisGuideUI();
  const viewport=window.visualViewport;
  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
  const isStandalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ const iosStandalone=isIOS&&isStandalone;
+ if(iosStandalone)document.documentElement.setAttribute('data-ios-standalone','');
  const editable=element=>element instanceof HTMLTextAreaElement||(element instanceof HTMLInputElement&&!['button','submit','reset','checkbox','radio','file','range','color','hidden'].includes(element.type));
  let focusFrame=0,fullHeight=0,layoutWidth=window.innerWidth;
  const heightProbe=document.createElement('div');
  heightProbe.style.cssText='position:fixed;top:0;left:0;width:0;height:100dvh;visibility:hidden;pointer-events:none;contain:strict';
+ // Installed WebKit can exclude safe areas from dynamic viewport measurements.
+ // Its large viewport has no browser toolbar; measure that without adding insets.
+ if(iosStandalone)heightProbe.style.height='100vh';
  document.body.append(heightProbe);
  function readSafeTop(){
   const probe=document.createElement('div');probe.style.cssText='position:fixed;height:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);box-sizing:content-box;visibility:hidden;pointer-events:none';
@@ -3809,7 +3814,8 @@ syncIrisGuideUI();
   if(isIOS&&(window.scrollX||window.scrollY))window.scrollTo(0,0);
   const root=document.documentElement;
   const conversation=$('#conversation'),wasNearBottom=Boolean(conversation&&conversation.scrollHeight-conversation.clientHeight-conversation.scrollTop<48);
-  const layoutHeight=heightProbe.getBoundingClientRect().height||window.innerHeight;
+  const measuredHeight=heightProbe.getBoundingClientRect().height||window.innerHeight;
+  const layoutHeight=iosStandalone?Math.max(measuredHeight,window.innerHeight):measuredHeight;
   const focused=editable(document.activeElement),widthChanged=layoutWidth!==window.innerWidth;
   if(!focused||widthChanged)fullHeight=layoutHeight;
   else fullHeight=Math.max(fullHeight,layoutHeight);
@@ -3820,10 +3826,14 @@ syncIrisGuideUI();
   const viewportTop=keyboardOpen?Math.max(0,viewport.offsetTop||0):0;
   // Wallpaper keeps the full, keyboard-free viewport; only the content shell shrinks.
   root.style.setProperty('--app-wallpaper-height',`${fullHeight}px`);
-  root.style.setProperty('--app-viewport-height',keyboardOpen?`${viewport.height}px`:'100dvh');
+  root.style.setProperty('--app-viewport-height',keyboardOpen?`${viewport.height}px`:iosStandalone?`${fullHeight}px`:'100dvh');
   root.style.setProperty('--app-viewport-top',`${viewportTop}px`);
   root.style.setProperty('--app-viewport-bottom',keyboardOpen?`${Math.max(0,fullHeight-viewportTop-viewport.height)}px`:'0px');
   root.style.setProperty('--app-bottom-gap',keyboardOpen?'20px':'calc(20px + var(--app-safe-bottom, env(safe-area-inset-bottom, 0px)))');
+  if(iosStandalone){
+   window.IRIS_APP_VIEWPORT={offsetLeft:keyboardOpen?(viewport.offsetLeft||0):0,offsetTop:viewportTop,width:keyboardOpen?(viewport.width||window.innerWidth):window.innerWidth,height:keyboardOpen?viewport.height:fullHeight};
+   positionIrisGuideOrb();
+  }
   if(wasNearBottom)requestAnimationFrame(()=>{if(conversation?.isConnected)conversation.scrollTop=conversation.scrollHeight});
   const input=document.activeElement;
   if(input instanceof HTMLTextAreaElement&&input.closest('.sms-composer')){const messages=$('#featurePageContent [data-sms-messages]');if(messages)messages.scrollTop=messages.scrollHeight}

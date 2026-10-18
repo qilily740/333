@@ -1,5 +1,5 @@
 {
-  "version": "5.4.2",
-  "release": "5.4.2",
-  "notes": "移除音乐 API 提示"
+  "version": "5.4.3",
+  "release": "5.4.3",
+  "notes": "修复 iOS PWA 底部空缺与悬浮按钮活动范围"
 }

@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const app=fs.readFileSync(require.resolve('../scripts/app.js'),'utf8');
 const source=app.slice(app.indexOf('(function bindAppViewport(){'),app.indexOf('// Restore an unfinished blocked-contact SMS'));
-function fixture(ios=true,safeBottom=0){
+function fixture(ios=true,safeBottom=0,metrics={}){
  const documentEvents={},windowEvents={},viewportEvents={},frames=[],properties={},focuses=[],scrolls=[];
  const style={setProperty(name,value){properties[name]=value}};
  const conversation={scrollHeight:900,clientHeight:500,scrollTop:400,isConnected:true};
@@ -12,10 +12,10 @@ function fixture(ios=true,safeBottom=0){
  class Textarea extends Input{}
  const add=(map,name,fn)=>(map[name]||=[]).push(fn);
  const viewport={height:844,offsetTop:0,addEventListener:(name,fn)=>add(viewportEvents,name,fn)};
- const document={activeElement:null,documentElement:{style},body:{append(){}},createElement:()=>({style:{},getBoundingClientRect(){return {height:this.style.cssText.includes('height:100dvh')?0:safeBottom}},remove(){}}),addEventListener:(name,fn)=>add(documentEvents,name,fn)};
+ const document={activeElement:null,documentElement:{style,setAttribute(){}},body:{append(){}},createElement:()=>({style:{},getBoundingClientRect(){return {height:this.style.height==='100vh'?(metrics.vh||0):this.style.cssText.includes('height:100dvh')?(metrics.dvh||0):safeBottom}},remove(){}}),addEventListener:(name,fn)=>add(documentEvents,name,fn)};
  const window={visualViewport:viewport,innerWidth:390,innerHeight:844,scrollX:0,scrollY:0,addEventListener:(name,fn)=>add(windowEvents,name,fn),scrollTo(x,y){scrolls.push([x,y]);this.scrollX=x;this.scrollY=y}};
  const input=new Textarea();
- const context=vm.createContext({document,window,navigator:{userAgent:ios?'iPhone':'Android',platform:'',maxTouchPoints:1},HTMLInputElement:Input,HTMLTextAreaElement:Textarea,matchMedia:()=>({matches:false}),requestAnimationFrame:fn=>(frames.push(fn),frames.length),cancelAnimationFrame(){},performance:{now:()=>0},setTimeout(){},getComputedStyle:()=>({overflowY:'visible',paddingBottom:safeBottom+'px'}),$:s=>s==='#conversation'?conversation:s==='#messageInput'?input:null,keepLatestChatMessageVisible(){},keepLatestSmsMessageVisible(){}});
+ const context=vm.createContext({document,window,navigator:{userAgent:ios?'iPhone':'Android',platform:'',maxTouchPoints:1},HTMLInputElement:Input,HTMLTextAreaElement:Textarea,matchMedia:()=>({matches:!!metrics.standalone}),requestAnimationFrame:fn=>(frames.push(fn),frames.length),cancelAnimationFrame(){},performance:{now:()=>0},setTimeout(){},getComputedStyle:()=>({overflowY:'visible',paddingBottom:safeBottom+'px'}),$:s=>s==='#conversation'?conversation:s==='#messageInput'?input:null,keepLatestChatMessageVisible(){},keepLatestSmsMessageVisible(){},positionIrisGuideOrb(){}});
  vm.runInContext(source,context);
  for(const frame of frames.splice(0))frame();
  const emit=(map,type,event={})=>{event.type=type;for(const fn of map[type]||[])fn(event)};
@@ -115,4 +115,35 @@ test('Iris guide dragging uses the visual viewport and keeps the entire orb insi
  assert.ok(context.state.irisGuidePosition.y<=1);
  assert.equal(typeof listeners.resize,'function');
  assert.equal(typeof listeners['window:resize'],'function');
+ context.window.IRIS_APP_VIEWPORT={offsetLeft:0,offsetTop:0,width:390,height:844};
+ context.state.irisGuidePosition={edge:'right',y:1};
+ vm.runInContext('positionIrisGuideOrb()',context);
+ assert.equal(ball.style.top,'788px');
+ assert.equal(ball.style.left,'334px');
+ context.window.IRIS_APP_VIEWPORT.height=510;
+ vm.runInContext('positionIrisGuideOrb()',context);
+ assert.equal(ball.style.top,'454px');
+});
+
+for(const vh of [844,810])test(`installed iOS fills the full viewport when CSS or visual viewport omits the home area (${vh})`,()=>{
+ const metrics={standalone:true,vh,dvh:810},f=fixture(true,34,metrics);
+ f.viewport.height=810;f.emitWindow('pageshow');
+ assert.equal(f.properties['--app-viewport-height'],'844px');
+ assert.equal(f.properties['--app-wallpaper-height'],'844px');
+ assert.equal(f.window.IRIS_APP_VIEWPORT.height,844);
+ f.document.activeElement=f.input;f.viewport.height=510;f.viewport.offsetTop=20;f.window.innerHeight=510;f.emitViewport('resize');
+ assert.equal(f.properties['--app-viewport-height'],'510px');
+ assert.equal(f.window.IRIS_APP_VIEWPORT.height,510);
+ assert.equal(f.properties['--app-wallpaper-height'],'844px');
+ f.document.activeElement=null;f.window.innerHeight=844;f.emitViewport('resize');
+ assert.equal(f.properties['--app-viewport-height'],'844px');
+ assert.equal(f.window.IRIS_APP_VIEWPORT.offsetTop,0);
+ metrics.vh=390;f.window.innerWidth=844;f.window.innerHeight=390;f.viewport.height=356;f.emitWindow('resize');
+ assert.equal(f.properties['--app-viewport-height'],'390px');
+ assert.equal(f.window.IRIS_APP_VIEWPORT.height,390);
+});
+test('installed iOS explicit shell and body heights override their fixed bottom constraints',()=>{
+ const css=fs.readFileSync(require.resolve('../style.css'),'utf8');
+ assert.match(css,/html\[data-ios-standalone\] body\{bottom:auto;height:var\(--app-wallpaper-height,100vh\)\}/);
+ assert.match(css,/html\[data-ios-standalone\] \.phone\{bottom:auto;height:var\(--app-viewport-height,100vh\)\}/);
 });
