@@ -1042,6 +1042,10 @@ body{position:fixed;inset:0}
 @media(max-width:480px){.conversation.is-offline-story{padding:16px 20px 28px}.conversation.is-offline-story>.offline-prose-entry{margin-bottom:38px}.offline-prose-heading{margin-bottom:clamp(18px,4vh,30px)}.offline-prose-body{font-size:clamp(15px,4.25vw,17px);line-height:1.95}}
 
 .version-actions #checkVersion,.version-actions #updateVersion{height:44px;min-height:44px;align-self:stretch}
+.version-diagnostics{margin-top:20px;color:#777;font-size:11px}
+.version-diagnostics summary{cursor:pointer}
+.version-diagnostics p{line-height:1.7}
+.version-diagnostics textarea{height:180px;max-height:180px;margin-top:12px;font:11px/1.5 monospace;overflow:auto;user-select:text}
 .video-call-screen{padding-top:0}
 .video-call-header{height:auto;min-height:0;align-items:flex-start;padding:24px clamp(18px,5vw,52px) 9px}
 @media(max-width:480px){.video-call-header{padding-top:var(--app-safe-top,env(safe-area-inset-top));padding-bottom:7px}}

@@ -1,0 +1,21 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+test('layout report reads geometry without collecting content and removes its probes',()=>{
+ const probes=new Set();
+ const node={clientHeight:810,scrollHeight:810,scrollTop:0,hasAttribute:()=>true,getBoundingClientRect:()=>({top:0,bottom:810,left:0,right:390,width:390,height:810}),textContent:'private chat',value:'private account'};
+ const document={documentElement:node,body:{append(element){probes.add(element)}},getElementById:()=>null,querySelector:selector=>selector.startsWith('meta')?{content:'width=device-width,viewport-fit=cover'}:node,createElement:()=>({...node,style:{},remove(){probes.delete(this)}})};
+ const window={IRIS_CODE_VERSION:'5.4.4',IRIS_RELEASE:'5.4.3',devicePixelRatio:3,visualViewport:{width:390,height:810,offsetTop:0,offsetLeft:0,scale:1}};
+ const context=vm.createContext({window,document,screen:{width:390,height:844,availWidth:390,availHeight:844},navigator:{userAgent:'iPhone',standalone:true},matchMedia:()=>({matches:true}),innerWidth:390,innerHeight:844,scrollX:0,scrollY:0,getComputedStyle:()=>({backgroundImage:'url(private-wallpaper)',getPropertyValue:key=>key==='height'?'810px':''})});
+ vm.runInContext(fs.readFileSync(require.resolve('../scripts/layout-diagnostics.js'),'utf8'),context);
+ const report=window.IrisLayoutDiagnostics.collect();
+ assert.equal(report.codeVersion,'5.4.4');
+ assert.equal(report.requestedRelease,'5.4.3');
+ assert.equal(report.elements['.phone'].rect.bottom,810);
+ assert.equal(report.screen.height,844);
+ assert.equal(report.wallpaperLayer.hasBackgroundImage,true);
+ assert.equal(report.standaloneFixActive,true);
+ assert.equal(probes.size,0);
+ assert.doesNotMatch(JSON.stringify(report),/private chat|private account|private-wallpaper/);
+});

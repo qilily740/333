@@ -1,5 +1,5 @@
 {
-  "version": "5.4.3",
-  "release": "5.4.3",
-  "notes": "修复 iOS PWA 底部空缺与悬浮按钮活动范围"
+  "version": "5.4.4",
+  "release": "5.4.4",
+  "notes": "增加 iOS 布局诊断并校准实际运行版本显示"
 }

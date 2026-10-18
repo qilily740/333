@@ -1894,10 +1894,11 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='5.4.3';
+const APP_VERSION='5.4.4';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
-try{const rawSaved=localStorage.getItem('iris-installed-version'),rawRequested=window.IRIS_RELEASE,saved=/^\d+(?:\.\d+){1,2}$/.test(rawSaved||'')?rawSaved:'',requested=/^\d+(?:\.\d+){1,2}$/.test(rawRequested||'')?rawRequested:'';if(saved&&compareAppVersions(saved,INSTALLED_APP_VERSION)>0)INSTALLED_APP_VERSION=saved;if(requested&&compareAppVersions(requested,INSTALLED_APP_VERSION)>=0)INSTALLED_APP_VERSION=requested;localStorage.setItem('iris-installed-version',INSTALLED_APP_VERSION)}catch{}
+window.IRIS_CODE_VERSION=APP_VERSION;
+try{localStorage.setItem('iris-installed-version',APP_VERSION)}catch{}
 let activeFeaturePage=null;
 const defaultOnlineMemory={enabled:true,autoSummary:true,summaryEveryRounds:10,shortTermRounds:40,recentLongCount:5,recallCount:3,coreEveryLongMemories:5,summaryMaxChars:300,coreMaxChars:1200,timeDecayDays:180,contextTokenBudget:12000,semanticRecall:true};
 const localTimezone=Intl.DateTimeFormat().resolvedOptions().timeZone||'Asia/Shanghai';
@@ -3189,10 +3190,17 @@ function refreshSettings(){
   if(savedCheck?.version&&compareAppVersions(savedCheck.version,INSTALLED_APP_VERSION)<0)savedCheck=null;
   const savedAvailable=savedCheck?.version&&compareAppVersions(savedCheck.version,INSTALLED_APP_VERSION)>0;
   content.innerHTML=globalTabs+pageHead+`<div class="settings-page-body version-page"><div class="version-caption"><span>IRIS</span><i></i><small>版本信息</small></div><div class="version-comparison"><div class="version-current"><small>INSTALLED</small><b>${esc(INSTALLED_APP_VERSION)}</b><span>当前版本</span></div><i class="version-divider" aria-hidden="true"></i><div class="version-available" data-version-latest><small>LATEST</small><b data-version-number>${esc(savedCheck?.version||INSTALLED_APP_VERSION)}</b><span>最新版本</span></div></div><p class="version-status ${savedAvailable?'is-update':''}" data-version-status role="status"><i></i><span>${savedCheck?(savedAvailable?`发现新版本${savedCheck.notes?`：${esc(savedCheck.notes)}`:'，可以更新。'}`:'正在查验最新版本…'):'正在查验最新版本…'}</span></p><div class="version-actions ${savedAvailable?'has-update':''}"><button type="button" id="checkVersion"><span class="version-check-icon">${icon('retry')}</span><span>查验版本</span><small>CHECK</small></button><button type="button" id="updateVersion" ${savedAvailable?'':'hidden'}><span>立即更新</span><i>↗</i></button></div></div>`;
+  const diagnostics=document.createElement('details');diagnostics.className='version-diagnostics';
+  diagnostics.innerHTML='<summary>布局诊断</summary><p>仅收集页面尺寸、运行版本和布局样式，不包含聊天内容、图片或账号数据。</p><button type="button" class="primary" data-copy-layout>复制布局诊断</button><textarea readonly hidden aria-label="布局诊断结果"></textarea>';
+  content.querySelector('.version-page').append(diagnostics);
+  diagnostics.querySelector('[data-copy-layout]').onclick=async()=>{
+   const output=diagnostics.querySelector('textarea');
+   try{const text=JSON.stringify(window.IrisLayoutDiagnostics.collect(),null,2);output.value=text;output.hidden=false;if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text);toast('布局诊断已复制，可以粘贴发送')}else toast('请长按诊断结果，选择全选并复制')}catch{toast('未能复制，请长按诊断结果手动复制')}
+  };
   if(savedCheck){$('#updateVersion').dataset.version=String(savedCheck.version);$('#updateVersion').dataset.release=String(savedCheck.release||savedCheck.version)}
   $('#checkVersion').onclick=async()=>{const check=$('#checkVersion'),update=$('#updateVersion'),status=$('[data-version-status]'),statusText=status.querySelector('span'),latest=$('[data-version-latest]'),actions=check.parentElement;check.disabled=true;check.querySelector('span:nth-child(2)').textContent='正在查验…';statusText.textContent='正在连接版本信息…';try{const manifestLink=document.querySelector('link[rel="manifest"]'),manifestUrl=new URL(manifestLink?.href||'manifest.webmanifest',location.href),versionUrl=new URL('../version.json',manifestUrl);versionUrl.searchParams.set('_',String(Date.now()));const response=await fetch(versionUrl,{cache:'no-store'});if(!response.ok)throw Error(`请求失败（${response.status}）`);const remote=await response.json();if(!remote.version)throw Error('版本信息格式不正确。');const checked={version:String(remote.version),release:String(remote.release||remote.version),notes:String(remote.notes||'')};try{localStorage.setItem('iris-last-version-check',JSON.stringify(checked))}catch{}$('[data-version-number]').textContent=checked.version;latest.hidden=false;const available=compareAppVersions(checked.version,INSTALLED_APP_VERSION)>0;update.hidden=!available;actions.classList.toggle('has-update',available);status.classList.toggle('is-update',available);update.dataset.version=checked.version;update.dataset.release=checked.release;statusText.textContent=available?`发现新版本${checked.notes?`：${checked.notes}`:'，可以更新。'}`:'当前已是最新版本。'}catch(error){status.classList.remove('is-update');statusText.textContent=`查验失败：${error.message||'请检查网络后重试。'}`}finally{check.disabled=false;check.querySelector('span:nth-child(2)').textContent='查验版本'}};
   $('#checkVersion').click();
-  $('#updateVersion').onclick=()=>{const version=$('#updateVersion').dataset.release;if(!version)return;try{localStorage.setItem('iris-installed-version',version)}catch{}const url=new URL(location.href);url.searchParams.set('iris-release',version);location.replace(url.href)};
+  $('#updateVersion').onclick=()=>{const version=$('#updateVersion').dataset.release;if(!version)return;const url=new URL(location.href);url.searchParams.set('iris-release',version);location.replace(url.href)};
  }else{
   content.innerHTML=globalTabs+pageHead+`<div class="settings-page-body"><label class="keepalive-card"><span class="keepalive-copy"><strong>静音音频保活</strong><small>使用系统媒体播放会话尽量保持 Iris 在后台运行；锁屏播放卡片显示 Iris 图标。系统仍可能暂停网页。</small><span class="keepalive-status" id="keepAliveStatus" role="status"></span></span><input id="keepAlive" type="checkbox" ${cfg.keepAlive?'checked':''}><i class="keepalive-switch" aria-hidden="true"></i></label></div>`;
   $('#keepAlive').onchange=event=>{void window.IrisKeepAlive.setEnabled(event.target.checked)};renderIrisKeepAliveStatus();
