@@ -76,7 +76,7 @@ for(const ios of [true,false])test(`${ios?'iOS':'Android'} wallpaper keeps its f
 });
 
 test('online and offline wallpapers fill a separate full-shell layer instead of letterboxing the resized shell',()=>{
- const start=app.indexOf('function beautifyBackgroundRule('),end=app.indexOf('\n',start);
+ const start=app.indexOf('function beautifyCanvasBackgroundRule('),end=app.indexOf('\n',app.indexOf('function beautifyBackgroundRule('));
  const context=vm.createContext({state:{settings:{beautifyBackgrounds:{online:'data:image/png;base64,online',offline:'data:image/png;base64,offline'}}},beautifyBackgroundRoots:{online:'.phone.online',offline:'.phone.offline'}});
  vm.runInContext(app.slice(start,end),context);
  for(const tab of ['online','offline']){
@@ -86,6 +86,9 @@ test('online and offline wallpapers fill a separate full-shell layer instead of 
   assert.ok(css.includes('background-size:cover!important'));
   assert.ok(css.includes('pointer-events:none'));
   assert.ok(!css.includes('background-size:contain'));
+  assert.ok(css.includes('html[data-ios-standalone]:has('));
+  assert.ok(css.includes(':not(:has(#settingsScreen:not([hidden]),#featureScreen:not([hidden])))'));
+  assert.ok(!css.includes(':has(.phone:has('));
  }
 });
 
@@ -144,6 +147,6 @@ for(const vh of [844,810])test(`installed iOS fills the full viewport when CSS o
 });
 test('installed iOS explicit shell and body heights override their fixed bottom constraints',()=>{
  const css=fs.readFileSync(require.resolve('../style.css'),'utf8');
- assert.match(css,/html\[data-ios-standalone\] body\{bottom:auto;height:var\(--app-wallpaper-height,100vh\)\}/);
+ assert.match(css,/html\[data-ios-standalone\] body\{position:static;bottom:auto;height:var\(--app-wallpaper-height,100vh\);background:transparent\}/);
  assert.match(css,/html\[data-ios-standalone\] \.phone\{bottom:auto;height:var\(--app-viewport-height,100vh\)\}/);
 });

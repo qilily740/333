@@ -1,5 +1,5 @@
 {
-  "version": "5.4.4",
-  "release": "5.4.4",
-  "notes": "增加 iOS 布局诊断并校准实际运行版本显示"
+  "version": "5.4.5",
+  "release": "5.4.5",
+  "notes": "修复 iOS PWA 根画布壁纸覆盖与底部背景衔接"
 }

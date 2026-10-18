@@ -3641,7 +3641,8 @@ body{top:0;bottom:0;height:auto}
 .phone{top:var(--app-viewport-top,0px);bottom:var(--app-viewport-bottom,0px)}
 /* Installed iOS uses the measured full viewport, not WebKit's inset-based
    fixed bottom. Keep the safe-area padding inside this explicit shell height. */
-html[data-ios-standalone] body{bottom:auto;height:var(--app-wallpaper-height,100vh)}
+html[data-ios-standalone]{height:var(--app-wallpaper-height,100vh)}
+html[data-ios-standalone] body{position:static;bottom:auto;height:var(--app-wallpaper-height,100vh);background:transparent}
 html[data-ios-standalone] .phone{bottom:auto;height:var(--app-viewport-height,100vh)}
 dialog[open]::backdrop{box-shadow:0 var(--app-safe-bottom,env(safe-area-inset-bottom,0px)) 0 var(--app-safe-bottom,env(safe-area-inset-bottom,0px)) rgb(0 0 0 / .32)}
 
