@@ -115,11 +115,9 @@ async function route(request, env, url) {
     const { data } = await upstream('/api/login/qrcode/unikey?type=1');
     const key = data?.unikey || data?.data?.unikey;
     if (!key) throw new Error('网易云暂时没有返回登录二维码');
-    const qr = await upstream('/api/login/qrcode/create?key=' + encodeURIComponent(key) + '&qrimg=true');
     const id = randomToken(18);
     await env.MUSIC_STORE.put('qr:' + id, JSON.stringify({ key, createdAt: Date.now() }), { expirationTtl: QR_TTL });
-    const qrData = qr.data?.data || qr.data;
-    return json({ id, qrUrl: qrData?.qrurl || 'https://music.163.com/login?codekey=' + encodeURIComponent(key), qrImage: qrData?.qrimg || '', expiresIn: QR_TTL }, 200, origin);
+    return json({ id, qrUrl: 'https://music.163.com/login?codekey=' + encodeURIComponent(key), expiresIn: QR_TTL }, 200, origin);
   }
 
   if (request.method === 'GET' && path === '/auth/qr/poll') {
