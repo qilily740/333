@@ -3667,6 +3667,7 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 /* Dedicated full-page listening conversation. */
 #featureScreen:has(.music-chat-fullscreen)>.feature-page-topbar{display:none}
 #featurePageContent:has(.music-chat-fullscreen){display:flex;flex-direction:column;min-height:0;padding:0;overflow:hidden}
+#featurePageContent:has(.music-chat-fullscreen)>.music-chat-fullscreen{width:100%;margin-inline:0}
 .music-chat-fullscreen{display:flex;flex:1;flex-direction:column;width:100%;max-width:none;min-height:0;margin:0;overflow:hidden}
 .music-chat-page-header{display:flex;flex:none;align-items:center;justify-content:flex-start;min-height:44px;padding:24px var(--app-page-gutter) 9px;border-bottom:1px solid #eee;color:#555;font-size:13px}
 .music-chat-brand{appearance:none;display:flex;align-items:baseline;gap:9px;width:auto;height:38px;min-width:0;margin:0;padding:0;color:#555;text-align:left}
