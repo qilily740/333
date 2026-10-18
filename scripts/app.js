@@ -1886,7 +1886,7 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='5.3.2';
+const APP_VERSION='5.3.3';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
 try{const rawSaved=localStorage.getItem('iris-installed-version'),rawRequested=window.IRIS_RELEASE,saved=/^\d+(?:\.\d+){1,2}$/.test(rawSaved||'')?rawSaved:'',requested=/^\d+(?:\.\d+){1,2}$/.test(rawRequested||'')?rawRequested:'';if(saved&&compareAppVersions(saved,INSTALLED_APP_VERSION)>0)INSTALLED_APP_VERSION=saved;if(requested&&compareAppVersions(requested,INSTALLED_APP_VERSION)>=0)INSTALLED_APP_VERSION=requested;localStorage.setItem('iris-installed-version',INSTALLED_APP_VERSION)}catch{}
@@ -3776,8 +3776,10 @@ syncIrisGuideUI();
   const keyboardOpen=focused&&viewport&&fullHeight-viewport.height>100;
   // A pixel height must not survive keyboard dismissal: Safari can report a
   // stale visual viewport while the browser has already restored its full size.
+  const viewportTop=keyboardOpen?Math.max(0,viewport.offsetTop||0):0;
   root.style.setProperty('--app-viewport-height',keyboardOpen?`${viewport.height}px`:'100dvh');
-  root.style.setProperty('--app-viewport-top',`${keyboardOpen?Math.max(0,viewport.offsetTop||0):0}px`);
+  root.style.setProperty('--app-viewport-top',`${viewportTop}px`);
+  root.style.setProperty('--app-viewport-bottom',keyboardOpen?`${Math.max(0,fullHeight-viewportTop-viewport.height)}px`:'0px');
   if(wasNearBottom)requestAnimationFrame(()=>{if(conversation?.isConnected)conversation.scrollTop=conversation.scrollHeight});
   const input=document.activeElement;
   if(input instanceof HTMLTextAreaElement&&input.closest('.sms-composer')){const messages=$('#featurePageContent [data-sms-messages]');if(messages)messages.scrollTop=messages.scrollHeight}

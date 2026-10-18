@@ -1006,7 +1006,7 @@ body{position:fixed;inset:0}
 .video-call-callee{font-family:var(--iris-character-font,"Snell Roundhand","Apple Chancery","URW Chancery L","Songti SC",serif)}
 
 /* Every full page shares the visible viewport, including while typing. */
-.phone{position:fixed;left:0;right:0;top:var(--app-viewport-top,0px);height:var(--app-viewport-height,100dvh);max-height:var(--app-viewport-height,100dvh);min-height:0;transition:none}
+.phone{position:fixed;left:0;right:0;top:var(--app-viewport-top,0px);bottom:var(--app-viewport-bottom,0px);height:auto;max-height:none;min-height:0;transition:none}
 .settings-screen,.feature-screen{min-height:0;overflow:hidden}
 .topbar,.settings-topbar,.feature-page-topbar{flex-shrink:0}
 .settings-content,.feature-page-content{flex:1;min-height:0;min-width:0;overflow-x:hidden}
