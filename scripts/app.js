@@ -1881,10 +1881,10 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='4.0.2';
+const APP_VERSION='5.0.0';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
-try{const saved=localStorage.getItem('iris-installed-version'),requested=window.IRIS_RELEASE;if(saved&&compareAppVersions(saved,INSTALLED_APP_VERSION)>0)INSTALLED_APP_VERSION=saved;if(requested&&compareAppVersions(requested,INSTALLED_APP_VERSION)>=0){INSTALLED_APP_VERSION=requested;localStorage.setItem('iris-installed-version',requested)}else localStorage.setItem('iris-installed-version',INSTALLED_APP_VERSION)}catch{}
+try{const rawSaved=localStorage.getItem('iris-installed-version'),rawRequested=window.IRIS_RELEASE,saved=/^\d+(?:\.\d+){1,2}$/.test(rawSaved||'')?rawSaved:'',requested=/^\d+(?:\.\d+){1,2}$/.test(rawRequested||'')?rawRequested:'';if(saved&&compareAppVersions(saved,INSTALLED_APP_VERSION)>0)INSTALLED_APP_VERSION=saved;if(requested&&compareAppVersions(requested,INSTALLED_APP_VERSION)>=0)INSTALLED_APP_VERSION=requested;localStorage.setItem('iris-installed-version',INSTALLED_APP_VERSION)}catch{}
 let activeFeaturePage=null;
 const defaultOnlineMemory={enabled:true,autoSummary:true,summaryEveryRounds:10,shortTermRounds:40,recentLongCount:5,recallCount:3,coreEveryLongMemories:5,summaryMaxChars:300,coreMaxChars:1200,timeDecayDays:180,contextTokenBudget:12000,semanticRecall:true};
 const localTimezone=Intl.DateTimeFormat().resolvedOptions().timeZone||'Asia/Shanghai';
