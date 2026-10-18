@@ -8,7 +8,7 @@
 .avatar-stack .avatar{font-family:"Snell Roundhand","Apple Chancery","URW Chancery L",cursive;font-size:21px;font-style:italic;font-weight:500}.quick-item>span:last-child{background:#fff;padding:5px 8px;border-radius:12px;box-shadow:0 2px 12px #0000000c}.quick-item>.quick-icon{display:grid;place-items:center;padding:0;background:transparent;box-shadow:none}.quick-item>.quick-icon svg{width:38px;height:38px;padding:10px;border-radius:50%;background:#f0f0f0;stroke-width:1.4}.quick-exit>.quick-icon svg{background:#333;color:#fff;transform:rotate(180deg)}
 
 
-#emoji.is-send{width:28px;height:28px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:#e2e2e2;color:#363636}#emoji.is-send svg{width:15px;height:15px}.bottom:has(.composer:not([hidden])){padding-top:10px;padding-bottom:var(--app-bottom-gap,calc(20px + env(safe-area-inset-bottom,0px)))}.bottom:has(.composer:not([hidden])) .composer{min-height:0}
+#emoji.is-send{width:28px;height:28px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:#e2e2e2;color:#363636}#emoji.is-send svg{width:15px;height:15px}.bottom:has(.composer:not([hidden])){padding-top:10px;padding-bottom:var(--app-composer-bottom-gap,calc(15px + env(safe-area-inset-bottom,0px)))}.bottom:has(.composer:not([hidden])) .composer{min-height:0}
 
 .quick-features{max-height:65dvh;overflow-y:auto;overscroll-behavior:contain}
 /* Original centered personal file */

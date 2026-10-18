@@ -1894,7 +1894,7 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='5.4.5';
+const APP_VERSION='5.4.6';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
 window.IRIS_CODE_VERSION=APP_VERSION;
@@ -3845,6 +3845,7 @@ syncIrisGuideUI();
   root.style.setProperty('--app-viewport-top',`${viewportTop}px`);
   root.style.setProperty('--app-viewport-bottom',keyboardOpen?`${Math.max(0,fullHeight-viewportTop-viewport.height)}px`:'0px');
   root.style.setProperty('--app-bottom-gap',keyboardOpen?'20px':'calc(20px + var(--app-safe-bottom, env(safe-area-inset-bottom, 0px)))');
+  root.style.setProperty('--app-composer-bottom-gap',keyboardOpen?'15px':'calc(15px + var(--app-safe-bottom, env(safe-area-inset-bottom, 0px)))');
   if(iosStandalone){
    window.IRIS_APP_VIEWPORT={offsetLeft:keyboardOpen?(viewport.offsetLeft||0):0,offsetTop:viewportTop,width:keyboardOpen?(viewport.width||window.innerWidth):window.innerWidth,height:keyboardOpen?viewport.height:fullHeight};
    positionIrisGuideOrb();

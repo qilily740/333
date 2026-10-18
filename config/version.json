@@ -1,5 +1,5 @@
 {
-  "version": "5.4.5",
-  "release": "5.4.5",
-  "notes": "修复 iOS PWA 根画布壁纸覆盖与底部背景衔接"
+  "version": "5.4.6",
+  "release": "5.4.6",
+  "notes": "输入框距底部调整为 15px"
 }
