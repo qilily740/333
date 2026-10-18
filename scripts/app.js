@@ -1886,7 +1886,7 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='5.3.0';
+const APP_VERSION='5.3.1';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
 try{const rawSaved=localStorage.getItem('iris-installed-version'),rawRequested=window.IRIS_RELEASE,saved=/^\d+(?:\.\d+){1,2}$/.test(rawSaved||'')?rawSaved:'',requested=/^\d+(?:\.\d+){1,2}$/.test(rawRequested||'')?rawRequested:'';if(saved&&compareAppVersions(saved,INSTALLED_APP_VERSION)>0)INSTALLED_APP_VERSION=saved;if(requested&&compareAppVersions(requested,INSTALLED_APP_VERSION)>=0)INSTALLED_APP_VERSION=requested;localStorage.setItem('iris-installed-version',INSTALLED_APP_VERSION)}catch{}
@@ -3706,7 +3706,10 @@ syncIrisGuideUI();
  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
  const isStandalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
  const editable=element=>element instanceof HTMLTextAreaElement||(element instanceof HTMLInputElement&&!['button','submit','reset','checkbox','radio','file','range','color','hidden'].includes(element.type));
- let focusFrame=0;
+ let focusFrame=0,fullHeight=0,layoutWidth=window.innerWidth;
+ const heightProbe=document.createElement('div');
+ heightProbe.style.cssText='position:fixed;top:0;left:0;width:0;height:100dvh;visibility:hidden;pointer-events:none;contain:strict';
+ document.body.append(heightProbe);
  function readSafeTop(){
   const probe=document.createElement('div');probe.style.cssText='position:fixed;height:env(safe-area-inset-top);visibility:hidden;pointer-events:none';
   document.body.append(probe);const inset=probe.getBoundingClientRect().height;probe.remove();
@@ -3765,8 +3768,16 @@ syncIrisGuideUI();
   if(isIOS&&(window.scrollX||window.scrollY))window.scrollTo(0,0);
   const root=document.documentElement;
   const conversation=$('#conversation'),wasNearBottom=Boolean(conversation&&conversation.scrollHeight-conversation.clientHeight-conversation.scrollTop<48);
-  root.style.setProperty('--app-viewport-height',`${viewport?.height||window.innerHeight}px`);
-  root.style.setProperty('--app-viewport-top',`${Math.max(0,viewport?.offsetTop||0)}px`);
+  const layoutHeight=heightProbe.getBoundingClientRect().height||window.innerHeight;
+  const focused=editable(document.activeElement),widthChanged=layoutWidth!==window.innerWidth;
+  if(!focused||widthChanged)fullHeight=layoutHeight;
+  else fullHeight=Math.max(fullHeight,layoutHeight);
+  layoutWidth=window.innerWidth;
+  const keyboardOpen=focused&&viewport&&fullHeight-viewport.height>100;
+  // A pixel height must not survive keyboard dismissal: Safari can report a
+  // stale visual viewport while the browser has already restored its full size.
+  root.style.setProperty('--app-viewport-height',keyboardOpen?`${viewport.height}px`:'100dvh');
+  root.style.setProperty('--app-viewport-top',`${keyboardOpen?Math.max(0,viewport.offsetTop||0):0}px`);
   if(wasNearBottom)requestAnimationFrame(()=>{if(conversation?.isConnected)conversation.scrollTop=conversation.scrollHeight});
   const input=document.activeElement;
   if(input instanceof HTMLTextAreaElement&&input.closest('.sms-composer')){const messages=$('#featurePageContent [data-sms-messages]');if(messages)messages.scrollTop=messages.scrollHeight}
@@ -3802,6 +3813,8 @@ syncIrisGuideUI();
  viewport?.addEventListener('scroll',sync);
  window.addEventListener('resize',sync);
  window.addEventListener('scroll',sync,{passive:true});
+ window.addEventListener('pageshow',sync);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
  document.addEventListener('focusin',event=>{if(event.target instanceof HTMLInputElement&&event.target.type==='date')return;if(editable(event.target))avoidNativePan(event.target);if(event.target===$('#messageInput'))keepLatestChatMessageVisible(750);else if(event.target.matches?.('.sms-composer textarea'))keepLatestSmsMessageVisible(850);followKeyboard()});
  document.addEventListener('focusout',followKeyboard);
  window.addEventListener('orientationchange',()=>setTimeout(readSafeTop,250));

@@ -13,7 +13,7 @@ function fixture(ios=true){
  const add=(map,name,fn)=>(map[name]||=[]).push(fn);
  const viewport={height:844,offsetTop:0,addEventListener:(name,fn)=>add(viewportEvents,name,fn)};
  const document={activeElement:null,documentElement:{style},body:{append(){}},createElement:()=>({style:{},getBoundingClientRect:()=>({height:0}),remove(){}}),addEventListener:(name,fn)=>add(documentEvents,name,fn)};
- const window={visualViewport:viewport,innerHeight:844,scrollX:0,scrollY:0,addEventListener:(name,fn)=>add(windowEvents,name,fn),scrollTo(x,y){scrolls.push([x,y]);this.scrollX=x;this.scrollY=y}};
+ const window={visualViewport:viewport,innerWidth:390,innerHeight:844,scrollX:0,scrollY:0,addEventListener:(name,fn)=>add(windowEvents,name,fn),scrollTo(x,y){scrolls.push([x,y]);this.scrollX=x;this.scrollY=y}};
  const input=new Textarea();
  const context=vm.createContext({document,window,navigator:{userAgent:ios?'iPhone':'Android',platform:'',maxTouchPoints:1},HTMLInputElement:Input,HTMLTextAreaElement:Textarea,matchMedia:()=>({matches:false}),requestAnimationFrame:fn=>(frames.push(fn),frames.length),cancelAnimationFrame(){},performance:{now:()=>0},setTimeout(){},getComputedStyle:()=>({overflowY:'visible'}),$:s=>s==='#conversation'?conversation:s==='#messageInput'?input:null,keepLatestChatMessageVisible(){},keepLatestSmsMessageVisible(){}});
  vm.runInContext(source,context);
@@ -31,8 +31,20 @@ test('iOS taps focus invisibly before native keyboard scrolling and restore the 
 test('dragging across a chat field scrolls without focusing or opening the keyboard',()=>{const f=fixture();f.touch('pointerdown');f.touch('pointermove',{clientY:60});f.touch('pointerup',{clientY:60});assert.equal(f.focuses.length,0);assert.equal(f.input.readOnly,false);assert.equal(f.touch('click').prevented,true)});
 test('a cancelled touch restores editability without opening the keyboard',()=>{const f=fixture();f.touch('pointerdown');f.touch('pointercancel');assert.equal(f.focuses.length,0);assert.equal(f.input.readOnly,false)});
 test('keyboard opening and closing compensates every viewport pan without changing header spacing',()=>{
- const f=fixture();for(const [height,top]of [[780,18],[600,72],[510,96],[600,66],[780,12],[844,0]]){f.viewport.height=height;f.viewport.offsetTop=top;f.emitViewport('resize');f.emitViewport('scroll');assert.equal(f.properties['--app-viewport-height'],height+'px');assert.equal(f.properties['--app-viewport-top'],top+'px');assert.equal(f.properties['--app-safe-top'],'0px')}
+ const f=fixture();f.document.activeElement=f.input;for(const [height,top]of [[780,18],[600,72],[510,96],[600,66],[780,12],[844,0]]){f.viewport.height=height;f.viewport.offsetTop=top;f.emitViewport('resize');f.emitViewport('scroll');const keyboardOpen=844-height>100;assert.equal(f.properties['--app-viewport-height'],keyboardOpen?height+'px':'100dvh');assert.equal(f.properties['--app-viewport-top'],(keyboardOpen?top:0)+'px');assert.equal(f.properties['--app-safe-top'],'0px')}
  f.window.scrollY=60;f.emitWindow('scroll');assert.deepEqual(f.scrolls,[[0,0]]);assert.equal(f.window.scrollY,0);
 });
 test('already focused fields retain native caret selection',()=>{const f=fixture();f.document.activeElement=f.input;assert.equal(f.touch('pointerdown').prevented,false);f.touch('pointerup');assert.equal(f.focuses.length,0)});
-test('Android keeps native tap focus while retaining viewport resize updates',()=>{const f=fixture(false);assert.equal(f.touch('pointerdown').prevented,false);f.touch('pointerup');assert.equal(f.focuses.length,0);f.viewport.height=420;f.emitViewport('resize');assert.equal(f.properties['--app-viewport-height'],'420px')});
+test('Android keeps native tap focus while retaining viewport resize updates',()=>{const f=fixture(false);assert.equal(f.touch('pointerdown').prevented,false);f.touch('pointerup');assert.equal(f.focuses.length,0);f.document.activeElement=f.input;f.viewport.height=420;f.emitViewport('resize');assert.equal(f.properties['--app-viewport-height'],'420px')});
+
+test('dismissing the keyboard restores fullscreen even when Safari retains its old shrunken height',()=>{
+ const f=fixture();f.document.activeElement=f.input;f.viewport.height=510;f.viewport.offsetTop=96;f.emitViewport('resize');assert.equal(f.properties['--app-viewport-height'],'510px');
+ f.document.activeElement=null;f.emitViewport('scroll');assert.equal(f.properties['--app-viewport-height'],'100dvh');assert.equal(f.properties['--app-viewport-top'],'0px');
+});
+test('reopening the app with a stale visual viewport cannot create a bottom gap',()=>{
+ const f=fixture();f.viewport.height=620;f.viewport.offsetTop=30;f.emitWindow('pageshow');assert.equal(f.properties['--app-viewport-height'],'100dvh');assert.equal(f.properties['--app-viewport-top'],'0px');
+});
+test('rotation discards the old portrait keyboard height',()=>{
+ const f=fixture();f.document.activeElement=f.input;f.viewport.height=510;f.emitViewport('resize');assert.equal(f.properties['--app-viewport-height'],'510px');
+ f.window.innerWidth=844;f.window.innerHeight=390;f.viewport.height=390;f.emitWindow('resize');assert.equal(f.properties['--app-viewport-height'],'100dvh');assert.equal(f.properties['--app-viewport-top'],'0px');
+});
