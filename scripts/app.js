@@ -1886,7 +1886,7 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='5.3.5';
+const APP_VERSION='5.3.6';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
 try{const rawSaved=localStorage.getItem('iris-installed-version'),rawRequested=window.IRIS_RELEASE,saved=/^\d+(?:\.\d+){1,2}$/.test(rawSaved||'')?rawSaved:'',requested=/^\d+(?:\.\d+){1,2}$/.test(rawRequested||'')?rawRequested:'';if(saved&&compareAppVersions(saved,INSTALLED_APP_VERSION)>0)INSTALLED_APP_VERSION=saved;if(requested&&compareAppVersions(requested,INSTALLED_APP_VERSION)>=0)INSTALLED_APP_VERSION=requested;localStorage.setItem('iris-installed-version',INSTALLED_APP_VERSION)}catch{}
@@ -3782,7 +3782,7 @@ syncIrisGuideUI();
   root.style.setProperty('--app-viewport-height',keyboardOpen?`${viewport.height}px`:'100dvh');
   root.style.setProperty('--app-viewport-top',`${viewportTop}px`);
   root.style.setProperty('--app-viewport-bottom',keyboardOpen?`${Math.max(0,fullHeight-viewportTop-viewport.height)}px`:'calc(0px - var(--app-safe-bottom, 0px))');
-  root.style.setProperty('--app-bottom-gap',keyboardOpen?'10px':'calc(10px + var(--app-safe-bottom, env(safe-area-inset-bottom, 0px)))');
+  root.style.setProperty('--app-bottom-gap',keyboardOpen?'15px':'calc(15px + var(--app-safe-bottom, env(safe-area-inset-bottom, 0px)))');
   if(wasNearBottom)requestAnimationFrame(()=>{if(conversation?.isConnected)conversation.scrollTop=conversation.scrollHeight});
   const input=document.activeElement;
   if(input instanceof HTMLTextAreaElement&&input.closest('.sms-composer')){const messages=$('#featurePageContent [data-sms-messages]');if(messages)messages.scrollTop=messages.scrollHeight}
