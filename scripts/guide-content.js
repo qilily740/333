@@ -16,11 +16,52 @@
 #reply|请求或重新生成回复|让当前角色依据聊天记录和角色资料生成回复。如果已有上一轮回复，可生成另一版并保留已有版本。此操作需要可用的聊天接口和模型，会发送当前功能需要的上下文。
 #closeInput,[data-quick="Exit"]|返回底部导航|收起扩展输入功能，恢复底部胶囊导航。输入栏和导航显示方式会切换，角色及用户资料不会因此删除。|进入
 [data-quick="语音"]|语音消息|填写语音卡片的时长和对应文字，确认后发送给当前角色。消息会显示时长与波形，点击卡片可以展开文字内容。|进入
-[data-quick="视频"]|视频通话|打开当前角色的视频通话功能，线上与线下都使用视频通话接口。发送文字后自动请求角色回应；摄像头开启时附带发送时的画面，理解画面需要支持图片的模型。|进入
+[data-quick="视频"]|视频通话|打开当前角色的视频通话功能。可以连续发送多条文字，发送键只发送消息；点击发送键右侧的回复键，才调用视频通话接口让角色回应。摄像头开启时记录发送时的画面，理解画面需要支持图片的模型。角色也可按情境主动挂断。|进入
 [data-quick="图片"]|图片消息|选择图片后，可决定直接发送图片给支持视觉的模型，或先提供文字描述。两种发送方式传递的信息不同，确认预览后再发送。|进入
 [data-quick="转账"]|聊天转账|打开虚构聊天中的转账面板，填写金额并确认接收对象。转账记录会进入对应聊天，后续是否接受由该功能的实际操作决定。|进入
 [data-quick="定位"]|分享位置|打开位置面板时会自动尝试浏览器定位，可能请求定位授权。也可手动填写地点与坐标，确认后点击发送。|进入
-[data-quick="听歌"]|听歌入口|当前听歌功能尚未完成，点击会提示待开发。可以先使用其他已经开放的消息功能。
+[data-quick="听歌"]|一起听|打开当前角色的一起听页面，导入本地歌曲或添加音频直链。音乐播放不调用模型；邀请角色、发消息和问问TA使用线上聊天API。|进入
+[data-music-tab]|一起听页面|在固定页签中切换正在听、曲库、角色最近在听和我的网易云。页面切换不会暂停歌曲；音乐资料和播放位置保存在本机。|进入
+[data-music-tab="role"]|角色最近在听|查看当前角色在聊天中分享或邀请一起听的歌曲。收藏近期歌单或单曲后，可以从“我的”中再次播放。|进入
+[data-music-tab="cloud"]|我的音乐与网易云|查看已同步的网易云歌单、收藏的角色歌单和单曲。歌单详情与歌曲资料首次读取后会缓存在当前浏览器。
+[data-net-login]|网易云扫码登录|通过网易云 App 扫码登录，不需要把密码交给 Iris。扫码成功后，登录会话由 Iris 的 CF Worker 加密保存；可随时退出登录。登录凭证不放进 Iris 导出文件。|进入
+[data-net-sync]|同步网易云歌单|读取当前登录账号可见的歌单列表并保存到本机。点开具体歌单后读取曲目；私人歌单只属于当前已登录账号，不与其他用户共用缓存。|进入
+[data-net-playlist]|打开网易云歌单|读取歌单中的歌曲、歌手、专辑封面及曲目时长。首次打开会请求音乐服务，之后使用本地已保存歌单资料。
+[data-net-save-playlist]|收藏歌单|把歌单及当前已读取的曲目资料保存到本机“我的音乐”。再次查看或播放已缓存的曲目时不重复查询资料。
+[data-role-favorite-playlist]|收藏角色近期歌单|将当前角色最近分享的歌曲保存为一份本地歌单。歌单与角色分开保存，可在“我的”中重新打开。
+[data-role-song],[data-net-song]|播放歌曲|首次播放会读取歌曲资料、歌词和当前可用的播放来源，并保存到本机曲库；以后直接从保存的来源播放。来源失效时可能需要重新获取播放地址。
+[data-role-favorite],[data-net-song-favorite]|收藏单曲|保存已核对的歌名、演唱者、专辑封面、歌词及可用播放来源。之后从“我的”或曲库播放时不重复查询歌曲资料。
+[data-music-import]|导入本地歌曲|一次选择多首音频，支持浏览器可解码的常见音频格式，单首最多80MB。音频保存在本机浏览器，能读取的MP3歌名、歌手、封面及内嵌歌词会自动填入；不调用模型API。|进入
+[data-music-files]|选择歌曲文件|选中文件后自动验证并导入本地曲库。清除浏览器网站数据也会清除本机歌曲文件。
+[data-music-link]|添加音频直链|填写歌名、歌手和能直接播放的音频地址。保存前会联网验证音频，添加后还会按歌名、歌手和时长自动联网匹配歌词，不调用模型API；普通音乐平台分享页面不是音频直链。|进入
+[data-music-select]|播放这首歌|选择当前用户曲库中的歌曲并尝试播放。一起听已开始时会为新歌曲留下共同记录，不自动生成角色感想。|进入
+[data-music-edit]|编辑歌曲资料|修改歌名、歌手、封面或歌词，也可以删除这首歌。资料需要在表单中保存，播放不调用模型。|进入
+[data-music-play],[data-music-mini-play]|播放或暂停|控制同一个前端播放器，暂停保留进度，不结束角色陪伴。此键不调用模型API。
+[data-music-prev],[data-music-next]|切换歌曲|按当前播放顺序选择上一首或下一首。顺序播放到列表末尾会停止；单曲循环作用于歌曲自然播完时。
+[data-music-seek]|播放进度|拖动后跳到相应位置，播放位置自动保存，不需要额外点保存。
+[data-music-mode]|播放顺序|选择顺序播放、单曲循环或随机播放，选择后自动保存。
+[data-music-volume]|播放音量|调整播放器音量并自动保存；部分手机浏览器的音量仍由系统音量键控制。
+[data-music-find-lyrics]|联网查找歌词|打开歌词查询面板，可修改歌名和实际演唱者，按歌手、歌曲时长和版本选择正确歌词。不会上传音频或调用模型API；小幅时长差异只使用文字歌词，不强行套用时间轴。
+[data-music-lyrics-choice],[data-music-lyrics-use]|使用选定歌词|把所选演唱者和版本的歌词保存到这首歌；时间轴与歌曲时长不匹配时只保存文字，不会修改音频文件。
+[data-music-lyric]|同步歌词|点击带时间轴的歌词可跳到相应位置。没有时间轴的歌词只作为文字展示，不自动编造歌词。
+[data-music-invite]|邀请或结束一起听|尚未开始时调用线上聊天API，让当前角色依据人设接受或婉拒。开始后可选择结束陪伴并继续放歌，或同时暂停音乐。|进入
+[data-music-invite-action]|接受或婉拒角色邀请|在 chat 中接受后把歌曲加入曲库并开始一起听；选择暂不后仅更新邀请状态，不播放歌曲。歌曲已由音乐服务核实。|进入
+[data-music-ask]|问问TA|调用线上聊天API，结合已提供的歌名、歌词和真实交流生成角色回应。模型不会收到本地音频文件，不会定时自动发表感想。
+[data-music-retry]|重试一起听回应|重新调用线上聊天API处理刚才失败的邀请或对话；保留之前的消息，不会重复添加用户消息。
+[data-music-suggestion]|同意角色换歌建议|确认后才实际重播、切到下一首或切到角色提出的曲库歌曲，角色建议不会自行改变播放。
+[data-music-dismiss]|暂不换歌|关闭这条换歌建议，继续当前播放，不调用API。
+[data-music-history]|共同听歌记录|查看当前角色和用户一起听过的歌曲与真实交流，可手动保存为共同记忆。不同角色和用户的记录各自独立。|进入
+[data-music-remember]|保存共同记忆|把这次一起听的歌曲与真实交流保存为当前双方的线上记忆，不调用总结API；再次保存会更新同一条记忆。
+[data-music-mini-close]|关闭音乐|暂停并关闭小播放条，结束当前一起听，保留歌曲和听到的位置。再次打开Music页面可以继续播放，不会删除曲库。
+[data-music-mini-open]|返回一起听|从聊天页面的小播放条返回完整播放器。小播放条占用自己的位置，不覆盖底部胶囊。|进入
+[data-music-dialog-close]|关闭音乐面板|关闭当前小面板。面板标题和关闭键固定在顶部，下方内容可独立滚动；未提交的歌曲资料不会保存，已经播放的音乐继续播放。|进入
+[data-music-cover-file]|选择歌曲封面|选择2MB以内的JPG、PNG或WebP图片，读取后需在歌曲资料中保存。
+[data-music-cover-remove]|移除封面|从当前编辑草稿中移除封面，保存歌曲资料后生效。
+[data-music-lyrics-file]|导入歌词|选择LRC或TXT歌词文件，最多256KB。歌词填入编辑框后需要保存；也可以直接粘贴歌词。
+[data-music-remove]|删除歌曲|删除曲库资料和这首歌的本地音频文件。历史共同听歌记录保留；删除正在播放的歌曲会停止播放。
+[data-music-end-keep]|结束陪伴并继续播放|结束当前双方的一起听记录，音乐继续播放，不调用API。
+[data-music-end-pause]|结束并暂停|结束当前一起听记录并暂停播放器，保留听到的位置。
+
 [data-quick="阅读"]|阅读|进入书架、正文和阅读笔记功能。可以导入书籍、查找书目，或在正文中批注并与角色讨论选中的内容。|进入
 [data-quick="打码"]|打码线下故事|选择角色、用户或双方姓名，并应用内置或自定义替换样式。打码只处理当前画面显示，可以随时取消；源故事、保存记录和导出内容都不会被改写。|进入
 [data-offline-redaction-form]|线下内容打码面板|在当前线下故事的显示层隐藏角色名、用户姓名或双方姓名。这里的打码只用于当前页面展示，消息原文、保存记录、总结和导出数据保持不变；关闭或取消打码后会恢复原文。
@@ -48,6 +89,17 @@ input[name="custom"]|填写自定义打码内容|填写替换姓名后显示的�
 [data-offline-setting-tab="stage-memory"]|阶段记忆|查看按故事轮次整理的阶段摘要。可核对摘要覆盖范围、修改内容或重新生成，避免把未发生的情节当作既有经历。|进入
 [data-offline-setting-tab="records"]|线下记录|保存和回看线下故事记录。回看与删除是不同操作，删除前先确认记录名称及内容。|进入
 #addApiConfig|新增接口|新建一组独立的模型接口配置。填写服务地址、密钥和模型后，再设置哪些功能使用这组接口。
+[data-api-connection]|接口配置类别|在普通聊天接口与向量接口之间切换。向量配置直接用于记忆召回，无需在配置与功能中再次分配。|进入
+[data-vector-models]|拉取向量模型|使用当前填写的地址和密钥联网读取模型列表，再单选一个支持 embeddings 的模型。列表可能包含聊天模型，请按服务方说明选择。|进入
+[data-vector-model]|选择向量模型|单选用于记忆检索的向量模型。确认使用后回到配置页保存，才能在后续聊天中调用。
+[data-vector-keep]|使用向量模型|将单选的模型填入配置表单，随后点击保存配置。
+[data-vector-close]|关闭向量模型列表|关闭列表，保留此前配置。
+[data-vector-test]|测试向量连接|调用当前表单填写的 embeddings 接口生成一个测试向量，可能产生少量 API 用量；测试成功后仍需保存修改。
+[data-vector-add]|新建向量配置|打开空白表单，新建一套独立向量地址、密钥和单个模型。保存后自动使用新配置。|进入
+[data-vector-profile]|切换向量配置|选择一套已保存的向量配置后立即使用它进行后续记忆召回，无需再绑定功能。
+[data-vector-clear]|删除向量配置|删除正在编辑的向量配置；删除当前使用的配置后会切换到剩余配置，没有剩余配置时停止向量召回。原始记忆和聊天保留。
+[data-life-enabled]|事情有后续|自动记住当前用户亲口提到且尚未有结果的小事，合适时在对应角色的线上聊天自然关心。提取随正常聊天 API 完成；主动关心会额外调用一次线上聊天 API。关闭后停止提取和主动关心，已有记录保留。开关自动保存。
+[data-life-forget]|不再记挂|删除这件待跟进事项，角色不再自动追问。不会删除最初的聊天原文。
 #fetchModels|获取模型列表|使用当前填写的接口地址和密钥请求可用模型。请求需要联网及有效权限；拿到列表后选择所需模型，失败时也可检查服务方提供的模型名称。
 #exportData|导出备份|把当前本地资料打包下载，便于迁移或恢复。下载完成后检查文件确实保存成功，并保管好可能包含聊天和接口配置的备份。
 #importDataButton,#restoreBackup|恢复备份|选择已有的 Iris 备份文件，按恢复提示检查内容后继续。恢复会写入本地资料，操作前建议先导出当前数据。
@@ -127,10 +179,19 @@ input[name="custom"]|填写自定义打码内容|填写替换姓名后显示的�
 [data-voice-toggle]|展开语音文字|展开这张语音卡片对应的文字内容及已有译文，再次点击收起。页面显示的波形与时长来自这条语音消息的资料。|进入
 [data-call-toggle]|通话设备开关|按当前按键标签开启或关闭对应的通话设备。关闭摄像头后不再提供新的画面，重新开启可能需要设备授权。
 [data-call-flip]|切换摄像头|在设备支持的摄像头方向之间切换。设备没有其他摄像头时可能无法切换，切换后核对预览画面。
-[data-call-reply],[data-call-retry]|请求通话回应|重试未成功的通话回应，或重新生成最近一条用户消息的角色回复。重新生成成功后替换该轮旧回复，并沿用这条消息发送时的画面；不会重新拍摄当前画面。
+[data-call-reply],[data-call-retry]|请求通话回应|发送键右侧的回复键会调用视频通话接口，让角色依据当前已发送的消息回应。可先连续发送多条文字，再请求回应。已有该轮回复时可重新生成，沿用消息发送时的画面，不会重新拍摄。角色也可根据情境决定结束通话。
 [data-call-return]|返回聊天并保留通话|收起视频通话界面并回到聊天，当前通话按原功能规则继续，可以通过通话返回入口再次打开。|进入
 #videoCallReturn|返回视频通话|重新打开正在进行的通话界面，查看画面与通话消息。是否仍在通话以界面显示的状态为准。|进入
 [data-call-close]|结束视频通话|结束视频通话并关闭摄像头，自动将通话文字与回顾卡片保存到聊天；有文字交流且配置了通话总结接口时，会自动请求摘要。
+[data-incoming-accept]|接听角色视频来电|接听当前角色主动发起的视频通话。接通后角色先开口，会调用视频通话 API；摄像头默认关闭，可保持文字交流，也可自行开启。
+[data-incoming-decline]|拒绝角色视频来电|拒绝本次来电并留下拒接记录，不会请求视频通话 API。角色后续回复能知道拒接结果，不会据此替你推测拒接原因；30 分钟内不会再次主动拨打。
+[data-more-toggle="incomingVideoEnabled"]|允许角色主动视频|此项默认关闭。开启后才显示来电频率、铃声和振动设置；角色可在正常线上聊天回复时按情境拨打。网页关闭时不会来电，接听前不会开启摄像头。开关自动保存。
+[data-more-value="incomingVideoFrequency"]|角色来电频率|设置当前角色主动来电的频率偏好。偶尔、正常、较频繁分别至少间隔 60、15、5 分钟；仅在聊天情境合适时发起，不是定时拨打。拒接或未接后至少等待 30 分钟。选择后自动保存。
+[data-more-toggle="incomingVideoSound"]|来电声音|关闭后仍会显示来电面板，开启时使用导入的铃声或 Iris 默认铃声。开关自动保存；设备和浏览器的声音权限会影响实际播放。
+[data-more-toggle="incomingVideoVibration"]|来电振动|单独开启或关闭来电振动，修改后自动保存。振动效果由设备和浏览器支持情况决定。接听等待为 30 秒，超时会记为未接。
+[data-incoming-ringtone-import]|导入来电铃声|选择设备中的 MP3、M4A、AAC、WAV、OGG、Opus 或 WebM 音频，单个文件需小于 4 MB。铃声保存在当前角色设置中。
+[data-incoming-ringtone-preview]|试听来电铃声|播放当前角色选用的铃声；尚未导入铃声时试听 Iris 默认提示音。播放失败时检查音频格式或浏览器声音权限。
+[data-incoming-ringtone-remove]|恢复默认铃声|移除当前角色导入的铃声，之后来电会使用 Iris 默认提示音。此项只修改当前角色的来电设置。
 [data-call-summary]|查看通话记录|打开通话总结和消息明细，回看本次交流内容。总结用于辅助回顾，重要细节以实际消息为准。|进入
 [data-call-summary-delete]|删除通话记录|移除这份通话总结及对应记录。删除前核对通话对象和时间，重要资料先备份。
 [data-message-action="edit"]|编辑消息|修改这条文字消息，保存后更新聊天记录和后续上下文。只编辑实际需要改动的内容。|进入
@@ -143,7 +204,8 @@ input[name="custom"]|填写自定义打码内容|填写替换姓名后显示的�
 [data-role-reflection]|角色心声与状态|打开这条角色回复附带的心声或状态资料。它们属于对应回复，查看后可按面板入口浏览更多内容。|进入
 [data-chat-user-wallet],[data-bank-front]|用户银行卡|打开当前用户面具的钱包或银行卡资料。先核对身份和币种，再查看余额与流水。|进入
 [data-bank-kind],[data-bank-sort]|筛选或排序账目|根据当前选项筛选交易类型或调整流水顺序，便于查找指定收支。该操作只改变列表的查看方式。
-[data-chat-gift-order]|查看赠礼订单|打开这条赠礼对应的订单，核对赠送对象、商品和当前配送状态。|进入
+[data-chat-gift-order]|查看赠礼订单|打开这份礼物的商品、配送状态与收礼回应。用户送出的礼物到货后，进入对应角色的线上 Chat 会调用线上聊天 API 生成角色反应，并以独立卡片展示收下或婉拒，以及角色对你说的话。关闭后不重复弹出，之后可从礼物详情查看。|进入
+[data-gift-reaction-close]|收起收礼回应|关闭当前角色的收礼反应卡片并标记为已读。收下或婉拒的结果已经记录在订单中；这不是让用户代角色决定是否收礼。卡片关闭后仍可从聊天中的礼物详情查看这段回应。
 [data-transfer-action]|回应转账|按当前按键执行接受、退回或其他转账回应。先核对金额、币种和发送对象，确认后相关记录会按功能规则更新。
 [data-invitation-action]|回应见面邀请|根据当前按键接受、拒绝或重新进入邀约故事。接受前核对时间和地点；生成线下开场需要可用的故事接口。
 [data-sms-open]|打开短信会话|进入这名联系人与对应用户面具的短信记录。发送前核对会话上显示的身份。|进入
@@ -162,8 +224,8 @@ input[name="custom"]|填写自定义打码内容|填写替换姓名后显示的�
 [data-timezone-reset]|重置时区|恢复时区相关设置的默认值。时区会影响时间感知与日期显示，重置后核对用户和角色的所在地设置。
 [data-feature-retry]|重新打开功能|在页面加载失败后重新尝试打开该功能。若仍失败，检查页面提示和相关接口配置。
 `;
- rows.trim().split('\n').forEach(line=>{const[selectors,title,text,nav]=line.split('|');define(selectors,title,text,nav==='进入')});
- const add=(attr,rows)=>rows.trim().split('\n').forEach(line=>{const[key,title,text,nav]=line.split('|');define(`[data-${attr}${key?'="'+key+'"':''}]`,title,text,nav==='进入')});
+ rows.trim().split('\n').filter(line=>line.trim()).forEach(line=>{const[selectors,title,text,nav]=line.split('|');define(selectors,title,text,nav==='进入')});
+ const add=(attr,rows)=>rows.trim().split('\n').filter(line=>line.trim()).forEach(line=>{const[key,title,text,nav]=line.split('|');define(`[data-${attr}${key?'="'+key+'"':''}]`,title,text,nav==='进入')});
  define('[data-backup-format]','备份文件格式','选择导出为数据文件或压缩包。两种格式都应在下载后妥善保留；恢复时选择支持的对应备份文件，格式选择本身不会立即导出。');
  define('[data-copy-ai-prompt]','复制美化提问模板','复制当前页面提供的美化需求模板，粘贴到你使用的工具后补充具体要求。复制模板不会自动修改页面，生成样式后还需要自行核对和应用。');
  define('[data-gpt-action="copy-all"]','复制整段模拟对话','复制当前角色状态面板展示的完整模拟对话。复制后可粘贴到文本编辑器检查；它不代表真实连接了外部聊天账户。');
@@ -353,13 +415,19 @@ open-profile-collection-form|创建主页合集|展开合集编辑表单，填�
   '[data-form="profile-collection"]':['创建帖子合集','保存输入的合集名称，之后发布帖子时可以归入该合集。'],
   '.forum-comment-form':['发表评论','把填写的评论发布到当前帖子，提交前核对正在使用的身份、帖子内容和评论正文。'],
   '.forum-reply-form':['发送评论回复','把输入内容作为对当前评论的回复发送，先确认回复对象及上下文。'],
-  '[data-call-form]':['发送通话消息','发送文字后自动调用视频通话接口请求角色回应。摄像头开启时一并截取发送时的画面；画面不持续上传。失败后可点击回复或重新生成按键重试。'],
+  '[data-call-form]':['发送通话消息','只将文字发送到通话记录，可以连续发送多条，不会请求角色回应。摄像头开启时保存发送当时的画面；点击发送键右侧的回复键后才调用视频通话接口。'],
   '#composer':['发送聊天消息','把输入内容发送给当前角色。先绑定用户面具并核对角色，之后可请求角色生成回复。'],
   '#messageEditForm,#smsMessageEditForm':['保存消息修改','把编辑后的文字保存到这条消息，后续上下文会依据实际保存的记录处理。保存前核对原文及译文。'],
   '#transferForm':['发送聊天转账','以人民币从当前虚构银行卡余额发起转账，核对金额、收款角色和备注后确认。消息会记录待回应的转账状态。'],
   '#imageDescriptionForm':['发送描述图片','把填写的画面描述与所选比例作为图片描述消息发送。模型收到的是文字描述，发送前核对画面与当前角色。'],
   '#voiceForm':['发送语音卡片','把填写的语音时长与文字发送为一张虚构语音卡，时长按表单允许范围处理。先核对文字和接收对象。'],
   '#locationForm':['发送位置','把地点名称、坐标和补充说明发到当前聊天，核对浏览器取得的位置或自己填写的坐标后再发送。'],
+  '[data-vector-form]':['保存向量配置','保存当前向量地址、密钥和单个模型，后续语义记忆召回会直接使用此配置。总结文字仍由已有的总结接口生成。'],
+  '[data-life-edit]':['重新安排后续关心','保存这件事的描述及未来关心时间。重新安排后允许角色在合适时间再问一次。'],
+  '[data-music-lyrics-search]':['搜索歌词版本','填写准确歌名和实际演唱者，联网查找歌词版本，按歌手与时长选择后保存。不调用聊天模型API。'],
+  '[data-music-link-form]':['添加歌曲链接','联网读取音频元数据，验证成功后保存歌曲链接并自动联网匹配歌词，不调用模型API。'],
+  '[data-music-edit-form]':['保存歌曲资料','保存歌名、歌手、封面和歌词，更新播放器展示，不调用模型API。'],
+  '[data-music-chat]':['发送一起听消息','保存这条消息并调用线上聊天API请求当前角色回应；失败时可重试，之前的用户消息会保留。'],
   '#apiForm':['保存接口配置','保存当前服务地址、密钥和模型配置，再按需要为各个功能分配接口。字段错误可能导致请求失败，保存前核对服务方提供的信息。'],
   '[data-memory-entry-form]':['保存手动记忆','保存这一条记忆的标题、正文、来源和归属。只记录已经确认的经历或设定，核对当前角色后提交。'],
   '[data-experience-form]':['保存角色经历','保存当前填写的经历正文与相关资料，核对时间、参与者和人物已知信息后提交。'],
@@ -494,6 +562,8 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
   if(element.matches('[data-regex-test]'))return '直接试运行并显示替换前后的对比；试运行不会代替保存规则。';
   if(element.matches('[data-regex-prop],[data-regex-target],[data-regex-context],[data-regex-display],[data-draft-cot-input],[data-mini-theater-prompt],[data-offline-extra-input],[data-offline-extra-name],[data-stage-memory-text]'))return '正文或规则编辑完成后，点击这一项对应的“保存”。';
   if(element.matches('[data-user-phone-random]'))return '本地生成号码并立即保存到当前面具。';
+  if(element.closest('[data-music-edit-form],[data-music-link-form]'))return '填写或选择后，在当前表单点击保存或添加；关闭面板不保存草稿。';
+  if(element.matches('[data-music-seek],[data-music-mode],[data-music-volume]'))return '调整后自动保存播放设置，不需要额外保存。';
   if(result.navigation)return '点击后进入、展开或切换；这次页面切换本身不需要保存。';
   if(element.matches('button')&&element.type!=='submit')return '';
   if(form?.matches('#apiForm,#characterForm,#profileForm,[data-user-phone-form],[data-memory-entry-form],[data-experience-form],[data-global-worldbook-form],[data-global-worldbook-book-form],[data-global-worldbook-rename-form],[data-role-worldbook-name-form],[data-role-worldbook-entry-form],[data-offline-prompt-form],[data-offline-style-form],[data-r-form="metadata"],[data-r-form="preferences"],.market-address-form,[data-form="profile"],[data-form="edit-world"]'))return element.matches('button')?'点击此表单的确认或保存按键后提交。':'这份表单需要使用对应的确认或保存按键提交。';
@@ -515,8 +585,11 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
   ['[data-p-inspect],[data-p-certify],[data-p-buy],[data-p-sell]','按本地经营规则检查或结算；此按键本身不请求模型生成。费用和资金变化以页面显示为准。'],
   ['[data-forum-action="refresh"],[data-forum-action="interact"],[data-forum-action="invite-roles"],[data-forum-action="send-comment-role-replies"],[data-forum-action="role-new-post"]','会调用论坛模型 API 生成动态或角色互动，需要可用接口及对应世界成员资料。'],
   ['[data-r-annotate],[data-r-reveal],[data-r-letter],[data-r-form="discussion"] button:not([type="button"]),[data-r-form="prediction"] button:not([type="button"])','会调用阅读模型 API 生成角色批注、讨论、猜测或读后信。请先为当前用户绑定共读角色并配置阅读接口。'],
+  ['[data-music-find-lyrics],[data-music-link-form] button,[data-net-sync],[data-net-playlist],[data-role-song],[data-net-song]','通过配置的 CF 音乐服务查询网易云歌单、歌曲资料、歌词与可播放来源；不调用聊天模型。用户账号歌单按账号会话隔离，歌曲资料优先使用本机缓存，不上传本地音频。'],
+  ['[data-net-login]','扫码登录将网易云会话交给 Iris CF Worker 进行账号资料读取；会话在 Worker 侧 AES-GCM 加密存储，浏览器仅保存 Iris 随机会话令牌。退出登录会删除 Worker 会话与本地令牌。'],
+  ['[data-music-ask],[data-music-invite],[data-music-retry],[data-music-chat] button','角色交流会调用线上聊天API；歌曲音频只在本机播放，不上传给模型。结束一起听不请求API。'],
   ['#reply','调用当前模式的聊天或线下故事模型 API；满足记忆整理条件时，还可能自动调用对应的总结接口。'],
-  ['[data-call-reply],[data-call-retry],[data-call-form] button:not([type="button"])','发送文字或请求回应会调用视频通话模型 API，线上与线下使用同一功能配置。请求附带该条消息发送时取得的画面；模型不支持图片时会提示并尝试纯文字回应。'],
+  ['[data-call-reply],[data-call-retry]','请求回应或重新生成会调用视频通话模型 API，线上与线下使用同一功能配置。请求附带消息发送时取得的画面；模型不支持图片时会提示并尝试纯文字回应。发送键本身不会调用模型。'],
   ['.sms-reply,[data-sms-retry-blocked]','调用短信模型 API 生成角色短信，需要可用接口和绑定身份。'],
   ['.reflection-generate','调用线上聊天模型 API 补全心声面板内容或缺失译文。'],
   ['[data-call-close]','有通话文字且配置可用的通话总结接口时，结束通话会自动调用通话总结模型 API；未配置或生成失败时使用本地回顾。'],

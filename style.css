@@ -1,4 +1,5 @@
 @charset "UTF-8";
+.incoming-video-dialog{width:min(360px,calc(100vw - 40px));max-height:calc(100dvh - 48px);padding:0;border:1px solid #e5e5e5;border-radius:24px;background:#fff;color:#262626;box-shadow:0 24px 100px #0002;overflow:auto}.incoming-video-dialog::backdrop{background:#0006;backdrop-filter:blur(8px)}.incoming-video-card{padding:34px 28px 28px;text-align:center}.incoming-video-kicker{color:#999;font-size:10px;letter-spacing:4px}.incoming-video-avatar{margin:30px auto 20px}.incoming-video-avatar .avatar{width:94px;height:94px;margin:auto;border:1px solid #e7e7e7;font-size:32px;overflow:hidden}.incoming-video-avatar img{width:100%;height:100%;object-fit:cover}.incoming-video-card h2{margin:0;font:500 23px/1.5 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;overflow-wrap:anywhere}.incoming-video-card>p{margin:9px 0 36px;color:#888;font-size:12px}.incoming-video-actions{display:flex;justify-content:center;gap:64px}.incoming-video-actions button{display:grid;justify-items:center;gap:12px;min-width:68px;padding:3px;color:#777}.incoming-video-actions button>span{display:grid;place-items:center;width:60px;height:60px;border-radius:50%;background:#f1f1f1;font-size:29px;font-weight:300}.incoming-video-actions button[data-incoming-accept]>span{background:#252525;color:#fff}.incoming-video-actions svg{width:23px;height:23px}.incoming-video-actions strong{font-size:12px;font-weight:400;letter-spacing:2px}.incoming-video-frequency{display:flex!important;align-items:center;justify-content:space-between;gap:16px;margin:12px 0 18px;color:#777;font-size:12px}.incoming-video-frequency select{max-width:140px;padding:8px 28px 8px 12px;border:1px solid #e5e5e5;border-radius:8px;background:#fff;color:#444;font:inherit}
 :root{font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;color:#262626;background:#fff;font-synthesis:none;--surface:#f4f4f4;--muted:#a2a2a2;--line:#eeeeee}*{box-sizing:border-box}body{margin:0}button,input,textarea{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}button{color:inherit}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #979797;outline-offset:5px}button{border:0;background:none}button:hover{filter:brightness(.96)}svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.phone{height:100dvh;min-height:480px;max-width:780px;margin:auto;position:relative;display:flex;flex-direction:column;padding:0 48px;overflow:hidden;background:white}.topbar{padding:54px 0 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}h1{font-family:"Snell Roundhand","Apple Chancery","URW Chancery L",cursive;font-size:44px;letter-spacing:-1.5px;margin:0;font-weight:400;display:flex;align-items:center;gap:7px}.top-actions{display:flex;align-items:center;gap:13px}.avatar-stack{display:flex;padding:0 5px}.avatar{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;position:relative;font-family:Georgia,serif;font-size:21px;color:#4b4b4b;background:#e6e6e6;border:3px solid #fff;flex-shrink:0}.avatar-stack .avatar+.avatar{margin-left:-15px}.avatar-stack .avatar:last-child{background:#3c3c3c;color:#f2f2f2}.icon-button{width:28px;height:40px;display:grid;place-items:center}.icon-button svg{width:19px}.conversation{flex:1;min-height:0;overflow:auto;scrollbar-width:thin;padding:10px 0 24px;display:flex;flex-direction:column}.bottom{padding:12px 0 max(34px,env(safe-area-inset-bottom));position:relative;background:#fff;z-index:4}.dock{display:flex;justify-content:space-between;gap:18px}.dock-item{padding:0;display:flex;align-items:center;flex-direction:column;gap:13px;font-size:10px;letter-spacing:2px;color:#8b8b8b}.circle{width:56px;height:56px;border-radius:50%;background:var(--surface);display:grid;place-items:center;color:#676767;transition:background .2s,transform .2s}.dock-item:hover .circle{transform:translateY(-3px);background:#ebebeb}.dock-item:nth-child(2) .circle{background:#ebebeb;color:#5e5e5e}.dock-item:last-child .circle{background:#ededed}.dock-item .circle svg{width:25px;height:25px}.composer{display:flex;align-items:center;gap:9px;min-height:99px}.composer[hidden],.dock[hidden],[hidden]{display:none!important}.small{width:40px;height:40px;flex-shrink:0}.small svg{width:19px;height:19px}.composer-tools{position:relative}.close-input{position:absolute;top:47px;font-size:9px;width:40px;padding:0;color:#949494;letter-spacing:1px}.input-wrap{display:flex;align-items:center;background:#f2f2f2;border:1px solid #eaeaea;border-radius:26px;padding:0 12px 0 17px;height:40px;flex:1;min-width:0}textarea{background:transparent;border:0;outline:none!important;resize:none;width:100%;font-size:13px;line-height:24px;max-height:96px;color:#474747}textarea::placeholder{color:#adadad}.emoji{display:grid;place-items:center;padding:0;color:#979797}.emoji svg{width:20px;height:20px}.input-wrap textarea{line-height:20px;max-height:20px}.send{background:#666666;color:white}.shade{position:absolute;inset:0;background:rgba(0,0,0,.12);z-index:5;backdrop-filter:blur(3px)}.sheet{position:absolute;bottom:0;left:0;right:0;z-index:6;background:#fff;border-radius:28px 28px 0 0;padding:15px 38px 42px;box-shadow:0 -10px 60px #33333308;max-height:78%;overflow:auto;animation:slide .25s ease}.handle{width:30px;height:3px;background:#dedede;border-radius:3px;margin:0 auto 25px}.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}.sheet h2{font-weight:500;font-size:20px;margin:0}.sheet-sub{font-size:11px;color:#a2a2a2;margin:7px 0 0}.sheet-close{color:#979797;font-size:23px}.choices{display:grid;gap:8px}.choice{display:flex;align-items:center;text-align:left;padding:13px;border-radius:15px;gap:14px;border:1px solid transparent}.choice.selected{border-color:#e6e6e6;background:#f7f7f7}.choice .avatar{width:49px;height:49px}.choice strong{font-size:14px;font-weight:500}.choice p{font-size:11px;color:#9b9b9b;margin:5px 0 0}.check{margin-left:auto;color:#808080}.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.feature{background:#f6f6f6;border-radius:17px;padding:23px 8px;display:flex;align-items:center;gap:12px;flex-direction:column;font-size:12px}.sheet label{font-size:12px;display:block;color:#868686;margin-bottom:10px}.sheet input{width:100%;padding:14px;border:1px solid #e7e7e7;border-radius:12px;background:#fbfbfb;margin:7px 0 15px;color:#4a4a4a}.primary{padding:13px 20px;background:#696969;color:white;border-radius:12px;width:100%;font-size:12px}.sheet-copy{font-size:13px;line-height:1.9;color:#959595}.message{display:flex;gap:10px;margin:14px 0;align-items:flex-end;max-width:87%;animation:appear .2s ease}.message .avatar{width:30px;height:30px;font-size:14px;border:0}.bubble{padding:12px 16px;background:#f4f4f4;border-radius:17px 17px 17px 4px;font-size:13px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}.message.mine{align-self:flex-end;flex-direction:row-reverse}.mine .bubble{background:#eeeeee;border-radius:17px 17px 4px 17px}.timestamp{text-align:center;color:#b3b3b3;font-size:9px;letter-spacing:1px;margin:15px 0}.toast{position:absolute;bottom:170px;left:50%;transform:translateX(-50%);background:#4a4a4a;color:white;padding:12px 19px;border-radius:30px;font-size:12px;z-index:10;white-space:nowrap}@keyframes slide{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes appear{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}@media(min-width:850px){.phone{max-width:700px;padding:0 65px}.topbar{padding-top:64px}.bottom{padding-bottom:45px}.circle{width:60px;height:60px}.small{width:42px;height:42px}}@media(max-width:480px){.phone{padding:0 25px}.topbar{padding-top:max(30px,env(safe-area-inset-top));padding-bottom:22px}h1{font-size:40px}.circle{width:50px;height:50px}.dock{gap:12px}.small{width:35px;height:35px}.composer{gap:6px}.input-wrap{height:35px;padding-left:12px;padding-right:9px}.input-wrap textarea{font-size:12px;line-height:18px;max-height:18px}.sheet{padding-left:25px;padding-right:25px}.bottom{padding-bottom:max(27px,env(safe-area-inset-bottom))}.avatar{width:38px;height:38px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 
 .dock-item .circle{background:var(--surface);color:#555}.dock-item .circle svg{width:21px;height:21px;stroke-width:1.3}.dock-item{font-size:9px;letter-spacing:1px;gap:11px}.avatar-stack .avatar{border-width:2px}.sheet-sub:empty{display:none}
@@ -566,7 +567,7 @@
 .api-model-dialog::backdrop{background:#16161645;backdrop-filter:blur(2px)}
 .api-model-picker{display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto;max-height:min(78dvh,680px);min-height:260px;padding:20px 22px 16px}
 .api-model-picker-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:0 0 14px;border-bottom:1px solid #ededed}
-.api-model-picker-heading h2{margin:0;color:#333;font-family:"Songti SC",serif;font-size:20px;font-weight:400;letter-spacing:.4px}
+.api-model-picker-heading h2{margin:0;color:#333;font-family:"Great Vibes",cursive;font-size:32px;font-style:normal;font-weight:400;line-height:1.2;letter-spacing:0}
 .api-model-picker-heading p{margin:7px 0 0;color:#999;font-size:10px;line-height:1.6}
 .api-model-close{flex:none;padding:0 2px;color:#888;font-size:23px;line-height:1}
 .api-model-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;color:#999;font-size:9px}
@@ -3150,3 +3151,190 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .offline-redaction-form{display:grid;gap:16px}.offline-redaction-form fieldset{margin:0;padding:13px;border:1px solid #e8e8e8;border-radius:12px}.offline-redaction-form legend{padding:0 5px;color:#777;font-size:11px}.offline-redaction-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.offline-redaction-options label{display:flex;align-items:center;justify-content:center;gap:7px;margin:0;padding:10px 5px;border:1px solid #eee;border-radius:9px;color:#555}.sheet .offline-redaction-options input{width:14px;height:14px;margin:0;padding:0;accent-color:#333}.offline-redaction-style,.offline-redaction-custom{display:grid;gap:7px;color:#777;font-size:11px}.sheet .offline-redaction-form select,.sheet .offline-redaction-form input[name=custom]{width:100%;height:42px;margin:0;padding:0 12px;border:1px solid #e7e7e7;border-radius:9px;background:#fff;color:#444;font:inherit}.offline-redaction-form footer{display:flex;justify-content:flex-end;gap:9px;padding-top:4px}.offline-redaction-form footer button{min-width:94px;padding:10px 14px;border:1px solid #ddd;border-radius:9px;background:#fff;color:#555;font-size:11px}.offline-redaction-form footer .offline-redaction-apply{border-color:#292929;background:#292929;color:#fff}.offline-redaction-form footer [hidden],.offline-redaction-custom[hidden]{display:none}
 
 .sheet.is-centered-panel h2,.sheet.is-message-edit .sheet-head h2,.chat-bank-sheet-title,.reflection-script-title,.chat-user-bank-card header>span:first-child{font-family:"Great Vibes",cursive!important;font-style:normal!important;letter-spacing:0!important}
+
+.incoming-video-extra[hidden]{display:none}.incoming-video-extra{margin-top:7px;padding-top:4px;border-top:1px solid #f0f0f0}.incoming-video-ringtone-row{display:grid!important;gap:10px}.incoming-video-ringtone-row>span:first-child{display:block}.incoming-video-ringtone-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.incoming-video-ringtone-actions button{padding:7px 11px;border:1px solid #e5e5e5;border-radius:7px;background:#fff;color:#666;font-size:9px}.incoming-video-ringtone-actions button:hover{border-color:#bbb}.incoming-video-ringtone-actions [hidden]{display:none}
+
+.gift-reaction-dialog{width:min(400px,calc(100vw - 36px));max-height:calc(100dvh - 48px);padding:0;border:1px solid #e5e5e5;border-radius:19px;background:#fff;color:#333;overflow:auto;box-shadow:0 24px 90px #0002}.gift-reaction-dialog::backdrop{background:#0005;backdrop-filter:blur(5px)}.gift-reaction-card{padding:24px 26px}.gift-reaction-card>header{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #eee}.gift-reaction-card>header>span{font:38px/1.2 "Great Vibes",cursive}.gift-reaction-card>header>button{padding:2px 4px;color:#999;font-size:23px}.gift-reaction-person{display:flex;align-items:center;gap:16px;margin:24px 0}.gift-reaction-person .avatar{width:58px;height:58px;flex:none;overflow:hidden;border:1px solid #eee}.gift-reaction-person .avatar img{width:100%;height:100%;object-fit:cover}.gift-reaction-person small{font-size:9px;letter-spacing:2px;color:#aaa}.gift-reaction-person h2{margin:7px 0 0;font:400 13px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;overflow-wrap:anywhere}.gift-reaction-person h2 strong{font-size:21px;font-weight:500}.gift-reaction-items{display:flex;align-items:center;gap:13px;padding:13px 0;border-top:1px solid #eee;border-bottom:1px solid #eee}.gift-reaction-items img{object-fit:contain;flex:none}.gift-reaction-items p{margin:0;color:#777;font-size:11px;line-height:1.9}.gift-reaction-items p span{color:#aaa}.gift-reaction-card blockquote{margin:24px 0;padding:0 0 0 15px;border-left:2px solid #ddd;color:#444;font-size:14px;line-height:1.95;white-space:pre-wrap;overflow-wrap:anywhere}.gift-reaction-refund{margin:0 0 19px;color:#999;font-size:10px}.gift-reaction-confirm{width:100%;min-height:41px;padding:10px 18px;border:1px solid #252525;border-radius:9px;background:#252525;color:#fff;font-size:11px;letter-spacing:1px}
+
+/* Memory connections and quiet, persistent follow-ups. */
+.api-connection-switch{display:flex;align-items:center;gap:20px;min-width:0}
+.api-connection-switch button{border:0;background:none;color:#999;font-family:"LXGW WenKai","Iris Kai",serif;font-weight:400;font-size:13px;line-height:1.6;padding:6px 0;white-space:nowrap;border-bottom:1px solid transparent}
+.api-connection-switch button.active{color:#222;border-bottom-color:#222}
+.vector-config-panel .settings-note{line-height:1.8}
+.life-followups{margin:20px 0;border:1px solid #e7e7e7;border-radius:12px;background:#fff;padding:18px;color:#333}
+.life-followups .settings-switch-row{padding:0 0 16px}
+.life-followups summary{cursor:pointer;font-size:13px;line-height:1.8;padding:8px 0}
+.life-followups summary span{color:#999;margin-left:8px}
+.life-followup-list article{padding:16px 0;border-top:1px solid #eee}
+.life-followup-list header{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.life-followup-list strong{font-size:14px;font-weight:500;overflow-wrap:anywhere}
+.life-followup-list small{font-size:11px;color:#888;line-height:1.8}
+.life-followup-list p{font-size:12px;color:#777;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+.life-followup-list form{display:grid;gap:12px;margin:8px 0}
+.life-followup-list label{display:grid;gap:6px;font-size:12px}
+.life-followup-list input{width:100%;box-sizing:border-box;min-width:0;padding:10px;border:1px solid #ddd;border-radius:5px;background:white;color:#333}
+.life-followup-list button{border:1px solid #ddd;background:#fff;color:#555;border-radius:5px;font-size:12px;padding:7px 12px;margin-top:8px}
+@media(max-width:380px){.api-connection-switch{gap:12px}.api-connection-switch button{font-size:12px}.api-add-config{padding:6px!important;font-size:11px!important}}
+
+/* Together listening: the shared player and library. */
+#featureScreen .feature-page-topbar:has(.music-feature-brand){overflow:visible}
+.music-feature-brand{overflow:visible}
+.music-feature-brand .feature-page-wordmark{display:block;padding:0 5px;font-family:"Great Vibes",cursive;font-style:normal;font-weight:400;line-height:1;transform:translateY(3px);overflow:visible}
+.music-feature-brand .music-page-subtitle{font-family:"LXGW WenKai","Iris Kai",serif;font-size:12px;font-style:normal;letter-spacing:1px;color:#999}
+#featurePageContent:has(.music-page){padding-bottom:26px}
+.music-page{max-width:540px;margin:0 auto;color:#333;font-size:13px}
+.music-tabs{display:flex;align-items:center;gap:24px;border-bottom:1px solid #eee;margin-bottom:24px}
+.music-tabs button{padding:12px 0;color:#999;font-size:12px;border-bottom:1px solid transparent}
+.music-tabs button.active{border-bottom-color:#333;color:#222}
+.music-tabs button:last-child{margin-left:auto;font-size:11px}.music-tabs small{font-size:10px;margin-left:4px}
+.music-companions{display:flex;justify-content:center;align-items:center;gap:24px;margin:24px 0}
+.music-companions>span{display:grid;justify-items:center;gap:7px}.music-companions .avatar{width:36px;height:36px;border:1px solid #eee;font-size:13px}.music-companions .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.music-companions small{max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:#888}
+.music-companions>i{font-family:"Great Vibes",cursive;font-size:22px;color:#bbb;font-style:normal}
+.music-artwork{width:clamp(150px,48vw,220px);aspect-ratio:1;margin:22px auto;box-shadow:0 12px 32px #0000000b;border:1px solid #e9e9e9;border-radius:4px;overflow:hidden}
+.music-artwork>img,.music-artwork>span{width:100%;height:100%;object-fit:cover;display:grid;place-items:center;background:#f5f5f5}
+.music-cover-placeholder{display:grid;place-items:center;background:#f5f5f5;color:#aaa}.music-cover-placeholder svg{width:65%;height:65%;stroke-width:.55}
+.music-song-title{text-align:center}.music-song-title h2{font-size:19px;font-weight:500;line-height:1.5;overflow-wrap:anywhere;margin:18px 0 4px}.music-song-title p{font-size:11px;color:#888;margin:0}.music-song-title button{font-size:10px;color:#aaa;padding:8px}
+.music-timeline{margin:16px auto 0;max-width:360px}.music-timeline>input{display:block;width:100%;accent-color:#444;height:16px}.music-timeline>div{display:flex;justify-content:space-between;font-size:10px;color:#aaa;font-variant-numeric:tabular-nums}
+.music-player-controls{display:flex;align-items:center;justify-content:center;gap:36px;margin:15px 0}.music-player-controls button{font-size:20px;min-width:44px;min-height:44px;color:#555;font-family:Arial,sans-serif}.music-player-controls [data-music-play]{border:1px solid #e4e4e4;border-radius:50%;width:54px;height:54px;font-size:24px}
+.music-player-options{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:12px auto 20px;max-width:360px;color:#888;font-size:10px}.music-player-options select{max-width:120px;background:#fff;border:0;color:#777;font:inherit;padding:8px 0}.music-player-options label{display:flex;align-items:center;gap:7px}.music-player-options input{max-width:70px;width:16vw;accent-color:#777}
+.music-lyrics{position:relative;max-height:145px;overflow:auto;scrollbar-width:thin;text-align:center;margin:20px 0;padding:8px}.music-lyrics button{display:block;width:100%;font-size:12px;line-height:2.2;padding:3px;color:#aaa;transition:color .2s}.music-lyrics button.active{color:#222}.music-lyrics p{white-space:pre-wrap;color:#777;line-height:2;font-size:12px}
+.music-invite-row{text-align:center;margin:22px 0}.music-invite-row button{border:1px solid #ddd;border-radius:3px;padding:10px 20px;font-size:11px;color:#555}
+.music-discussion{border-top:1px solid #eee;margin-top:28px;padding-top:18px}.music-discussion>header{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#888}.music-discussion>header button{font-size:11px;color:#555;border-bottom:1px solid #ddd;padding:5px 0}
+.music-messages{max-height:280px;overflow:auto;scrollbar-width:thin;margin:14px 0}.music-messages article{padding:12px 14px;margin:8px 0;background:#f7f7f7;border-radius:5px;max-width:92%;width:fit-content}.music-messages article.mine{margin-left:auto;background:#f0f0f0}.music-messages small{font-size:9px;color:#aaa}.music-messages p{font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 0}
+.music-discussion form{display:flex;align-items:center;gap:12px}.music-discussion textarea{font-size:12px;background:#f7f7f7;border-radius:5px;padding:9px 12px;min-height:58px;line-height:1.8}.music-discussion form button{font-size:11px;flex:none;color:#555;padding:10px 4px}
+.music-page button:disabled,.music-dialog button:disabled{opacity:.35;cursor:default}
+.music-library-actions{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.music-library-actions button{font-size:11px;padding:9px 12px;border:1px solid #ddd;border-radius:3px}
+.music-track-list>article{display:flex;align-items:center;border-bottom:1px solid #eee;padding:12px 0;gap:6px}.music-track-list>article.active{background:#fafafa}.music-track-list [data-music-select]{display:flex;align-items:center;flex:1;min-width:0;text-align:left;gap:12px;padding:0}.music-track-list [data-music-select]>img,.music-track-list [data-music-select]>.music-cover-placeholder{width:42px;height:42px;border-radius:3px;object-fit:cover;flex:none}.music-track-list [data-music-select]>span:not(.music-cover-placeholder){display:grid;gap:6px;flex:1;min-width:0}.music-track-list strong{font-size:12px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.music-track-list small{font-size:9px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.music-track-list [data-music-edit]{padding:12px 4px;font-size:18px;color:#888}
+.music-empty{text-align:center;padding:60px 14px;color:#aaa}.music-empty strong{font-size:15px;font-family:"LXGW WenKai","Iris Kai",serif;font-weight:400;color:#777}.music-empty p{font-size:11px;line-height:2}.music-empty button{padding:9px;border-bottom:1px solid #ddd;color:#777;font-size:12px}
+.music-dialog{width:min(440px,calc(100vw - 32px));max-height:80dvh;overflow:auto;border:1px solid #ddd;border-radius:10px;padding:24px;background:#fff;color:#444;box-shadow:0 20px 80px #00000015}.music-dialog::backdrop{background:#0004;backdrop-filter:blur(3px)}
+.music-dialog>header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;border-bottom:1px solid #eee;padding-bottom:14px}.music-dialog h2{font-family:"Great Vibes",cursive;font-style:normal;font-weight:400;font-size:30px;margin:0}.music-dialog header button{font-size:22px;color:#999;padding:5px}.music-dialog form{display:grid;gap:17px}.music-dialog label{display:grid;gap:8px;font-size:11px;color:#888}.music-dialog input:not([type=file]),.music-dialog textarea{border:1px solid #e4e4e4;padding:10px;background:#fff;font:inherit;color:#444;width:100%;box-sizing:border-box;min-width:0;border-radius:3px}.music-dialog textarea{min-height:140px;max-height:none;line-height:1.8;resize:vertical}.music-dialog input[type=file]{max-width:100%;font-size:10px}.music-dialog form>button,.music-dialog>button{padding:10px 13px;border:1px solid #ddd;border-radius:3px;font-size:11px;color:#666}.music-dialog>button{display:block;width:100%;margin:10px 0}.music-dialog p{font-size:11px;line-height:1.9;overflow-wrap:anywhere;white-space:pre-wrap}.music-dialog p small{display:block;color:#aaa;font-size:10px}.music-history>article{padding:12px 0 18px;border-bottom:1px solid #eee}.music-history h3{font-size:14px;font-weight:400}.music-history small{font-size:10px;color:#aaa}.music-history summary{font-size:11px;color:#777;cursor:pointer;margin:12px 0}.music-history button{font-size:10px;color:#777;padding:6px 0;border-bottom:1px solid #ddd}.music-suggestion{border-top:1px solid #e7e7e7;margin-top:12px;padding-top:8px;font-size:10px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;color:#888}.music-suggestion button{font-size:10px;padding:4px 0;color:#555;border-bottom:1px solid #ccc}
+.music-mini-player{flex:none;display:flex;align-items:center;gap:12px;margin:4px 0;padding:8px 12px;border:1px solid #e8e8e8;border-radius:8px;background:#fafafa;min-height:54px}.music-mini-player>button:first-child{display:flex;align-items:center;gap:10px;flex:1;min-width:0;text-align:left;padding:0}.music-mini-player img,.music-mini-player .music-cover-placeholder{width:34px;height:34px;object-fit:cover;flex:none;border-radius:3px}.music-mini-player button>span:not(.music-cover-placeholder){display:grid;gap:5px;min-width:0}.music-mini-player strong{font-size:11px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.music-mini-player small{font-size:9px;color:#999}.music-mini-player>button:last-child{min-width:36px;min-height:36px;font-size:21px;font-family:Arial,sans-serif;color:#555}
+.phone:has(#featureScreen:not([hidden]))>.music-mini-player,.phone:has(#settingsScreen:not([hidden]))>.music-mini-player{display:none}
+@media(max-width:380px){.music-tabs{gap:16px}.music-artwork{width:150px}.music-dialog{padding:20px}.music-player-controls{gap:28px}}
+@media(prefers-reduced-motion:reduce){.music-lyrics button{transition:none}}
+
+/* Music controls share the app's quiet monochrome treatment. */
+.music-page input[type="range"]{display:block;appearance:none;-webkit-appearance:none;height:24px;min-height:24px;padding:0;margin:0;border:0;border-radius:0;box-shadow:none;background:transparent;cursor:pointer;--music-progress:0%}
+.music-page input[type="range"]::-webkit-slider-runnable-track{height:2px;border:0;border-radius:2px;background:linear-gradient(to right,#666 0%,#666 var(--music-progress),#e7e7e7 var(--music-progress),#e7e7e7 100%)}
+.music-page input[type="range"]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:8px;height:8px;margin-top:-3px;border:1px solid #666;border-radius:50%;background:#fff;box-shadow:none}
+.music-page input[type="range"]::-moz-range-track{height:2px;border:0;border-radius:2px;background:#e7e7e7}
+.music-page input[type="range"]::-moz-range-progress{height:2px;border-radius:2px;background:#666}
+.music-page input[type="range"]::-moz-range-thumb{width:6px;height:6px;border:1px solid #666;border-radius:50%;background:#fff;box-shadow:none}
+.music-page input[type="range"]:focus-visible{outline:1px solid #aaa;outline-offset:3px}
+.music-timeline>div{margin-top:1px;font-size:9px;letter-spacing:.5px;color:#aaa}
+.music-player-options{font-size:10px;color:#999}.music-player-options label{gap:10px}.music-player-options input[type="range"]{width:74px;max-width:20vw}
+.music-player-options select{appearance:none;-webkit-appearance:none;border-bottom:1px solid #e8e8e8;border-radius:0;padding:7px 17px 7px 0;background:linear-gradient(45deg,transparent 50%,#999 50%) calc(100% - 5px) 50%/4px 4px no-repeat,linear-gradient(135deg,#999 50%,transparent 50%) calc(100% - 1px) 50%/4px 4px no-repeat;font-size:10px;letter-spacing:.4px}
+.music-invite-row{display:flex;align-items:center;justify-content:center;gap:18px;margin:26px 0}
+.music-invite-row::before,.music-invite-row::after{content:"";height:1px;flex:1;max-width:56px;background:#eee}
+.music-invite-row button{display:inline-flex;align-items:center;justify-content:center;gap:16px;max-width:100%;padding:10px 17px;border:1px solid #e5e5e5;border-radius:999px;background:#fff;color:#555;font-size:11px;font-weight:400;line-height:1.6;letter-spacing:.5px;transition:border-color .18s,background .18s}
+.music-invite-row button>span{min-width:0;overflow-wrap:anywhere}.music-invite-row svg,.music-end-options svg{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
+.music-invite-row button:hover{border-color:#bbb;background:#fafafa}
+.music-dialog{padding:25px 26px;border-color:#e6e6e6;border-radius:8px;box-shadow:0 16px 70px #00000012}
+.music-dialog>header{margin-bottom:23px;padding-bottom:16px}.music-dialog form{gap:22px}.music-dialog label,.music-file-heading{font-size:10px;letter-spacing:.6px;color:#999}
+.music-dialog input:not([type="file"]),.music-dialog textarea{border:0;border-bottom:1px solid #e8e8e8;border-radius:0;background:transparent;padding:10px 0;font-size:12px;line-height:1.8;letter-spacing:.2px;color:#555}
+.music-dialog input:not([type="file"]):focus,.music-dialog textarea:focus{border-bottom-color:#999}
+.music-dialog textarea{padding:11px 12px;border:1px solid #ededed;border-radius:4px;background:#fcfcfc;min-height:152px;font-size:11px;line-height:1.9}
+.music-file-field{display:grid;gap:10px;min-width:0}.music-file-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.music-file-heading button{padding:3px 0;border:0;border-bottom:1px solid #e5e5e5;border-radius:0;background:transparent;color:#aaa;font-size:9px;letter-spacing:.4px}
+.music-dialog .music-file-picker{position:relative;display:flex;align-items:center;gap:13px;min-height:64px;padding:13px 14px;border:1px solid #eaeaea;border-radius:5px;background:#fafafa;cursor:pointer;overflow:hidden}
+.music-dialog .music-file-picker input[type="file"]{position:absolute;inset:0;z-index:1;width:100%;max-width:none;height:100%;margin:0;padding:0;opacity:0;cursor:pointer;font-size:16px}
+.music-file-picker>svg{width:21px;height:21px;flex:none;stroke:#999;stroke-width:1;fill:none}
+.music-file-picker>span{display:grid;gap:5px;flex:1;min-width:0}.music-file-picker strong{font-size:11px;font-weight:400;color:#666;letter-spacing:.4px}
+.music-file-picker small{font-size:9px;color:#aaa;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.5}
+.music-file-picker>.music-file-plus{width:13px;height:13px;color:#aaa}
+.music-file-picker:focus-within{outline:1px solid #aaa;outline-offset:3px}.music-file-picker:hover{border-color:#ccc}
+.music-dialog-actions{display:flex;align-items:center;justify-content:space-between;gap:22px;margin-top:2px;padding-top:19px;border-top:1px solid #eee}
+.music-dialog .music-action-primary{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:38px;padding:10px 19px;border:1px solid #373737;border-radius:3px;background:#373737;color:#fff;font-size:10px;font-weight:400;letter-spacing:.8px;line-height:1.6}
+.music-dialog-actions>.music-action-primary{flex:1}
+.music-dialog .music-action-delete{flex:none;min-height:34px;padding:7px 0;border:0;border-bottom:1px solid #ddd;border-radius:0;background:transparent;color:#999;font-size:10px;letter-spacing:.5px}
+.music-dialog .music-action-delete:hover{color:#444;border-bottom-color:#777}
+.music-dialog .music-end-caption{margin:0 0 20px;color:#999;font-size:11px;letter-spacing:.5px}
+.music-end-options{display:grid;gap:10px}
+.music-end-options>button{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:43px;padding:12px 16px;border:1px solid #e7e7e7;border-radius:3px;background:#fff;color:#666;font-size:11px;letter-spacing:.5px;text-align:left}
+.music-end-options>.music-action-primary{justify-content:space-between;font-size:11px}
+@media(max-width:380px){.music-dialog{padding:22px 20px}.music-dialog-actions{gap:16px}.music-invite-row{gap:12px}.music-invite-row button{padding:9px 14px;gap:12px}}
+@media(prefers-reduced-motion:reduce){.music-invite-row button{transition:none}}
+.music-library-actions{gap:10px}.music-library-actions button{min-height:34px;padding:8px 13px;border-color:#e6e6e6;border-radius:3px;font-size:10px;letter-spacing:.5px;background:#fff;color:#777}.music-library-actions [data-music-import]{border-color:#444;background:#444;color:#fff}
+
+/* Keep the music tabs attached to the header while only their content scrolls. */
+#featureScreen #featurePageContent:has(.music-page){display:flex;flex-direction:column;min-height:0;padding-top:0;padding-bottom:0;margin-top:0;overflow:hidden}
+.music-page{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;height:100%;overflow:hidden}
+.music-tabs{flex:none;margin:0;background:#fff;position:relative;z-index:1}
+.music-page-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding:18px 0 26px}
+.music-lyrics-source{display:block;margin:10px 0;text-align:center;color:#aaa;font-size:9px;letter-spacing:.3px}
+.music-lyrics-source a{color:#999;text-decoration:none;border-bottom:1px solid #e7e7e7}
+.music-song-title [data-music-find-lyrics]{font-size:10px;color:#888;margin-left:8px}
+
+/* Modal titles stay in place; only the contents below them scroll. */
+.music-dialog{padding:0;overflow:hidden}
+.music-dialog[open]{display:flex;flex-direction:column;max-height:80dvh}
+.music-dialog>header{flex:none;gap:18px;margin:0;padding:20px 26px 16px;background:#fff;border-bottom:1px solid #eee}
+.music-dialog>header h2{line-height:1.3;min-width:0}
+.music-dialog-body{flex:1;min-height:0;max-height:calc(80dvh - 78px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding:22px 26px 25px}
+.music-mini-player{gap:8px}
+.music-mini-player>[data-music-mini-play]{min-width:32px;min-height:34px;font-family:Arial,sans-serif;font-size:21px;color:#555}
+.music-mini-player>[data-music-mini-close]{display:grid;place-items:center;flex:none;min-width:28px;min-height:32px;padding:5px;border:0;background:transparent;color:#aaa}
+.music-mini-player>[data-music-mini-close] svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:round}
+.music-mini-player>[data-music-mini-close]:hover{color:#444}
+@media(max-width:380px){.music-dialog{padding:0}.music-dialog>header{padding:18px 20px 14px}.music-dialog-body{padding:20px}}
+
+/* NetEase account, role listening history, and chat song invitations. */
+.music-tabs{gap:clamp(11px,3vw,22px);overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain}
+.music-tabs::-webkit-scrollbar{display:none}
+.music-tabs button{flex:0 0 auto;white-space:nowrap;font-size:11px;letter-spacing:.15px}
+.music-tabs button:last-child{margin-left:auto}
+.music-net-page{max-width:540px;margin:0 auto;color:#333}
+.music-net-profile,.music-role-heading{display:flex;align-items:center;gap:14px;padding:18px 8px 20px;border-bottom:1px solid #eee}
+.music-net-profile>img,.music-net-avatar,.music-role-heading>.avatar{width:48px;height:48px;flex:0 0 48px;border-radius:50%;object-fit:cover}
+.music-net-avatar{display:grid;place-items:center;background:#f1f1f1;color:#555;font-size:21px}
+.music-net-profile>div,.music-role-heading>div{display:grid;gap:5px;min-width:0;flex:1}
+.music-net-profile strong,.music-role-heading strong{font-size:14px;font-weight:500;color:#333}
+.music-net-profile small,.music-role-heading small,.music-net-sync-time{font-size:10px;color:#999;letter-spacing:.3px}
+.music-net-profile button,.music-role-heading>button,.music-net-library-heading button,.music-cloud-playlist-actions button{font-size:10px;color:#777;padding:8px 12px;border:1px solid #e5e5e5;border-radius:2px;background:#fff}
+.music-net-library-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 8px 12px}
+.music-net-library-heading strong{font-size:12px;font-weight:500;letter-spacing:.4px}
+.music-net-sync-time{display:block;padding:0 8px 9px}
+.music-net-playlists{display:grid}
+.music-net-playlists>button,.music-net-playlists article>button:first-child,.music-net-song-list article>button:first-child{display:flex;align-items:center;gap:12px;width:100%;min-width:0;padding:11px 8px;border-bottom:1px solid #f0f0f0;text-align:left}
+.music-net-playlists>button>img,.music-net-playlists article img,.music-cloud-playlist-head img,.music-net-song-list img{width:44px;height:44px;flex:0 0 44px;object-fit:cover;border-radius:3px}
+.music-net-playlists>button>span,.music-net-playlists article>button:first-child>span,.music-net-song-list article>button:first-child>span{display:grid;gap:5px;min-width:0;flex:1}
+.music-net-playlists strong,.music-net-song-list strong{overflow:hidden;color:#444;font-size:12px;font-weight:400;text-overflow:ellipsis;white-space:nowrap}
+.music-net-playlists small,.music-net-song-list small{overflow:hidden;color:#aaa;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+.music-net-playlists i,.music-net-song-list i{color:#aaa;font-size:17px;font-style:normal}
+.music-net-playlists article,.music-net-song-list article{display:flex;align-items:center;gap:8px;border-bottom:1px solid #f0f0f0}
+.music-net-playlists article>button:first-child,.music-net-song-list article>button:first-child{border:0}
+.music-net-playlists article>button:last-child,.music-net-song-list article>button:last-child{flex:0 0 auto;padding:8px;color:#888;font-size:10px}
+.music-net-empty{display:grid;justify-items:center;gap:9px;padding:48px 18px;text-align:center}
+.music-net-empty strong{font-family:"LXGW WenKai","Iris Kai",serif;font-size:14px;font-weight:400;color:#555}
+.music-net-empty p{margin:0;color:#999;font-size:11px;line-height:1.9}
+.music-net-empty .music-action-primary{margin-top:8px}
+.music-net-login{display:grid;justify-items:center;gap:15px;min-height:200px;text-align:center}
+.music-net-intro,.music-net-state{margin:0;color:#777;font-size:11px}
+.music-net-qr{display:grid;place-items:center;width:190px;height:190px;border:1px solid #eee;background:#fff}
+.music-net-qr img{width:176px;height:176px;object-fit:contain}
+.music-net-qr a{color:#444;font-size:11px}
+.music-net-login>small{max-width:270px;color:#aaa;font-size:9px;line-height:1.8}
+.music-net-success{color:#444;font-size:12px}
+.music-cloud-playlist-head{display:flex;align-items:center;gap:14px}
+.music-cloud-playlist-head img{width:62px;height:62px;flex-basis:62px}
+.music-cloud-playlist-head>div{display:grid;gap:8px}
+.music-cloud-playlist-head strong{font-size:13px;font-weight:500}
+.music-cloud-playlist-head small,.music-cloud-playlist-actions{font-size:10px;color:#999}
+.music-cloud-playlist-actions{display:flex;justify-content:flex-end;padding:14px 0;border-bottom:1px solid #eee}
+.music-net-song-list{display:grid;margin-top:6px}
+.music-chat-invite{width:min(310px,100%);overflow:hidden;border:1px solid #e5e5e5;border-radius:6px;background:#fff;color:#444}
+.music-chat-invite-head{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;border-bottom:1px solid #eee;font-size:11px;letter-spacing:.4px}
+.music-chat-invite-head small{color:#999;font-size:9px}
+.music-chat-invite-song{display:flex;align-items:center;gap:11px;padding:13px}
+.music-chat-invite-song img,.music-chat-cover-placeholder{width:46px;height:46px;flex:0 0 46px;object-fit:cover;border-radius:3px}
+.music-chat-cover-placeholder{display:grid;place-items:center;background:#f1f1f1;color:#888}
+.music-chat-invite-song>div{display:grid;gap:5px;min-width:0}
+.music-chat-invite-song strong{overflow:hidden;font-size:12px;font-weight:500;text-overflow:ellipsis;white-space:nowrap}
+.music-chat-invite-song small{overflow:hidden;color:#999;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+.music-chat-invite>p{margin:0;padding:0 13px 12px;color:#777;font-size:11px;line-height:1.7}
+.music-chat-invite-actions{display:flex;gap:8px;padding:10px 13px;border-top:1px solid #eee}
+.music-chat-invite-actions button{flex:1;padding:9px 8px;border:1px solid #e3e3e3;border-radius:2px;color:#666;font-size:10px}
+.music-chat-invite-actions button:first-child{border-color:#3c3c3c;background:#3c3c3c;color:#fff}
+.music-chat-invite-note{display:block;padding:10px 13px;border-top:1px solid #eee;color:#999;font-size:9px}
+.music-lyric-results{margin-top:24px}.music-lyric-results>article{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 0;border-top:1px solid #eee}.music-lyric-results>article>div{display:grid;gap:7px;min-width:0}.music-lyric-results strong{font-size:12px;color:#555;font-weight:400;overflow-wrap:anywhere}.music-lyric-results small{font-size:10px;color:#999;line-height:1.6}.music-lyric-results button{flex:none;padding:6px 0;font-size:10px;letter-spacing:.4px;color:#666;border-bottom:1px solid #ddd}.music-lyric-results p{font-size:11px;color:#999;line-height:1.9}

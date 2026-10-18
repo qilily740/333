@@ -134,7 +134,7 @@ test('ending a call saves the transcript under its original identity and mode', 
   assert.equal(f.context.state.messages['1-1-chat'], undefined);
 });
 
-test('the actual send binding captures once and automatically requests a response', () => {
+test('the send button allows repeated messages without requesting a reply, including while a reply is pending', () => {
   const f = fixture();
   const form = {}, input = { value: '新消息' };
   let captures = 0, replies = 0;
@@ -145,8 +145,126 @@ test('the actual send binding captures once and automatically requests a respons
   vm.runInContext(source.slice(start, end), f.context);
   form.onsubmit({ preventDefault() {} });
   assert.equal(captures, 1);
-  assert.equal(replies, 1);
+  assert.equal(replies, 0);
   assert.equal(f.session.thread.at(-1).text, '新消息');
   assert.equal(f.session.thread.at(-1).cameraFrames[0].data, 'new-frame');
   assert.equal(input.value, '');
+  f.context.replyPending = true;
+  input.value = '还想再补充一句';
+  form.onsubmit({ preventDefault() {} });
+  assert.equal(captures, 2);
+  assert.equal(replies, 0);
+  assert.equal(f.session.thread.at(-1).text, '还想再补充一句');
+});
+
+test('requesting a reply includes all sent messages and preserves messages sent while the request is in flight', async () => {
+  let release;
+  const f = fixture({ respond: () => new Promise(resolve => { release = resolve; }) });
+  f.session.thread.push({ mine: true, text: '补充第一句' });
+  const pending = f.context.requestVideoCallResponse(f.session);
+  assert.equal(f.requests[0].recent.length, 2);
+  assert.equal(f.requests[0].recent[1].content, '补充第一句');
+  const later = { mine: true, text: '请求期间继续说' };
+  f.session.thread.push(later);
+  release({ choices: [{ message: { content: '回应已经发送的前两句' } }] });
+  assert.equal(await pending, true);
+  assert.equal(f.session.thread.length, 4);
+  assert.equal(f.session.thread[2].text, '回应已经发送的前两句');
+  assert.equal(f.session.thread[3], later);
+});
+
+test('receiving an incoming call opening preserves user messages sent during generation', async () => {
+  let release;
+  const f = fixture({ respond: () => new Promise(resolve => { release = resolve; }) });
+  f.context.document = { querySelectorAll: () => [] };
+  f.session.thread.length = 0;
+  const pending = f.context.requestIncomingVideoOpening(f.session);
+  const message = { mine: true, text: '接通时先说一句' };
+  f.session.thread.push(message);
+  release({ choices: [{ message: { content: '角色先说的话' } }] });
+  assert.equal(await pending, true);
+  assert.equal(f.session.thread[0].text, '角色先说的话');
+  assert.equal(f.session.thread[1], message);
+});
+
+test('role hangup saves the final words and caller identity without displaying a control marker', async () => {
+  for (const content of ['我先去忙了，晚点聊。\n[[IRIS_CALL_END]]', '[[IRIS_CALL_END]]']) {
+    const f = fixture({ respond: async () => ({ choices: [{ message: { content } }] }) });
+    let stopped = false;
+    f.context.closeVideoCall = () => { stopped = true; f.context.videoCallActive = false; f.context.videoCallSession = null; };
+    f.context.videoCallDuration = () => '00:03';
+    f.context.save = () => {};
+    f.context.createVideoCallSummary = async () => '通话回顾';
+    vm.runInContext(source.slice(source.indexOf('async function finishVideoCall('), source.indexOf('let finishReflectionRead', source.indexOf('async function finishVideoCall('))), f.context);
+    assert.equal(await f.context.requestVideoCallResponse(f.session), true);
+    assert.equal(stopped, true);
+    const record = f.context.state.messages['0-0-offline-invite-example'][0];
+    assert.equal(record.endedBy, 'role');
+    assert.equal(record.callStatus, 'ended');
+    assert.ok(record.thread.every(message => !message.text.includes('IRIS_CALL_END')));
+    assert.equal(f.notices.length, 0);
+  }
+});
+
+test('ordinary goodbye text and quoted control text do not accidentally hang up', () => {
+  const f = fixture();
+  assert.equal(f.context.parseVideoCallControl('我先挂了').endCall, false);
+  assert.equal(f.context.parseVideoCallControl('这个 [[IRIS_CALL_END]] 是什么意思？').endCall, false);
+});
+
+test('an incoming call opens with a real video API reply and no fabricated user message in the transcript', async () => {
+  const f = fixture({ offline: false });
+  f.session.thread.length = 0;
+  f.session.incomingMessage = { id: 'incoming-test' };
+  const buttons = [{ disabled: false }, { disabled: false }];
+  f.context.document = { querySelectorAll: () => buttons };
+  assert.equal(await f.context.requestIncomingVideoOpening(f.session), true);
+  assert.equal(f.requests.length, 1);
+  assert.equal(f.requests[0].feature, 'videoCall');
+  assert.match(f.requests[0].recent[0].content, /对方刚接听/);
+  assert.equal(f.session.thread.length, 1);
+  assert.equal(f.session.thread[0].mine, false);
+  assert.equal(f.session.openingPending, false);
+  assert.ok(buttons.every(button => !button.disabled));
+});
+
+test('late incoming opening replies after hangup are discarded and failed openings can be retried', async () => {
+  let release;
+  const f = fixture({ respond: () => new Promise(resolve => { release = resolve; }) });
+  f.context.document = { querySelectorAll: () => [] };
+  f.session.thread.length = 0;
+  const pending = f.context.requestIncomingVideoOpening(f.session);
+  f.context.videoCallActive = false;
+  release({ choices: [{ message: { content: '迟到的开场白' } }] });
+  assert.equal(await pending, false);
+  assert.equal(f.session.thread.length, 0);
+  const g = fixture({ respond: async (_, count) => {
+    if (count === 1) throw Error('API 暂不可用');
+    return { choices: [{ message: { content: '终于接通了' } }] };
+  } });
+  g.context.document = { querySelectorAll: () => [] };
+  g.session.thread.length = 0;
+  assert.equal(await g.context.requestIncomingVideoOpening(g.session), false);
+  assert.equal(g.session.openingPending, false);
+  assert.equal(await g.context.requestIncomingVideoOpening(g.session), true);
+  assert.equal(g.session.thread[0].text, '终于接通了');
+});
+
+test('hanging up an incoming call updates its original event instead of adding a second record', async () => {
+  const f = fixture({ offline: false });
+  const record = { id: 'call-incoming-test', type: 'call-summary', callStatus: 'accepted' };
+  f.session.incomingMessage = record;
+  f.context.state.messages['0-0-chat'] = [record];
+  f.context.closeVideoCall = () => { f.context.videoCallActive = false; f.context.videoCallSession = null; };
+  f.context.videoCallDuration = () => '00:03';
+  f.context.save = () => {};
+  f.context.createVideoCallSummary = async () => '已保存的回顾';
+  f.context.rememberIncomingVideoResult = () => {};
+  f.context.addCallSummaryToMemory = () => {};
+  vm.runInContext(source.slice(source.indexOf('async function finishVideoCall('), source.indexOf('let finishReflectionRead', source.indexOf('async function finishVideoCall('))), f.context);
+  await f.context.finishVideoCall();
+  assert.equal(f.context.state.messages['0-0-chat'].length, 1);
+  assert.equal(f.context.state.messages['0-0-chat'][0], record);
+  assert.equal(record.callStatus, 'ended');
+  assert.equal(record.summary, '已保存的回顾');
 });

@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "iris-music-api",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-18",
+  "workers_dev": true,
+  "kv_namespaces": [
+    {
+      "binding": "MUSIC_STORE",
+      "id": "fc10889f37bf43fbb378e50f386600f0"
+    }
+  ],
+  "vars": {
+    "APP_ORIGIN": "https://iris-public.suri.us.ci"
+  }
+}
