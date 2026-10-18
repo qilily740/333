@@ -3498,8 +3498,8 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .music-song-title .music-current-lyric{display:block;min-height:22px;margin:7px auto 0;padding:0 12px;max-width:340px;overflow:hidden;color:#888;font-size:11px;line-height:22px;text-overflow:ellipsis;white-space:nowrap}
 
 /* Stationary player above an independently scrolling listening conversation. */
-.music-page-body:has(.music-player-view){display:block;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:6px 0 0}
-.music-player-view{display:flex;flex-direction:column;flex:none;min-height:100%;container-type:inline-size}
+.music-page-body:has(.music-player-view){display:flex;flex-direction:column;overflow:hidden;padding:6px 0 0}
+.music-player-view{display:flex;flex-direction:column;flex:1;min-height:0;container-type:size}
 .music-player-top{flex:none}
 .music-player-top .music-companions{margin:0 0 4px;gap:18px}
 .music-player-top .music-companions .avatar{width:24px;height:24px}
@@ -3546,12 +3546,12 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .music-arm-pivot{fill:#6c6c6c;stroke:#eee;stroke-width:1}
 .music-turntable.music-artwork>.music-tonearm{width:86px;height:145px;top:-4px;right:-7px;transform-origin:58px 17px;transform:rotate(-22deg)}
 .music-turntable.is-playing>.music-tonearm{transform:rotate(3deg)}
-@media(max-height:520px){.music-player-top .music-turntable{width:119px;margin-top:0;margin-bottom:2px}.music-player-top .music-companions{margin-bottom:0}.music-player-top .music-companions .avatar{width:20px;height:20px}.music-player-top .music-song-title h2{margin-top:2px;font-size:13px}.music-player-top .music-invite-row{margin-top:3px;margin-bottom:5px}.music-player-top .music-player-controls{margin:2px 0}}
-@media(max-height:430px){.music-player-top .music-turntable{width:90px}.music-player-top .music-companions{display:none}.music-player-top .music-song-title>p:not(.music-current-lyric){display:none}.music-player-top .music-invite-row button{padding:5px 13px}.music-player-top .music-current-lyric{min-height:16px;line-height:16px}.music-player-top .music-player-controls [data-music-play]{width:40px;height:40px}.music-player-top .music-player-controls{grid-template-columns:42px 36px 40px 36px 42px}}
+@container(max-height:520px){.music-player-top .music-turntable{width:119px;margin-top:0;margin-bottom:2px}.music-player-top .music-companions{margin-bottom:0}.music-player-top .music-companions .avatar{width:20px;height:20px}.music-player-top .music-song-title h2{margin-top:2px;font-size:13px}.music-player-top .music-invite-row{margin-top:3px;margin-bottom:5px}.music-player-top .music-player-controls{margin:2px 0}}
+@container(max-height:430px){.music-player-top .music-turntable{width:90px}.music-player-top .music-companions{display:none}.music-player-top .music-song-title>p:not(.music-current-lyric){display:none}.music-player-top .music-invite-row button{padding:5px 13px}.music-player-top .music-current-lyric{min-height:16px;line-height:16px}.music-player-top .music-player-controls [data-music-play]{width:40px;height:40px}.music-player-top .music-player-controls{grid-template-columns:42px 36px 40px 36px 42px}}
 /* Land the stylus on the outer grooves, clear of the central cover art. */
 .music-turntable.music-artwork>.music-tonearm{width:54%;height:91%;top:-3%;right:-10%;transform-origin:67.37% 11.87%}
 .music-turntable.is-playing>.music-tonearm{transform:rotate(-5deg)}
-@media(max-height:430px){.music-player-top .music-companions{display:flex;gap:12px}.music-player-top .music-companions .avatar{width:17px;height:17px}.music-player-top .music-companions small{font-size:8px}}
+@container(max-height:430px){.music-player-top .music-companions{display:flex;gap:12px}.music-player-top .music-companions .avatar{width:17px;height:17px}.music-player-top .music-companions small{font-size:8px}}
 
 /* Music's URL-loaded Great Vibes wordmark doubles as contextual back navigation. */
 .music-feature-brand{display:flex;align-items:baseline;gap:12px;min-width:0;max-width:100%}
@@ -3572,8 +3572,8 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .music-player-top .music-companions small{max-width:64px;font-size:10px}
 .music-player-top .music-companions>i{display:none}
 .music-player-top .music-turntable{width:clamp(190px,37cqh,240px);margin:2px auto 8px}
-@media(max-height:520px){.music-player-top .music-turntable{width:180px;margin-bottom:5px}.music-player-top .music-companions .avatar{width:33px;height:33px}.music-player-top .music-companions small{font-size:9px}}
-@media(max-height:430px){.music-player-top .music-turntable{width:155px}.music-player-top .music-companions .avatar{width:30px;height:30px}.music-player-top .music-companions small{font-size:9px}.music-player-top .music-companions{display:flex;gap:0}}
+@container(max-height:520px){.music-player-top .music-turntable{width:180px;margin-bottom:5px}.music-player-top .music-companions .avatar{width:33px;height:33px}.music-player-top .music-companions small{font-size:9px}}
+@container(max-height:430px){.music-player-top .music-turntable{width:155px}.music-player-top .music-companions .avatar{width:30px;height:30px}.music-player-top .music-companions small{font-size:9px}.music-player-top .music-companions{display:flex;gap:0}}
 
 /* Keep the listening companions together above the record. */
 .music-player-top .music-companions{position:static;display:flex;align-items:center;justify-content:center;gap:15px;margin:0 0 7px;padding:0;pointer-events:auto}
@@ -3583,10 +3583,10 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .music-discussion .music-chat-actions [data-music-chat-expand]{display:grid;place-items:center;flex:none;min-width:24px;width:24px;height:30px;padding:3px;border:0;border-radius:0;background:transparent;color:#999}
 .music-chat-actions [data-music-chat-expand] svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
 .music-player-view .music-messages{margin-top:0}
-@media(max-height:430px){.music-player-top .music-companions{gap:13px;margin-bottom:4px}}
+@container(max-height:430px){.music-player-top .music-companions{gap:13px;margin-bottom:4px}}
 
 /* The record page and listening chat occupy separate views. */
-.music-player-view:not(.is-chat-expanded){overflow:visible}
+.music-player-view:not(.is-chat-expanded){overflow:hidden}
 .music-player-view:not(.is-chat-expanded)>.music-player-top{padding:12px 0 var(--app-bottom-gap,calc(20px + env(safe-area-inset-bottom,0px)))}
 .music-player-top .music-companions{gap:24px;margin-bottom:24px}
 .music-player-top .music-companions .avatar{width:56px;height:56px;font-size:20px}
@@ -3600,7 +3600,8 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .music-player-view.is-chat-expanded>.music-discussion>header{margin-bottom:12px}
 .music-page-body:has(.music-player-view.is-chat-expanded){display:flex;overflow:hidden}
 .music-player-view.is-chat-expanded{flex:1;min-height:0;overflow:hidden}
-@media(max-height:430px){.music-player-top .music-companions{gap:20px;margin-bottom:18px}.music-player-top .music-companions .avatar{width:48px;height:48px}.music-player-top .music-companions>i{font-size:28px}}
+#featureScreen:has(.music-player-view.is-chat-expanded)>.feature-page-topbar{display:none}
+@container(max-height:430px){.music-player-top .music-companions{gap:20px;margin-bottom:18px}.music-player-top .music-companions .avatar{width:48px;height:48px}.music-player-top .music-companions>i{font-size:28px}}
 
 /* A quiet record sleeve for invitations sent in chat. */
 .music-chat-invite{width:min(294px,100%);box-sizing:border-box;border:1px solid #e5e5e5;border-radius:9px;background:linear-gradient(145deg,#fff,#fcfcfc);box-shadow:0 5px 17px #00000005;color:#444}
@@ -3645,6 +3646,7 @@ html[data-ios-standalone]{height:var(--app-wallpaper-height,100vh)}
 html[data-ios-standalone] body{position:static;bottom:auto;height:var(--app-wallpaper-height,100vh);background:transparent}
 html[data-ios-standalone] .phone{bottom:auto;height:var(--app-viewport-height,100vh)}
 dialog[open]::backdrop{box-shadow:0 var(--app-safe-bottom,env(safe-area-inset-bottom,0px)) 0 var(--app-safe-bottom,env(safe-area-inset-bottom,0px)) rgb(0 0 0 / .32)}
+body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;pointer-events:none!important}
 
 /* Compact playlist panel: the header stays visible while the contents scroll. */
 .music-dialog.music-playlist-dialog[open]{display:flex!important;flex-direction:column;width:min(400px,calc(100vw - 32px));height:auto;max-height:min(460px,calc(var(--app-viewport-height,100dvh) * .64),calc(var(--app-viewport-height,100dvh) - 32px));top:calc(var(--app-viewport-top,0px) + var(--app-viewport-height,100dvh) / 2);overflow:hidden}
