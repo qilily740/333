@@ -1,14 +1,14 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "iris-music-api",
-  "account_id": "239b16343d6ce79f98421e3e5c21bb3b",
+  "account_id": "55024ce493b1e2e46f4ca0978172aa5b",
   "main": "worker.js",
   "compatibility_date": "2026-10-18",
   "workers_dev": true,
   "kv_namespaces": [
     {
       "binding": "MUSIC_STORE",
-      "id": "c09fda81cf404877939e6ddb89c698a1"
+      "id": "fc10889f37bf43fbb378e50f386600f0"
     }
   ],
   "vars": {

@@ -1,7 +1,7 @@
 /* Iris Music cloud API client. Login tokens stay out of the exportable app state. */
 (()=>{
 'use strict';
-const API=window.IRIS_MUSIC_API||'https://iris-music-api.ideal-machine.workers.dev';
+const API=window.IRIS_MUSIC_API||'https://iris-music-api.weishengrongqing.workers.dev';
 let dbPromise;
 function openDb(){if(dbPromise)return dbPromise;dbPromise=new Promise((resolve,reject)=>{const req=indexedDB.open('iris-music-auth',1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('sessions'))req.result.createObjectStore('sessions')};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||Error('无法打开网易云登录存储'))});dbPromise.catch(()=>dbPromise=null);return dbPromise}
 async function storage(action,userId,value){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction('sessions',action==='get'?'readonly':'readwrite'),store=tx.objectStore('sessions');let result;const req=action==='get'?store.get(userId):action==='put'?store.put(value,userId):store.delete(userId);req.onsuccess=()=>result=req.result;tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(tx.error||Error('网易云登录信息保存失败'));tx.onabort=()=>reject(tx.error||Error('网易云登录信息保存失败'))})}
