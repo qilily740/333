@@ -3612,8 +3612,10 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .music-dialog:not(.music-login-dialog) [data-music-dialog-close]:focus-visible{outline:none;color:#222}
 @media(max-width:380px){.music-dialog:not(.music-login-dialog)[open]{width:calc(100vw - 28px);max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)}.music-dialog:not(.music-login-dialog)>header{padding:14px 18px 11px}.music-dialog:not(.music-login-dialog)>.music-dialog-body{padding:16px 18px 20px}}
 /* Keep the app inside the visible viewport when Safari pans for the keyboard. */
-html,body{height:100dvh;overflow:hidden;overscroll-behavior:none}
-.phone{top:var(--app-viewport-top,0px)}
+html,body{height:calc(100dvh + env(safe-area-inset-bottom,0px));overflow:hidden;overscroll-behavior:none}
+body{top:0;bottom:calc(0px - var(--app-safe-bottom,env(safe-area-inset-bottom,0px)));height:auto}
+.phone{top:var(--app-viewport-top,0px);bottom:var(--app-viewport-bottom,calc(0px - env(safe-area-inset-bottom,0px)))}
+dialog[open]::backdrop{box-shadow:0 var(--app-safe-bottom,env(safe-area-inset-bottom,0px)) 0 var(--app-safe-bottom,env(safe-area-inset-bottom,0px)) rgb(0 0 0 / .32)}
 
 /* Compact playlist panel: the header stays visible while the contents scroll. */
 .music-dialog.music-playlist-dialog[open]{display:flex!important;flex-direction:column;width:min(400px,calc(100vw - 32px));height:auto;max-height:min(460px,calc(var(--app-viewport-height,100dvh) * .64),calc(var(--app-viewport-height,100dvh) - 32px));top:calc(var(--app-viewport-top,0px) + var(--app-viewport-height,100dvh) / 2);overflow:hidden}

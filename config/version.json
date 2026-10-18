@@ -1,5 +1,5 @@
 {
-  "version": "5.3.3",
-  "release": "5.3.3",
-  "notes": "修复所有页面底部留白，铺满屏幕"
+  "version": "5.3.4",
+  "release": "5.3.4",
+  "notes": "修复全局页面与弹窗遮罩未覆盖 Home Indicator 安全区"
 }
