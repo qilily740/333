@@ -120,6 +120,7 @@
  };
  const editPostView=(w,post)=>`<section class="forum-subpage"><form class="forum-compose-form" data-form="edit-post" data-post-id="${esc(post.id)}"><label>内容<textarea name="content" maxlength="5000" rows="7" required>${esc(post.content)}</textarea></label>${collectionPicker(w,post.collectionId)}<label>话题<input name="topics" maxlength="160" value="${esc((post.topics||[]).join(' '))}"></label><button class="forum-primary">保存修改</button></form></section>`;
  const render=()=>{
+  if(!runtime||runtime.isActive?.()===false)return;
   const dataStore=data(),w=world(),content=runtime.content; if(!content)return;
   const pageTitles={'world-add':'增加论坛世界','world-edit':'编辑论坛世界',members:'世界成员',compose:'发布帖子',search:'搜索论坛',bookmarks:'我的收藏',notifications:'通知',profile:'个人主页','profile-edit':'编辑论坛身份',detail:'帖子','edit-post':'编辑帖子',collection:'合集'},feedTitles={recommend:'为你推荐',latest:'最新动态',hot:'正在热议',following:'关注动态'};
   const subtitle=runtime.title?.querySelector('.forum-page-subtitle');if(subtitle){subtitle.textContent=view.page==='feed'?feedTitles[view.filter]||feedTitles.recommend:view.page==='collection'?['合集',Core.ownedCollectionById(w,view.collectionId,personaActor())?.name].filter(Boolean).join(' · '):pageTitles[view.page]||'';subtitle.hidden=false}
@@ -143,7 +144,7 @@
   content.onclick=onClick;content.onchange=onChange;content.onsubmit=onSubmit;content.oninput=onInput;
   if(view.page==='detail'&&view.commentId){content.querySelector(`[data-forum-comment="${CSS.escape(view.commentId)}"]`)?.scrollIntoView({block:'center'});view.commentId=''}
   if(view.page==='notifications'&&w){Core.markRead(w,personaActor());runtime.save()}
-  if(view.page==='feed'&&w&&runtime.apiConfigured&&!w.lastAiAttemptAt&&!(w.posts||[]).length)setTimeout(()=>{if(view.page==='feed'&&!runtime.content.closest('#featureScreen')?.hidden&&!busy.has(`feed:${w.id}`))void generateFeed(w)},0);
+  if(view.page==='feed'&&w&&runtime.apiConfigured&&!w.lastAiAttemptAt&&!(w.posts||[]).length)setTimeout(()=>{if(runtime.isActive?.()!==false&&view.page==='feed'&&!runtime.content.closest('#featureScreen')?.hidden&&!busy.has(`feed:${w.id}`))void generateFeed(w)},0);
  };
  const go=(page,options={})=>{view={...view,page,...options};noticeText='';render()};
  const visibleThread=(w,post)=>({post:{author:Core.authorView(w,post).nickname||post.authorName,content:post.content,topics:post.topics||[],type:post.type,marketShare:post.marketShare?{kind:post.marketShare.kind,name:post.marketShare.name,category:post.marketShare.category,shopName:post.marketShare.shopName,sender:post.marketShare.sender}:null},comments:commentsFor(w,post.id).slice(-18).map(comment=>({author:nameOf(w,comment.actorId),content:comment.content,parentId:comment.parentId,replyTo:comment.replyToActorId}))});
