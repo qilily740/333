@@ -37,6 +37,9 @@
 [data-music-import]|导入本地歌曲|一次选择多首音频，支持浏览器可解码的常见音频格式，单首最多80MB。音频保存在本机浏览器，能读取的MP3歌名、歌手、封面及内嵌歌词会自动填入；不调用模型API。|进入
 [data-music-files]|选择歌曲文件|选中文件后自动验证并导入本地曲库。清除浏览器网站数据也会清除本机歌曲文件。
 [data-music-link]|添加音频直链|填写歌名、歌手和能直接播放的音频地址。保存前会联网验证音频，添加后还会按歌名、歌手和时长自动联网匹配歌词，不调用模型API；普通音乐平台分享页面不是音频直链。|进入
+[data-track-playlist],[data-search-add]|加入歌单|将这首歌曲加入 Iris 自建歌单。点击后选择目标歌单，也可以新建歌单。|进入
+[data-local-choose]|添加歌曲到歌单|将选中的音乐库歌曲加入当前歌单，已加入的歌曲不可重复添加。
+[data-playlist-pick]|选择目标歌单|把当前歌曲加入选中的歌单，已加入时按键不可用。
 [data-music-select]|播放这首歌|选择当前用户曲库中的歌曲并尝试播放。一起听已开始时会为新歌曲留下共同记录，不自动生成角色感想。|进入
 [data-music-current-lyric]|当前歌词|显示当前播放时刻对应的一句同步歌词；点击唱片可以查看完整歌词。没有时间轴时不编造同步位置。
 [data-music-edit]|编辑歌曲资料|从音乐库每首歌曲右侧的三个点进入。修改歌名、歌手、封面或歌词，也可以删除这首歌。资料需要在表单中保存，播放不调用模型。|进入
@@ -630,7 +633,11 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
   if(!result&&element.matches('summary'))result={title:label,description:`展开“${label}”的完整说明和设置。展开后可继续查看内部按键与输入项，再次点击可收起；展开本身不会自动保存或生成内容。`,navigation:true};
   if(!result){const context=pageName(element),submit=element.matches('button')&&element.type==='submit'&&element.form,destructive=/删除|清空|重置|放弃/.test(label);result={title:label,description:destructive?`在${context}执行“${label}”。先核对选中的资料和处理范围，重要内容先备份；确认执行后会实际改变相应数据。`:submit?`按此按键执行${context}表单的对应操作。先核对必填项目与操作对象，执行结果以页面反馈为准。`:/取消|返回|关闭|收起/.test(label)?`收起当前区域或返回上一层，后续操作按目标页面的实际功能进行。`:`在${context}执行“${label}”。先核对页面显示的对象与当前选择，点击后查看页面反馈。`,navigation:element.matches('[role="tab"],summary')}}
   const form=element.form||element.closest('form');
-  if(!result.key)result.key=['context',pageName(element),form?.id||form?.getAttribute('data-r-form')||form?.getAttribute('data-p-form')||form?.getAttribute('data-form')||'',element.name||'',result.title].join(':');
+  if(!result.key){
+   // Row labels and IDs name the target, not a new kind of control.
+   const actions=element.getAttributeNames().filter(name=>name.startsWith('data-')&&!['data-confirm','data-state','data-index','data-id'].includes(name)).sort();
+   result.key=actions.length?['control-type',...actions.map(name=>/(?:action|tab|mode|type|pane|view)$/.test(name)?name+'='+element.getAttribute(name):name)].join(':'):['context',pageName(element),form?.id||form?.getAttribute('data-r-form')||form?.getAttribute('data-p-form')||form?.getAttribute('data-form')||'',element.name||'',result.title].join(':');
+  }
   const parameter=element.getAttributeNames().find(name=>['data-more-value','data-timezone-country','data-timezone-region','data-timezone-value','data-memory-number','data-memory-toggle','data-offline-setting','data-regex-prop','data-regex-target','data-regex-context','data-regex-display'].includes(name));
   if(parameter)result.key+=':'+parameter+':'+element.getAttribute(parameter);
   if(element.matches('input,textarea,select')&&element.name)result.key+=':field:'+element.name;

@@ -57,6 +57,23 @@ vm.runInNewContext(fs.readFileSync(require.resolve('../scripts/guide-content.js'
 const info = element => context.window.IrisGuideContent.get(element);
 const control = (attribute, value = '') => new Element('button', { [attribute]: value });
 
+test('repeated music actions share one tutorial key despite different songs and labels',()=>{
+ const addA=new Element('button',{'data-track-playlist':'song-a','aria-label':'将第一首加入歌单'});
+ const addB=new Element('button',{'data-track-playlist':'song-b','aria-label':'将第二首加入歌单'});
+ const searchAdd=new Element('button',{'data-search-add':'3','aria-label':'将第三首加入歌单'});
+ assert.equal(info(addA).key,info(addB).key);
+ assert.equal(info(addA).key,info(searchAdd).key);
+ assert.equal(info(control('data-local-choose','a')).key,info(control('data-local-choose','b')).key);
+ assert.notEqual(info(addA).key,info(control('data-music-edit','a')).key);
+});
+
+test('fallback row actions deduplicate by function while distinct operations remain separate',()=>{
+ const a=new Element('button',{'data-example-pick':'a',text:'选择甲'});
+ const b=new Element('button',{'data-example-pick':'b',text:'选择乙'});
+ assert.equal(info(a).key,info(b).key);
+ assert.notEqual(info(control('data-example-action','edit')).key,info(control('data-example-action','delete')).key);
+});
+
 test('reading discussion distinguishes local thought saving from model requests', () => {
   const form = new Element('form', { 'data-r-form': 'discussion' });
   const local = info(new Element('button', { type: 'button', 'data-r-save-thought': 'note-1' }, form));
