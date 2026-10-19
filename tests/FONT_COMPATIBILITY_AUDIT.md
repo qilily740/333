@@ -1,5 +1,13 @@
 # Iris 跨平台字体检查（2026-10-18）
 
+## 2026-10-19：5.5.9 自定义字体作用域修复
+
+- 参考 SillyTavern `release/public/scripts/power-user.js` 的 `applyCustomCSS()` 与 `release/public/style.css`：其用户 CSS 直接注入 style，正文及表单控件引用 `--mainFontFamily`。Iris 仍保留各页面作用域，避免线上、线下与论坛美化互相影响。
+- 已复现 Iris 把 `:root`、`html`、`body` 改写为聊天容器内部的文档根元素选择器，导致字体变量声明及字体应用规则无法匹配。现将这些文档前缀映射到对应页面根容器，兼容 `html body`、`html:root > body` 及后续组件选择器。
+- 修复 `#conversation` 被当成自身后代的作用域错误；选择器列表按括号、属性和引号层级拆分，不再破坏 `:is(.bubble,.offline-prose-body)` 等字体规则。
+- 保留字体导入、字体分片及 Unicode 范围，保留组件和图标自身的 font-family；没有添加全局强制字体规则、诊断入口或清除用户数据。
+- `node --test tests/font-loading.test.cjs`：11/11 通过。没有 Android 真机渲染数据；本次修复确认的自定义 CSS 缺陷，不将其描述为所有 Android 字体差异的唯一根因。
+
 ## 确认的问题与证据
 
 1. `scopeBeautifyCss()` 原来只保留 media/supports/container。自定义 `@font-face` 被删除；`@import` 是分号结束的语句，原解析器却从后续 `{` 开始读取，连同导入后的第一条组件规则一起跳过。字体名存在于 CSS 不代表字体已注册。已用回归测试复现和修复。这是代码缺陷，不能据此断言某台 Android 的唯一根因。

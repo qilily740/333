@@ -1894,7 +1894,7 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='5.5.8';
+const APP_VERSION='5.5.9';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
 window.IRIS_CODE_VERSION=APP_VERSION;
@@ -2843,7 +2843,21 @@ function beautifyCanvasBackgroundRule(tab,image){
 function beautifyBackgroundRule(tab){const image=state.settings.beautifyBackgrounds?.[tab],root=beautifyBackgroundRoots[tab];if(!image||!root)return'';return `${root}{isolation:isolate;background-image:none!important}${root}::before{content:"";position:fixed;inset:0;min-height:var(--app-wallpaper-height,100dvh);z-index:-1;pointer-events:none;background-image:url("${image}")!important;background-position:center!important;background-repeat:no-repeat!important;background-size:cover!important}${root} > :is(.topbar,#conversation,.bottom){background-color:transparent!important;background-image:none!important}${root} > .bottom :is(.dock,.composer,.composer-tools,.quick-features){background-color:transparent!important;background-image:none!important}`+beautifyCanvasBackgroundRule(tab,image)}
 function beautifyBackgroundControlsMarkup(tab){const image=state.settings.beautifyBackgrounds?.[tab]||'',label=tab==='online'?'线上聊天':'线下故事';return `<section class="beautify-background-settings"><div class="beautify-background-copy"><strong>${label}背景</strong><small>${image?'已添加背景图，可以更换或移除':'添加一张背景图，为聊天换一种氛围'}</small></div><input type="file" accept="image/*" data-beautify-background-input hidden><div class="beautify-background-actions"><button type="button" data-beautify-background-pick>${image?'更换图片':'选择图片'}</button><button type="button" data-beautify-background-clear ${image?'':'disabled'}>移除</button></div><div class="beautify-background-preview ${image?'has-image':'is-empty'}">${image?`<img class="beautify-background-thumb" src="${esc(image)}" alt="当前聊天背景预览">`:'<span><i aria-hidden="true">＋</i>选择一张图片作为聊天背景</span>'}</div><small class="beautify-background-hint">图片会压缩后保存在本机，不会上传。</small></section>`}
 async function compressBeautifyImage(file){if(!file?.type?.startsWith('image/'))throw Error('请选择图片文件');if(file.size>24*1024*1024)throw Error('图片太大，请选择 24 MB 以内的图片');const source=URL.createObjectURL(file),image=new Image();try{await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(Error('图片无法读取'));image.src=source});const scale=Math.min(1,1500/Math.max(image.naturalWidth,image.naturalHeight)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));canvas.getContext('2d',{alpha:false}).drawImage(image,0,0,canvas.width,canvas.height);let result=canvas.toDataURL('image/webp',.76);if(!result.startsWith('data:image/webp'))result=canvas.toDataURL('image/jpeg',.76);if(result.length>1900000){const reduced=document.createElement('canvas'),ratio=Math.min(1,1050/Math.max(canvas.width,canvas.height));reduced.width=Math.max(1,Math.round(canvas.width*ratio));reduced.height=Math.max(1,Math.round(canvas.height*ratio));reduced.getContext('2d',{alpha:false}).drawImage(canvas,0,0,reduced.width,reduced.height);result=reduced.toDataURL('image/jpeg',.62)}if(result.length>1900000)throw Error('图片压缩后仍然较大，请换一张小一些的图片');return result}finally{URL.revokeObjectURL(source)}}
-function scopeBeautifySelector(selector,root,tab){const roots=tab==='forum'?[['.forum-app','.forum-app']]:[['.conversation','#conversation'],['.is-offline-story','#conversation.is-offline-story']];for(const [rootClass,target] of roots){if(selector===rootClass)return `${root} ${target}`;if(selector.startsWith(`${rootClass} `)||selector.startsWith(`${rootClass}:`)||selector.startsWith(`${rootClass}.`))return `${root} ${target}${selector.slice(rootClass.length)}`}if(tab!=='forum'){const shell=/^(\.topbar|\.bottom)(?=$|[\s:.#[])/.exec(selector);if(shell)return `${root} > ${shell[1]}${selector.slice(shell[1].length)}`}const containers=tab==='forum'?`${root} `:`${root} :is(.topbar,#conversation,.bottom) `;return `${containers}${selector}`}
+function scopeBeautifySelector(selector,root,tab){
+ // Document-level font rules belong to this page's root, not a nonexistent
+ // html/body/:root descendant inside a chat bubble or toolbar.
+ const documentPrefix=/^(?:(?::root|html(?::root)?|body)(?:\s*>\s*|\s+|$))+/i.exec(selector);
+ if(documentPrefix){selector=selector.slice(documentPrefix[0].length).trim();if(!selector)return root}
+ const roots=tab==='forum'?[['.forum-app','.forum-app']]:[['.conversation','#conversation'],['#conversation','#conversation'],['.is-offline-story','#conversation.is-offline-story']];
+ for(const [rootClass,target] of roots){if(selector===rootClass)return `${root} ${target}`;if(selector.startsWith(`${rootClass} `)||selector.startsWith(`${rootClass}:`)||selector.startsWith(`${rootClass}.`))return `${root} ${target}${selector.slice(rootClass.length)}`}
+ if(tab!=='forum'){const shell=/^(\.topbar|\.bottom)(?=$|[\s:.#[])/.exec(selector);if(shell)return `${root} > ${shell[1]}${selector.slice(shell[1].length)}`}
+ const containers=tab==='forum'?`${root} `:`${root} :is(.topbar,#conversation,.bottom) `;return `${containers}${selector}`;
+}
+function splitBeautifySelectors(head){
+ const selectors=[];let start=0,depth=0,quote='';
+ for(let index=0;index<head.length;index++){const char=head[index];if(char==='\\'){index++;continue}if(quote){if(char===quote)quote='';continue}if(char==='"'||char==="'"){quote=char;continue}if(char==='('||char==='[')depth++;else if(char===')'||char===']')depth--;else if(char===','&&!depth){selectors.push(head.slice(start,index).trim());start=index+1}}
+ selectors.push(head.slice(start).trim());return selectors.filter(Boolean);
+}
 function scopeBeautifyCss(css,root,tab){
  const source=String(css||'').replace(/<\/style/gi,'<\\/style').replace(/\/\*[\s\S]*?\*\//g,''),imports=[];
  const readRules=(text,topLevel=true)=>{let output='',index=0;
@@ -2869,7 +2883,7 @@ function scopeBeautifyCss(css,root,tab){
     else if(/^@(media|supports|container)\b/i.test(head))output+=`${head}{${readRules(body,false)}}`;
     continue;
    }
-   const selectors=head.split(',').map(selector=>selector.trim()).filter(Boolean).map(selector=>scopeBeautifySelector(selector,root,tab)).join(',');
+   const selectors=splitBeautifySelectors(head).map(selector=>scopeBeautifySelector(selector,root,tab)).join(',');
    if(selectors)output+=`${selectors}{${body}}`;
   }
   return output;

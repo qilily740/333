@@ -7,6 +7,29 @@ const source=fs.readFileSync(path.join(__dirname,'../scripts/app.js'),'utf8');
 const context=vm.createContext({});
 vm.runInContext(source.slice(source.indexOf('function scopeBeautifySelector('),source.indexOf('function setBeautifyCss(')),context);
 const root='.phone:has(#conversation:not(.is-offline-story))';
+test('document font variables and body font rules apply to the selected page root',()=>{
+ for(const [tab,pageRoot] of [['online',root],['offline','.phone:has(#conversation.is-offline-story)'],['forum','#featureScreen:has(.forum-app)']]){
+  const css=context.scopeBeautifyCss(':root{--mainFontFamily:"My Font"}html,body{font-family:var(--mainFontFamily)}',pageRoot,tab);
+  assert.ok(css.includes(`${pageRoot}{--mainFontFamily:"My Font"}`));
+  assert.ok(css.includes(`${pageRoot},${pageRoot}{font-family:var(--mainFontFamily)}`));
+  assert.doesNotMatch(css,/\s(?:body|html|:root)(?=[\s{])/);
+ }
+});
+test('document-prefixed component fonts still match real chat and toolbar elements',()=>{
+ const css=context.scopeBeautifyCss('html:root > body .topbar h1{font-family:Heading}body #conversation .bubble{font-family:Body}body textarea{font-family:Body}',root,'online');
+ assert.ok(css.includes(`${root} > .topbar h1{font-family:Heading}`));
+ assert.ok(css.includes(`${root} #conversation .bubble{font-family:Body}`));
+ assert.ok(css.includes(`${root} :is(.topbar,#conversation,.bottom) textarea{font-family:Body}`));
+});
+test('font selector lists preserve commas inside functions and attribute values',()=>{
+ const css=context.scopeBeautifyCss('body :is(.bubble,.offline-prose-body),body [data-name="A,B"]{font-family:"My Font"}',root,'online');
+ assert.ok(css.includes(`${root} :is(.topbar,#conversation,.bottom) :is(.bubble,.offline-prose-body),${root} :is(.topbar,#conversation,.bottom) [data-name="A,B"]{font-family:"My Font"}`));
+});
+test('nested font overrides retain media conditions and independent icon fonts',()=>{
+ const css=context.scopeBeautifyCss('@supports(font-format(woff2)){@media(max-width:480px){body{font-family:Text}.fa{font-family:Icons}}}',root,'online');
+ assert.ok(css.includes(`@supports(font-format(woff2)){@media(max-width:480px){${root}{font-family:Text}${root} :is(.topbar,#conversation,.bottom) .fa{font-family:Icons}}}`));
+ assert.doesNotMatch(css,/\*\s*\{[^}]*font-family/);
+});
 test('font imports survive scoping and do not swallow the first component rule',()=>{
  const css=context.scopeBeautifyCss('@import url("https://fonts.invalid/style.css"); .bubble{font-family:"My Font"}',root,'online');
  assert.ok(css.startsWith('@import url("https://fonts.invalid/style.css");'));
