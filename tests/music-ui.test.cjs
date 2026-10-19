@@ -8,6 +8,10 @@ test('record page scrolls in the page body, while expanded chat keeps its own me
  assert.match(styles, /\.music-chat-page-body>\.music-discussion\{[^}]*padding:12px 0 15px/);
  assert.doesNotMatch(styles, /\.music-player-view:not\(\.is-chat-expanded\)\{overflow-y:auto/);
 });
+test('all songs scroll independently below the fixed music-library controls',()=>{
+ assert.match(styles,/\.music-page-body:has\(\.music-library-page\.is-songs-view\)\{display:flex;flex-direction:column;overflow:hidden\}/);
+ assert.match(styles,/\.music-library-page\.is-songs-view \.music-track-list\{flex:1;min-height:0;overflow-y:auto/);
+});
 const attr=(tag,name)=>{const match=tag.match(new RegExp('(?:\\s|^)'+name+'(?:="([^"]*)")?(?=\\s|>|$)'));return match?match[1]||'':null};
 class Node{
  constructor(tag='div'){this.tag=tag;this.events={};this.attrs={};this.dataset={};this.style={setProperty(name,value){this[name]=value}};this.classList={toggle(){}};this._html='';this.nodes=new Map();this.hidden=false;this.value='';this.scrollHeight=0;this.clientHeight=100;this.scrollTop=0;this.offsetTop=0;this.open=false}
