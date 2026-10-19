@@ -51,10 +51,10 @@
 [data-music-lyric]|同步歌词|有时间轴的歌词随播放自动滚动，高亮当前句；可手动上下滚动，稍后恢复跟随。点击歌词区域返回唱片。纯文字歌词可手动滚动。
 [data-music-queue]|播放列表|打开当前播放列表，查看和选择音乐库内的歌曲；打开列表不会暂停播放，点击歌曲才切歌。|进入
 [data-music-chat-open]|和角色一起聊|从正在听页面进入全屏一起听聊天；返回唱片页面会保留音乐播放和未发送的文字。|进入
-[data-music-invite]|邀请或结束一起听|尚未开始时调用线上聊天API，让当前角色依据人设接受或婉拒。开始后可选择结束陪伴并继续放歌，或同时暂停音乐。|进入
+[data-music-invite]|邀请或结束一起听|尚未开始时调用音乐一起聊接口，让当前角色依据人设接受或婉拒；若未单独绑定接口和模型，则回退使用线上聊天配置。开始后可选择结束陪伴并继续放歌，或同时暂停音乐。|进入
 [data-music-invite-action]|接受或婉拒角色邀请|在 chat 中接受后把歌曲加入曲库并开始一起听；选择暂不后仅更新邀请状态，不播放歌曲。歌曲已由音乐服务核实。|进入
 [data-music-send]|发送消息|只把消息加入一起听聊天，不请求角色回应；可连续发送多条，准备好后再点击回复。
-[data-music-reply]|回复与重 roll|点击“回复”才调用线上聊天 API，让角色根据已发送的多条消息回应。角色回应后显示“重 roll”，点击会重新生成并替换上一条角色回复；失败保留原回复。发送新用户消息后恢复为“回复”。模型不会收到音频文件。
+[data-music-reply]|回复与重 roll|点击“回复”才调用音乐一起聊接口，让角色根据已发送的多条消息回应；若未单独绑定接口和模型，则回退使用线上聊天配置。角色回应后显示“重 roll”，点击会重新生成并替换上一条角色回复；失败保留原回复。发送新用户消息后恢复为“回复”。模型不会收到音频文件。
 [data-music-chat-expand]|全屏聊天|点击输入栏右侧的小图标展开聊天，再次点击图标收起；也可点击顶栏 Music 返回唱片。切换不会暂停歌曲，也不会清空草稿。
 [data-music-retry]|重试一起听回应|重新调用线上聊天API处理刚才失败的邀请或对话；保留之前的消息，不会重复添加用户消息。
 [data-music-suggestion]|同意角色换歌建议|确认后才实际重播、切到下一首或切到角色提出的曲库歌曲，角色建议不会自行改变播放。
@@ -594,7 +594,8 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
   ['[data-p-inspect],[data-p-certify],[data-p-buy],[data-p-sell]','按本地经营规则检查或结算；此按键本身不请求模型生成。费用和资金变化以页面显示为准。'],
   ['[data-forum-action="refresh"],[data-forum-action="interact"],[data-forum-action="invite-roles"],[data-forum-action="send-comment-role-replies"],[data-forum-action="role-new-post"]','会调用论坛模型 API 生成动态或角色互动，需要可用接口及对应世界成员资料。'],
   ['[data-r-annotate],[data-r-reveal],[data-r-letter],[data-r-form="discussion"] button:not([type="button"]),[data-r-form="prediction"] button:not([type="button"])','会调用阅读模型 API 生成角色批注、讨论、猜测或读后信。请先为当前用户绑定共读角色并配置阅读接口。'],
-  ['[data-music-reply],[data-music-invite],[data-music-retry]','角色交流会调用线上聊天API；歌曲音频只在本机播放，不上传给模型。结束一起听不请求API。'],
+  ['[data-music-send]','只把消息加入本机保存的一起听记录，不请求模型；点击“回复”后才让角色生成回应。'],
+  ['[data-music-reply],[data-music-invite],[data-music-retry]','角色交流会调用设置 → API 配置中“音乐一起聊”绑定的接口和模型；未单独绑定时回退使用线上聊天配置。歌曲音频只在本机播放，不上传给模型。结束一起听不请求API。'],
   ['#reply','调用当前模式的聊天或线下故事模型 API；满足记忆整理条件时，还可能自动调用对应的总结接口。'],
   ['[data-call-reply],[data-call-retry]','请求回应或重新生成会调用视频通话模型 API，线上与线下使用同一功能配置。请求附带消息发送时取得的画面；模型不支持图片时会提示并尝试纯文字回应。发送键本身不会调用模型。'],
   ['.sms-reply,[data-sms-retry-blocked]','调用短信模型 API 生成角色短信，需要可用接口和绑定身份。'],

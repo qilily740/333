@@ -124,11 +124,13 @@ test('floating guide covers the redaction button and every panel control', () =>
   assert.match(info(new Element('button', { 'data-redaction-clear': '' }, panel)).description, /重新显示原文/);
 });
 
-test('together listening describes local playback, direct-link validation and actual online-chat API use',()=>{
+test('together listening describes local playback, direct-link validation and music-chat API routing',()=>{
  assert.match(info(control('data-quick','听歌')).description,/一起听|本地歌曲/);
  assert.doesNotMatch(info(control('data-quick','听歌')).description,/待开发/);
  assert.match(info(control('data-music-play')).description,/不调用模型/);
- assert.match(info(control('data-music-ask')).api,/线上聊天API/);
+ assert.match(info(control('data-music-invite')).api,/音乐一起聊.*线上聊天配置/);
+ assert.match(info(control('data-music-reply')).api,/音乐一起聊.*线上聊天配置/);
+ assert.match(info(control('data-music-send')).api,/不请求模型/);
  assert.match(info(control('data-music-remember')).description,/不调用总结/);
  const form=new Element('form',{'data-music-edit-form':''});assert.match(info(new Element('input',{name:'lyrics'},form)).behavior,/保存/);
 });
