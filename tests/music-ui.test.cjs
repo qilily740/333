@@ -1,17 +1,17 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),C=require('../scripts/music-core.js');
 const styles=fs.readFileSync(require.resolve('../style.css'),'utf8');
 test('record page scrolls in the page body, while expanded chat keeps its own message scroller',()=>{
- assert.match(styles, /\.music-page-body:has\(\.music-player-view\)\{display:block;overflow-x:hidden;overflow-y:auto[^}]*touch-action:pan-y/);
- assert.match(styles, /\.music-player-view\{display:flex;flex-direction:column;flex:none;min-height:100%;container-type:inline-size\}/);
- assert.match(styles, /\.music-page-body:has\(\.music-player-view\.is-chat-expanded\)\{display:flex;overflow:hidden\}/);
- assert.match(styles, /\.music-player-view \.music-messages\{[^}]*overflow-y:auto/);
+ assert.match(styles, /\.music-page-body:has\(\.music-player-view\)\{display:flex;flex-direction:column;overflow:hidden/);
+ assert.match(styles, /\.music-player-view\{display:flex;flex-direction:column;flex:1;min-height:0/);
+ assert.match(styles, /\.music-chat-fullscreen\{display:flex;flex:1;flex-direction:column/);
+ assert.match(styles, /\.music-chat-page-body \.music-messages\{[^}]*overflow-y:auto/);
  assert.doesNotMatch(styles, /\.music-player-view:not\(\.is-chat-expanded\)\{overflow-y:auto/);
 });
 const attr=(tag,name)=>{const match=tag.match(new RegExp('(?:\\s|^)'+name+'(?:="([^"]*)")?(?=\\s|>|$)'));return match?match[1]||'':null};
 class Node{
  constructor(tag='div'){this.tag=tag;this.events={};this.attrs={};this.dataset={};this.style={setProperty(name,value){this[name]=value}};this.classList={toggle(){}};this._html='';this.nodes=new Map();this.hidden=false;this.value='';this.scrollHeight=0;this.clientHeight=100;this.scrollTop=0;this.offsetTop=0;this.open=false}
  set innerHTML(value){this._html=value;this.nodes=new Map()}get innerHTML(){return this._html}
- addEventListener(type,fn){this.events[type]=fn}setAttribute(name,value){this.attrs[name]=value}getAttribute(name){return this.attrs[name]??null}hasAttribute(name){return name in this.attrs}removeAttribute(name){delete this.attrs[name]}append(node){this.children||=[];this.children.push(node)}insertBefore(node){this.append(node)}remove(){this.removed=true}focus(){}showModal(){this.open=true}close(){this.open=false;this.events.close?.()}click(){return this.onclick?.({target:this,currentTarget:this})??this.events.click?.({target:this,currentTarget:this})}closest(){return this}
+ addEventListener(type,fn){this.events[type]=fn}setAttribute(name,value){this.attrs[name]=value}getAttribute(name){return this.attrs[name]??null}hasAttribute(name){return name in this.attrs}removeAttribute(name){delete this.attrs[name]}append(node){this.children||=[];this.children.push(node);this._html+=node.serialize()}replaceChildren(...nodes){this.children=nodes;this._html=nodes.map(node=>{const body=node.querySelector('.music-chat-page-body'),bodyMarkup=body?.children?.map(child=>child.serialize()).join('')||'';return node.serialize().replace('<div class="music-chat-page-body"></div>',`<div class="music-chat-page-body">${bodyMarkup}</div>`)}).join('');this.nodes=new Map()}serialize(){const attrs={...this.attrs};if(this.className)attrs.class=this.className;if(this.hidden)attrs.hidden='';else delete attrs.hidden;return `<${this.tag}${Object.entries(attrs).map(([name,value])=>` ${name}="${value}"`).join('')}>${this._html}</${this.tag}>`}insertBefore(node){this.append(node)}remove(){this.removed=true}focus(){}showModal(){this.open=true}close(){this.open=false;this.events.close?.()}click(){return this.onclick?.({target:this,currentTarget:this})??this.events.click?.({target:this,currentTarget:this})}closest(){return this}
  querySelectorAll(selector){const tags=[...this._html.matchAll(/<(button|input|textarea|form|div|section|time|i|span|p)\b[^>]*>/g)];const found=[];for(const match of tags){const tag=match[0],wanted=selector.match(/^\[([^\]=]+)(?:="([^"]*)")?\]$/);let yes=wanted?attr(tag,wanted[1])!==null&&(!wanted[2]||attr(tag,wanted[1])===wanted[2]):selector.startsWith('.')?(attr(tag,'class')||'').split(' ').includes(selector.slice(1)):match[1]===selector;if(!yes)continue;let node=this.nodes.get(match.index);if(!node){node=new Node(match[1]);for(const item of tag.matchAll(/([\w-]+)(?:="([^"]*)")?/g)){node.attrs[item[1]]=item[2]||'';if(item[1].startsWith('data-'))node.dataset[item[1].slice(5).replace(/-([a-z])/g,(_,x)=>x.toUpperCase())]=item[2]||''}node.value=attr(tag,'value')||'';node.disabled=attr(tag,'disabled')!==null;const end=this._html.indexOf('</'+match[1]+'>',match.index);node._html=end>=0?this._html.slice(match.index+tag.length,end):'';if(match[1]==='textarea')node.value=node._html;if(match[1]==='form'){node.elements={};for(const child of node.querySelectorAll('input').concat(node.querySelectorAll('textarea'))){const name=child.getAttribute('name');if(name)node.elements[name]=child}}this.nodes.set(match.index,node)}found.push(node)}return found}
  querySelector(selector){return this.querySelectorAll(selector)[0]||null}
 }
@@ -163,7 +163,7 @@ test('record chat entry opens a separate full chat view and back preserves playb
  assert.equal(f.content.querySelector('.music-discussion').hasAttribute('hidden'),true);
  assert.match(f.content.querySelector('[data-music-chat-open]').innerHTML,/和角色甲一起聊/);
  f.content.querySelector('[data-music-chat-open]').click();
- assert.match(f.content.innerHTML,/music-player-view is-chat-expanded/);
+ assert.match(f.content.innerHTML,/music-chat-fullscreen/);
  assert.equal(f.content.querySelector('.music-discussion').hasAttribute('hidden'),false);
  assert.equal(headers.at(-1).subtitle,'一起听聊天');
  assert.equal(headers.at(-1).backLabel,'返回正在听');
@@ -175,6 +175,12 @@ test('record chat entry opens a separate full chat view and back preserves playb
  assert.equal(f.content.querySelector('[data-music-message]').value,'尚未发送的文字');
  assert.equal(f.audio[0].paused,false);assert.equal(f.audio[0].src,src);
  assert.equal(f.audio.length,1);assert.equal(f.requests.length,0);
+});
+
+test('record chat entry remains available before a role session is bound',async()=>{
+ const f=fixture();await flush();f.select({userId:'user-a',roleId:'',userName:'用户甲',roleName:'角色甲'});f.api.render(f.runtime);await flush();
+ const entry=f.content.querySelector('[data-music-chat-open]');assert.ok(entry);assert.equal(entry.disabled,false);
+ entry.click();assert.match(f.content.innerHTML,/music-chat-fullscreen/);assert.ok(f.content.querySelector('[data-music-message]'));
 });
 
 test('music header tracks categories and lyrics, and its back action preserves audio',async()=>{
