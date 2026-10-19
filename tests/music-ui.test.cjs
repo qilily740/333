@@ -10,6 +10,7 @@ test('record page scrolls in the page body, while expanded chat keeps its own me
 });
 test('all songs scroll independently below the fixed music-library controls',()=>{
  assert.match(styles,/\.music-page-body:has\(\.music-library-page\.is-songs-view\)\{display:flex;flex-direction:column;overflow:hidden\}/);
+ assert.match(styles,/\.music-library-page\.is-songs-view\{[^}]*width:100%/);
  assert.match(styles,/\.music-library-page\.is-songs-view \.music-track-list\{flex:1;min-height:0;overflow-y:auto/);
 });
 const attr=(tag,name)=>{const match=tag.match(new RegExp('(?:\\s|^)'+name+'(?:="([^"]*)")?(?=\\s|>|$)'));return match?match[1]||'':null};

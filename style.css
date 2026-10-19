@@ -3416,7 +3416,7 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 /* One library for saved songs, personal playlists and NetEase collections. */
 .music-library-page{max-width:540px;margin:0 auto;min-width:0;color:#444}
 .music-page-body:has(.music-library-page.is-songs-view){display:flex;flex-direction:column;overflow:hidden}
-.music-library-page.is-songs-view{display:flex;flex:1;flex-direction:column;min-height:0}
+.music-library-page.is-songs-view{display:flex;flex:1;flex-direction:column;width:100%;min-height:0}
 .music-library-page.is-songs-view .music-track-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
 .music-library-account{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:4px 0 20px;border-bottom:1px solid #eee}
 .music-library-account>div{display:flex;align-items:center;gap:11px;min-width:0;flex:1}
