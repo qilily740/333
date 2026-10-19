@@ -199,7 +199,7 @@
 .call-summary-transcript-empty{margin:0;padding:12px 0;color:#aaa;font-size:10px;line-height:1.7}
 
 /* Solid monochrome capsule navigation and separate add action. */
-.bottom:has(#dock:not([hidden])){padding-bottom:15px;flex-shrink:0}
+.bottom:has(#dock:not([hidden])){padding-bottom:max(10px,env(safe-area-inset-bottom,0px));flex-shrink:0}
 #dock{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:430px;margin:0 auto;transform:none}
 #dock{position:relative}
 .dock-feature-menu{right:0;bottom:calc(100% + 10px);left:auto;max-width:100%;align-items:stretch}
@@ -3676,7 +3676,7 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .music-chat-brand{appearance:none;display:flex;align-items:baseline;gap:12px;width:auto;height:38px;min-width:0;margin:0;padding:0;color:#555;text-align:left}
 @media(max-width:480px){.music-chat-page-header{padding-top:var(--app-safe-top,env(safe-area-inset-top));padding-bottom:7px}}
 .music-chat-page-body{display:flex;flex:1;flex-direction:column;min-height:0;padding:0 var(--app-page-gutter);overflow:hidden}
-.music-chat-page-body>.music-discussion{display:flex;flex:1;flex-direction:column;min-height:0;margin:0;padding:12px 0 15px;overflow:hidden;border:0}
+.music-chat-page-body>.music-discussion{display:flex;flex:1;flex-direction:column;min-height:0;margin:0;padding:12px 0 max(10px,env(safe-area-inset-bottom,0px));overflow:hidden;border:0}
 .music-chat-page-body .music-messages{flex:1;min-height:0;max-height:none;margin:0 0 12px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .music-chat-page-body .music-chat-composer{flex:none}
 .music-dialog.music-edit-dialog[open]{max-height:min(70dvh,calc(var(--app-viewport-height,100dvh) - 40px))}
