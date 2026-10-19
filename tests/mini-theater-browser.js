@@ -20,7 +20,7 @@
  };
  try{
   await load('../scripts/mini-theater.js');await load('../scripts/app.js');
-  assert(!currentRoleOfflineData().settings.miniTheaterEnabled,'feature defaults off');
+  assert(!currentRoleOfflineData().settings.miniTheaterEnabled,'explicitly disabled saved setting stays off');
   assert(currentRoleOfflineData().settings.rolePerspective==='third'&&currentRoleOfflineData().settings.userAgency==='takeover'&&currentRoleOfflineData().settings.wordCount===1000&&currentRoleOfflineData().settings.paragraphCountMin===13&&currentRoleOfflineData().settings.paragraphCountMax===18,'new offline settings use requested defaults');
   assert(currentRoleOfflineData().settings.regexRules.some(x=>x.id===IrisMiniTheater.ruleId&&x.enabled&&!x.displayEnabled),'built-in context rule migrated and defaults on');
   assert(currentRoleOfflineData().settings.regexRules.some(x=>x.id==='offline-hide-paragraph-preview'&&x.name==='隐藏段落'&&x.enabled&&x.displayEnabled&&x.find==='/<!--\\s*段落预演[\\s\\S]*?-->\\r?\\n?/g'),'built-in hidden-paragraph regex is present and enabled by default');

@@ -341,7 +341,7 @@ const offlineDraftCotInstruction=`【强制逐段预演与输出顺序｜不得�
 
 </draft>`;
 function offlineDraftInstructionForSettings(settings){return String(settings?.draftCotPrompt||'').trim()||offlineDraftCotInstruction}
-const createOfflineSettings=()=>({rolePerspective:'third',userPerspective:'second',userAgency:'takeover',paragraphRequirement:'alternating',wordCount:1000,paragraphCountMin:13,paragraphCountMax:18,pacing:'free',style:'natural',customStyles:[],stylePromptOverrides:{},customPrompt:'',customPromptEnabled:false,draftCotEnabled:true,draftCotDeleted:false,miniTheaterEnabled:false,miniTheaterDeleted:false,miniTheaterPrompt:'',regexRules:[],prompt:offlineDefaultReplyPrompt,promptTemplates:[],activePromptTemplateId:'',promptVersion:2});
+const createOfflineSettings=()=>({rolePerspective:'third',userPerspective:'second',userAgency:'takeover',paragraphRequirement:'alternating',wordCount:1000,paragraphCountMin:13,paragraphCountMax:18,pacing:'free',style:'natural',customStyles:[],stylePromptOverrides:{},customPrompt:'',customPromptEnabled:false,draftCotEnabled:true,draftCotDeleted:false,miniTheaterEnabled:true,miniTheaterDeleted:false,miniTheaterPrompt:'',regexRules:[],prompt:offlineDefaultReplyPrompt,promptTemplates:[],activePromptTemplateId:'',promptVersion:2});
 function normalizeOfflineSettings(value={}){
  const settings={...createOfflineSettings(),...(value||{})},legacyStyle=String(value?.style||'');
  settings.customStyles=(Array.isArray(value?.customStyles)?value.customStyles:[]).filter(style=>style&&typeof style==='object').map((style,index)=>({id:String(style.id||`custom-style-${index+1}`),name:String(style.name||'未命名文风').slice(0,60),prompt:String(style.prompt||'').slice(0,12000)}));
@@ -354,8 +354,8 @@ function normalizeOfflineSettings(value={}){
  const cotMarker='【段落预演｜内置规则】',legacyCotEnd='所有预演模块只使用 HTML 注释包裹；正文仍按当前输出格式呈现。';
  if(customPrompt.startsWith(cotMarker)){const markerEnd=customPrompt.indexOf(legacyCotEnd);if(markerEnd>=0)customPrompt=customPrompt.slice(markerEnd+legacyCotEnd.length).replace(/^\s+/, '');else if(customPrompt.startsWith(offlineDraftCotInstruction))customPrompt=customPrompt.slice(offlineDraftCotInstruction.length).replace(/^\s+/, '')}
  settings.customPrompt=customPrompt;settings.customPromptName=String(value?.customPromptName||'额外要求').slice(0,60);
- settings.miniTheaterEnabled=Boolean(value?.miniTheaterEnabled);
  settings.miniTheaterDeleted=Boolean(value?.miniTheaterDeleted);
+ settings.miniTheaterEnabled=!settings.miniTheaterDeleted&&Boolean(value?.miniTheaterEnabled??true);
  settings.miniTheaterPrompt=String(value?.miniTheaterPrompt||'').slice(0,24000);if(window.IrisMiniTheater?.upgradePrompt)settings.miniTheaterPrompt=window.IrisMiniTheater.upgradePrompt(settings.miniTheaterPrompt);
  settings.draftCotDeleted=Boolean(value?.draftCotDeleted);
  settings.draftCotEnabled=settings.draftCotDeleted?false:Boolean(value?.draftCotEnabled??true);
@@ -1894,7 +1894,7 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='5.6.10';
+const APP_VERSION='5.6.11';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
 window.IRIS_CODE_VERSION=APP_VERSION;
