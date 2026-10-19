@@ -27,7 +27,8 @@ test('font selector lists preserve commas inside functions and attribute values'
 });
 test('nested font overrides retain media conditions and independent icon fonts',()=>{
  const css=context.scopeBeautifyCss('@supports(font-format(woff2)){@media(max-width:480px){body{font-family:Text}.fa{font-family:Icons}}}',root,'online');
- assert.ok(css.includes(`@supports(font-format(woff2)){@media(max-width:480px){${root}{font-family:Text}${root} :is(.topbar,#conversation,.bottom) .fa{font-family:Icons}}}`));
+ assert.ok(css.startsWith(`\n@supports(font-format(woff2)){@media(max-width:480px){${root}{font-family:Text}`));
+ assert.ok(css.endsWith(`${root} :is(.topbar,#conversation,.bottom) .fa{font-family:Icons}}}`));
  assert.doesNotMatch(css,/\*\s*\{[^}]*font-family/);
 });
 test('font imports survive scoping and do not swallow the first component rule',()=>{
@@ -85,4 +86,43 @@ test('same family, weight and style have no conflicting Unicode coverage',()=>{
  }
  for(const weight of ['300','400','700'])assert.ok(groups.has('LXGW WenKai|'+weight+'|normal'));
  for(const char of '线上线下角色音乐阅读调香一二三ABCabc0123，。！？')assert.ok(groups.get('LXGW WenKai|400|normal').has(char.codePointAt(0)),char);
+});
+
+test('chat preview uses the real shell, production stylesheet and isolated viewport',()=>{
+ const nodes={};
+ const previewContext=vm.createContext({APP_VERSION:'test',chars:[{name:'角色'}],state:{char:0,user:0,users:[{name:'用户'}]},avatar:()=>'<span class="avatar"></span>',esc:value=>String(value),beautifyRoots:{online:root,offline:'.phone:has(#conversation.is-offline-story)'},scopeBeautifyCss:()=>'',beautifyBackgroundRule:()=>'',document:{querySelector(selector){return {cloneNode(){const controls={'#dock':{},'#composer':{},'#messageInput':{removeAttribute(){}}};nodes[selector]=controls;return {querySelector:key=>controls[key],querySelectorAll:()=>[],get outerHTML(){return selector.includes('topbar')?'<header class="topbar" id="real-header"></header>':`<footer class="bottom"><nav id="dock" ${controls['#dock'].hidden?'hidden':''}></nav><form id="composer" ${controls['#composer'].hidden?'hidden':''}></form></footer>`}}}}}}});
+ vm.runInContext(source.slice(source.indexOf('function beautifyChatPreviewMarkup('),source.indexOf('function beautifyTutorialMarkup(')),previewContext);
+ for(const tab of ['online','offline'])for(const mode of ['dock','input']){
+  const html=previewContext.beautifyPreviewDocument(tab,'',mode);
+  assert.ok(html.includes('style.css?v=test'));
+  assert.ok(html.includes('id="real-header"'));
+  assert.equal(nodes['.phone > .bottom']['#dock'].hidden,mode==='input');
+  assert.equal(nodes['.phone > .bottom']['#composer'].hidden,mode!=='input');
+  assert.ok(html.includes('height:100%;margin:0;overflow:hidden'));
+  assert.ok(html.includes('id="conversation"'));
+  assert.equal((html.match(/class="message /g)||[]).length,8);
+  assert.ok(!html.includes('demo-message'));
+ }
+});
+
+test('page font imports reach explicit text components while preserving independent icons',()=>{
+ const css=context.scopeBeautifyCss('@import url("https://fonts.invalid/font.css");:root{--mainFontFamily:"Custom Chinese"}.bubble{font-family:"Separate Font"}',root,'online');
+ assert.ok(css.startsWith('@import'));
+ assert.ok(css.includes(':where(.topbar #chatTitle'));
+ assert.ok(css.includes('#conversation .offline-prose-body'));
+ assert.ok(css.includes('.bottom textarea'));
+ assert.ok(css.includes('font-family:var(--mainFontFamily)'));
+ assert.ok(css.includes(':not(:where(.fa,.fas,.far,.fab'));
+ assert.ok(css.endsWith('.bubble{font-family:"Separate Font"}'));
+ assert.doesNotMatch(css,/font-family:[^}]*!important/);
+});
+test('font propagation stays inside media rules and is absent without an explicit page font',()=>{
+ assert.ok(!context.scopeBeautifyCss('body{color:red}',root,'online').includes(':where('));
+ const css=context.scopeBeautifyCss('@media(max-width:480px){body{font-family:"My; Font"}}',root,'offline');
+ assert.ok(css.startsWith('\n@media(max-width:480px){'));
+ assert.ok(css.endsWith('{font-family:"My; Font"}}'));
+});
+test('family cascade respects important and direct font beats the compatibility variable',()=>{
+ const css=context.scopeBeautifyCss('body{--mainFontFamily:Other;font-family:First !important;font-family:Last}',root,'online');
+ assert.ok(css.endsWith('{font-family:First}'));
 });

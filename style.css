@@ -1344,7 +1344,7 @@ html,body,.phone{touch-action:manipulation}
 
 /* Bundle the Kai font so mobile role names do not depend on installed system fonts. */
 @font-face{font-family:"Iris Kai";src:url("assets/fonts/iris-kai.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
-#chatTitle .chat-character-name,.video-call-brand .chat-character-name{font-family:"LXGW WenKai","Iris Kai","Kaiti SC","STKaiti","KaiTi","楷体-简","楷体",serif!important;font-style:normal;font-weight:400;font-synthesis:none}
+#chatTitle .chat-character-name,.video-call-brand .chat-character-name{font-family:"LXGW WenKai","Iris Kai","Kaiti SC","STKaiti","KaiTi","楷体-简","楷体",serif;font-style:normal;font-weight:400;font-synthesis:none}
 .reflection-theme-group-toggle{gap:18px}
 .reflection-theme-group-toggle i{display:block;flex:1;height:1px;background:#dedede;font-size:0;line-height:0}
 .reflection-theme-group-toggle[aria-expanded="true"] i:after{content:none}
@@ -2122,7 +2122,7 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .forum-world-form{margin-top:8px;border-bottom:1px solid var(--fl)}.forum-world-row{gap:10px;padding:14px 1px;border-color:var(--fl)}.forum-world-row strong{color:#504b46;font-size:11px}.forum-world-row small{color:#a29c96;font-size:9px}.forum-world-row>button:not(:first-child){color:#8e8881;font-size:9px}.forum-world-row.is-current{background:linear-gradient(90deg,#f8f6f3,transparent 80%)}.forum-default-badge{border-color:#e8e2dc;border-radius:12px;background:#f8f6f3;color:#91877d;font-size:8px}.forum-world-row>button.forum-reset-world{color:#958176}
 .forum-member-add{gap:10px;padding:15px 0;border-color:var(--fl)}.forum-member-add h3{color:#605a54;font:400 13px "Songti SC","Noto Serif CJK SC",serif}.forum-member-add form{gap:8px}.forum-member-add form button{padding:7px 12px;border-color:#e7e2dd;border-radius:20px;background:#f2f0ed;color:#615b55;font-size:9px}.forum-member-card{gap:10px;padding:14px 0;border-color:var(--fl)}.forum-member-card>.forum-avatar{width:36px;height:36px}.forum-member-details>strong{color:#504b46;font-size:11px}.forum-member-details>small{color:#9d9791;font-size:9px;line-height:1.6}.forum-member-card>button:last-child{color:#9c958e;font-size:9px}.forum-member-setting{color:#7d766f;font-size:9px}.forum-member-setting select,.forum-role-select,.forum-comment-role-select{border-color:#e7e3de;border-radius:3px;background:#fff;color:#706a63;font-size:9px}.forum-permissions{gap:9px 12px;padding:7px 0}.forum-permissions label,.forum-story-summary{color:#89837d;font-size:9px}.forum-story-summary textarea{padding:9px 10px;border-color:#e9e5e1;border-radius:3px;background:#fff;font-size:10px}
 .forum-post-menu{border-color:#e9e5e1;border-radius:4px;box-shadow:0 8px 22px #40383012}.forum-app :focus-visible{outline-color:#b9b0a6;outline-offset:2px}
-.forum-page-subtitle{color:#888!important;font-family:"LXGW WenKai","Iris Kai","Kaiti SC","STKaiti","KaiTi","楷体-简","楷体",serif!important;font-size:12px!important;font-style:normal!important;font-weight:400!important;font-synthesis:none;letter-spacing:.1px!important;line-height:1.15}
+.forum-page-subtitle{color:#888!important;font-family:"LXGW WenKai","Iris Kai","Kaiti SC","STKaiti","KaiTi","楷体-简","楷体",serif;font-size:12px!important;font-style:normal!important;font-weight:400!important;font-synthesis:none;letter-spacing:.1px!important;line-height:1.15}
 .forum-inline-action{display:block;margin:10px 0 4px auto;padding:5px 0;border-bottom:1px solid #ddd;color:#777;font-size:10px}
 @media(max-width:480px){.forum-world-intro{padding-top:18px}.forum-tools>button,.forum-tools>button:first-child{font-size:8px}.forum-post-actions{gap:17px}.forum-compose-fab{right:27px;bottom:calc(82px + env(safe-area-inset-bottom))}.forum-comment.is-reply{margin-left:min(calc(var(--forum-depth)*10px),40px)}.forum-member-card{flex-wrap:wrap}}
 @media(max-width:360px){.forum-world-switch{gap:6px}.forum-world-switch label{font-size:8px}.forum-world-switch select#forumPersonaSelect{flex-basis:88px;max-width:88px}.forum-tools>button,.forum-tools>button:first-child{font-size:7px}.forum-post-actions{gap:13px}}
@@ -3711,3 +3711,13 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .settings-content.is-offline-settings>.offline-general-settings{margin-inline:calc(0px - var(--app-page-gutter));padding-inline:calc(var(--app-page-gutter) + 1px)}
 .settings-content.is-offline-settings>.offline-records-list{margin-inline:calc(0px - var(--app-page-gutter));padding-inline:calc(var(--app-page-gutter) + 2px)}
 @media(max-width:480px){.settings-content.is-offline-settings>.offline-records-list{padding-inline:calc(var(--app-page-gutter) + 1px)}}
+
+/* Chat previews show the full shell; only their conversation scrolls. */
+.beautify-preview-panel:has([data-beautify-preview-mode]) iframe{width:min(100%,390px);height:560px;max-height:none;margin-inline:auto}
+.beautify-preview-mode{display:flex;align-items:center;gap:8px;color:#777;font-size:12px}
+.beautify-preview-segments{display:inline-flex;gap:3px;padding:3px;border:1px solid #e9e9e9;border-radius:999px;background:#f4f4f4}
+.beautify-preview-segments label{position:relative;cursor:pointer}
+.beautify-preview-segments input{position:absolute;width:1px;height:1px;opacity:0}
+.beautify-preview-segments label>span{display:block;padding:7px 13px;border-radius:999px;color:#999;font-size:11px;line-height:1.3;white-space:nowrap}
+.beautify-preview-segments input:checked+span{background:#fff;color:#444;box-shadow:0 1px 4px #0000000d}
+.beautify-preview-segments input:focus-visible+span{outline:2px solid #979797;outline-offset:2px}
