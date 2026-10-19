@@ -1,6 +1,6 @@
 # Iris 字体资源与许可证
 
-这些文件是项目原来使用的字体，不是替代字体。页面的 font-family、字号、字重、样式及排版规则保持不变。
+这些文件是项目原来使用的字体，不是替代字体。保留原有字体资源、字号、字重、样式及排版规则。5.7.2 在依赖 Snell Roundhand / Apple Chancery 的英文组件中，将原有 Great Vibes 网页字体加入系统花体之后、通用字体之前的后备位置；系统字体仍优先，用户指定的组件字体不被强制覆盖。
 
 - `lxgw-1.522/`：原 `https://fontsapi.zeoseven.com/292/main/result.css` 中的 **LXGW WenKai Regular 1.522**，完整保留 237 个 WOFF2 分片和 Unicode 范围。移除 `local()`，确保各系统优先使用相同文件。许可见 `OFL-LXGW-WenKai-1.522.txt`。
 - `lxgw-legacy/`：原 `lxgw-wenkai-webfont@1.1.0` 的 WenKai Light 300、Bold 700、WenKai Mono Light/Regular/Bold，以及新版 Regular 没有覆盖的旧版字符。所有保留声明对应的分片均已保存；Regular 重叠字符由原本后加载的 1.522 版本负责，消除同字重、同字符的版本冲突。对原声明中超出实际 cmap 的字符范围按文件字形表取交集，空范围不再注册；原字体文件仍完整保留。字体许可见 `OFL-LXGW-Webfont-1.1.0.txt`；CSS 包装代码许可见 `LICENSE-LXGW-Webfont.txt`。

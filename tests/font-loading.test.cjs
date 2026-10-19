@@ -7,6 +7,17 @@ const source=fs.readFileSync(path.join(__dirname,'../scripts/app.js'),'utf8');
 const context=vm.createContext({});
 vm.runInContext(source.slice(source.indexOf('function scopeBeautifySelector('),source.indexOf('function setBeautifyCss(')),context);
 const root='.phone:has(#conversation:not(.is-offline-story))';
+test('system calligraphy declarations provide the hosted English font before generic fallbacks',()=>{
+ const css=fs.readFileSync(path.join(__dirname,'../style.css'),'utf8');
+ const declarations=[...css.matchAll(/font-family\s*:([^;}]+)/g)].map(match=>match[1]).filter(value=>value.includes('"Snell Roundhand"'));
+ assert.ok(declarations.length>20,'cover headings, settings, invitations and character labels');
+ for(const family of declarations){
+  const hosted=family.indexOf('"Great Vibes"');
+  assert.ok(hosted>family.indexOf('"Apple Chancery"'),family);
+  if(family.includes('"URW Chancery L"'))assert.ok(hosted>family.indexOf('"URW Chancery L"'),family);
+  for(const fallback of ['cursive','Georgia','"Songti SC"'])if(family.includes(fallback))assert.ok(hosted<family.indexOf(fallback),family);
+ }
+});
 test('document font variables and body font rules apply to the selected page root',()=>{
  for(const [tab,pageRoot] of [['online',root],['offline','.phone:has(#conversation.is-offline-story)'],['forum','#featureScreen:has(.forum-app)']]){
   const css=context.scopeBeautifyCss(':root{--mainFontFamily:"My Font"}html,body{font-family:var(--mainFontFamily)}',pageRoot,tab);
