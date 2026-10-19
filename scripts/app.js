@@ -1894,7 +1894,7 @@ let offlineExtraSettingsTab='requirements';
 let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
-const APP_VERSION='5.7.3';
+const APP_VERSION='5.7.4';
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;
 window.IRIS_CODE_VERSION=APP_VERSION;
@@ -2655,6 +2655,12 @@ function renderSmsFailureState(roleIndex,userIndex){
  const settings=chars[roleIndex]?.chatSettings;if(!settings?.blocked||!settings.blockedSmsError||hasCompletedBlockedSms(roleIndex,userIndex,Number(settings.blockedAt)||0))return'';
  return `<div class="sms-send-error" role="status"><span><strong>${esc(chars[roleIndex]?.name||'角色')} · 短信未发送</strong><small>${esc(settings.blockedSmsError)}</small></span><button type="button" data-sms-retry-blocked="${roleIndex}" data-sms-retry-user="${userIndex}">${icon('reply')}<span>重试</span></button></div>`;
 }
+function renderSmsUserSwitch(){
+ const users=state.users||[],user=users[state.user],label=user?.nickname||user?.name||'未选择用户',box=document.createElement('div');
+ box.className='sms-user-switch';
+ box.innerHTML=`<button type="button" id="smsUserToggle" aria-label="切换短信用户面具，当前${esc(label)}" title="${esc(label)}" aria-expanded="false" aria-controls="smsUserMenu" ${users.length?'':'disabled'}>${avatar(user||{name:'用户'})}</button><div class="sms-user-menu" id="smsUserMenu" role="menu" aria-label="短信用户面具" hidden><p>选择用户面具</p>${users.map((item,index)=>{const name=item.nickname||item.name||'未命名用户';return `<button type="button" data-sms-user-select="${index}" role="menuitemradio" aria-checked="${index===state.user}" class="${index===state.user?'is-current':''}"><span class="sms-user-option-avatar">${item.avatar?`<img src="${esc(item.avatar)}" alt="">`:esc(name.slice(0,1))}</span><span class="sms-user-option-name">${esc(name)}</span>${index===state.user?'<i aria-hidden="true">当前</i>':''}</button>`}).join('')}</div>`;
+ $('#featurePageTitle').parentElement.append(box);
+}
 function renderSmsInbox(){
  const contacts=smsContacts().sort((a,b)=>{const am=smsThreadMessages(a.roleIndex,a.userIndex),bm=smsThreadMessages(b.roleIndex,b.userIndex);return(Number(bm.at(-1)?.createdAt)||0)-(Number(am.at(-1)?.createdAt)||0)});
  return `<section class="sms-inbox"><p class="feature-page-kicker">MESSAGES</p>${chars.map((character,roleIndex)=>smsUserIndexForRole(roleIndex)===state.user?renderSmsFailureState(roleIndex,state.user):'').join('')}${contacts.length?`<div class="sms-contact-list">${contacts.map(({character,roleIndex,userIndex})=>{const thread=smsThreadMessages(roleIndex,userIndex),last=thread.at(-1),preview=last?`${last.mine?'我：':''}${last.text||''}`:'开始短信对话';return `<button type="button" class="sms-contact-row" data-sms-open="${roleIndex}" data-sms-user="${userIndex}">${avatar(character)}<span class="sms-contact-copy"><strong>${esc(character.name||'未命名角色')}<small>${esc([character.phoneCarrier,character.phoneNumber].filter(Boolean).join(' '))}</small></strong><span>${esc(preview)}</span></span><time>${esc(smsMessageTime(last?.createdAt))}</time>${icon('arrow')}</button>`}).join('')}</div>`:`<div class="sms-empty"><span>${icon('dockSms')}</span><strong>当前用户还没有绑定可短信联系的角色</strong><p>为角色绑定当前用户并开通号码后，对方就会显示在这里。</p></div>`}</section>`
@@ -2776,7 +2782,7 @@ function bindSmsPage(){
  }
  const userToggle=$('#smsUserToggle'),userMenu=$('#smsUserMenu');
  if(userToggle&&userMenu){
-  userToggle.onclick=event=>{event.stopPropagation();userMenu.hidden=!userMenu.hidden;if(!userMenu.hidden){const bounds=userToggle.getBoundingClientRect(),menuMaxHeight=Math.min(window.innerHeight*.55,360);userMenu.style.top=`${Math.max(12,Math.min(bounds.bottom+8,window.innerHeight-menuMaxHeight-12))}px`;userMenu.style.right=`${Math.max(12,window.innerWidth-bounds.right)}px`;setTimeout(()=>{const closeMenu=event=>{if(!userMenu.contains(event.target)&&!userToggle.contains(event.target))userMenu.hidden=true;document.removeEventListener('pointerdown',closeMenu)};document.addEventListener('pointerdown',closeMenu)},0)}};
+  userToggle.onclick=event=>{event.stopPropagation();userMenu.hidden=!userMenu.hidden;userToggle.setAttribute('aria-expanded',String(!userMenu.hidden));if(!userMenu.hidden){const bounds=userToggle.getBoundingClientRect(),menuMaxHeight=Math.min(window.innerHeight*.55,360);userMenu.style.top=`${Math.max(12,Math.min(bounds.bottom+8,window.innerHeight-menuMaxHeight-12))}px`;userMenu.style.right=`${Math.max(12,window.innerWidth-bounds.right)}px`;setTimeout(()=>{const closeMenu=event=>{if(!userMenu.contains(event.target)&&!userToggle.contains(event.target)){userMenu.hidden=true;userToggle.setAttribute('aria-expanded','false')}document.removeEventListener('pointerdown',closeMenu)};document.addEventListener('pointerdown',closeMenu)},0)}};
   userMenu?.querySelectorAll('[data-sms-user-select]').forEach(button=>button.onclick=()=>{const index=Number(button.dataset.smsUserSelect);if(!state.users[index])return;state.user=index;activeSmsThread=null;activeSmsMessageActionIndex=null;smsSelectionThreadKey='';smsSelectedMessageIndices.clear();smsClearMenuOpen=false;save();renderFeaturePage('sms')});
  }
  content.querySelectorAll('[data-sms-retry-blocked]').forEach(button=>button.onclick=()=>{button.disabled=true;resumeBlockedProactiveSms(Number(button.dataset.smsRetryBlocked),Number(button.dataset.smsRetryUser))});
@@ -3034,6 +3040,7 @@ function renderFeaturePage(page){
  else if(page==='reading'){renderReadingFeature(content,title)}
  else if(page==='business'){const book=activeGlobalWorldBook();window.IrisPerfumery.render({state,characters:chars,content,title,esc,save,toast,exchangeRateToCny,isActive:()=>activeFeaturePage==='business'&&!$('#featureScreen').hidden,worldContext:(book?.entries||[]).filter(entry=>entry.enabled!==false).slice(0,12).map(entry=>`${entry.name||''}: ${entry.content||''}`).join('\n').slice(0,1800),request:(prompt,recent=[])=>{const api=apiConfigForFeature('business'),model=apiModelForFeature('business',api);if(!api?.url||!api?.key||!model)throw Error('请先在设置 → API 配置中为经营分配 API');return requestConfiguredChatCompletion(api,model,prompt,recent,'business',true)}})}
  else if(page==='sms'){
+  renderSmsUserSwitch();
   const oldThread=content.querySelector('[data-sms-thread]'),oldBox=oldThread?.querySelector('[data-sms-messages]');
   const sameThread=smsRole&&oldThread?.dataset.smsThread===smsThreadKey(activeSmsThread.roleIndex,activeSmsThread.userIndex);
   const scrollTop=sameThread?oldBox.scrollTop:null,hadMenu=Boolean(oldThread?.querySelector('.sms-message-actions'));
