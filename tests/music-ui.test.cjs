@@ -5,6 +5,7 @@ test('record page scrolls in the page body, while expanded chat keeps its own me
  assert.match(styles, /\.music-player-view\{display:flex;flex-direction:column;flex:1;min-height:0/);
  assert.match(styles, /\.music-chat-fullscreen\{display:flex;flex:1;flex-direction:column/);
  assert.match(styles, /\.music-chat-page-body \.music-messages\{[^}]*overflow-y:auto/);
+ assert.match(styles, /\.music-chat-page-body>\.music-discussion\{[^}]*padding:12px 0 15px/);
  assert.doesNotMatch(styles, /\.music-player-view:not\(\.is-chat-expanded\)\{overflow-y:auto/);
 });
 const attr=(tag,name)=>{const match=tag.match(new RegExp('(?:\\s|^)'+name+'(?:="([^"]*)")?(?=\\s|>|$)'));return match?match[1]||'':null};
