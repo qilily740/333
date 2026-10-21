@@ -746,7 +746,7 @@ body{position:fixed;inset:0}
 .message-type-voice .message-content{max-width:min(82vw,360px)}
 .message-type-transfer .message-content,.message-type-location .message-content{max-width:min(76vw,300px)}
 .message-type-image .message-bubble-line,.message-type-sticker .message-bubble-line{align-items:flex-end}
-.message-image{display:block;width:100%;max-width:100%;padding:0;overflow:hidden;border:1px solid #e8e8e8;border-radius:4px;background:#f4f4f4;line-height:0}
+.message-image{display:block;width:100%;max-width:100%;padding:0;overflow:hidden;border:0;border-radius:4px;background:transparent;box-shadow:none;line-height:0}
 .message-image img{display:block;width:100%;height:auto;max-width:100%;max-height:320px;object-fit:contain}
 .image-description-card{width:min(var(--image-frame-width,240px),62vw);max-width:100%;color:#555}
 .image-description-preview{position:relative;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;width:100%;aspect-ratio:var(--image-ratio,1 / 1);overflow:hidden;padding:10px 12px;background:#f1f1ef;color:#777}
@@ -3728,3 +3728,85 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .api-profile-feature-list{display:grid;gap:13px}
 .api-feature-group h4{margin:0 0 7px;color:#999;font-size:10px;font-weight:400;letter-spacing:.4px}
 .api-feature-group>div{display:grid;gap:6px}
+
+/* Image input edits the API configuration used by online chat. */
+.chat-image-input-preference .settings-switch-row{gap:16px}
+.chat-image-input-preference .settings-switch-row>span{min-width:0;flex:1}
+.chat-image-input-preference .settings-switch-row>i{flex:0 0 34px}
+.chat-image-input-preference .chat-image-input-scope{margin:0;padding:0 0 12px;color:#999;font-size:9px;line-height:1.7}
+.chat-image-input-preference input:focus-visible+i{outline:2px solid #888;outline-offset:4px}
+.chat-image-input-preference input:disabled+i{opacity:.45}
+
+/* Real photos have no bubble; timestamps never take width away from the image. */
+.message-type-image:not(.message-image-description)>.message-content{flex:0 0 auto;width:min(62vw,240px);max-width:calc(100% - 42px)}
+.message-type-image:not(.message-image-description) .message-bubble-line>.message-image{flex:0 0 100%;width:100%;padding:0;border:0;background:transparent;box-shadow:none;border-radius:4px}
+.message-type-image:not(.message-image-description) .message-bubble-line>.message-time{position:absolute;bottom:0;left:calc(100% + 7px);width:max-content;margin:0;white-space:nowrap}
+.message-type-image.mine:not(.message-image-description) .message-bubble-line>.message-time{right:calc(100% + 7px);left:auto}
+.message-image:focus-visible{outline:2px solid #888;outline-offset:3px}
+
+/* Follow-up preferences share the quiet rows in Online / More. */
+.is-online-settings .life-followups{color:#666}
+.life-followups .settings-switch-row{gap:16px}
+.life-followups .settings-switch-row>span{flex:1;min-width:0}
+.life-followups .settings-switch-row small{line-height:1.8}
+.life-followups .settings-switch-row>i{flex:0 0 34px}
+.life-followups .settings-switch-row input:focus-visible+i{outline:2px solid #888;outline-offset:4px}
+.life-followups .life-followup-disclosure{border-top:1px solid #f0f0f0}
+.life-followups .life-followup-disclosure>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 0;list-style:none;font-size:10px;line-height:1.6}
+.life-followups .life-followup-disclosure>summary::-webkit-details-marker{display:none}
+.life-followups .life-followup-disclosure>summary span{margin:0;color:#777}
+.life-followups .life-followup-summary-end{display:flex;align-items:center;gap:10px;flex:none}
+.life-followups .life-followup-summary-end small{font-size:9px;color:#aaa}
+.life-followups .life-followup-summary-end i{font-size:13px;font-style:normal;color:#aaa;transition:transform .18s}
+.life-followup-disclosure[open]>summary .life-followup-summary-end i{transform:rotate(45deg)}
+.life-followups .life-followup-list{margin-top:12px}
+.life-followups .life-followup-list article{padding:12px 0}
+.life-followups .life-followup-list header strong{font-size:11px;line-height:1.7;color:#555}
+.life-followups .life-followup-list header small{flex:none;font-size:8px;padding:2px 6px;border-radius:4px;background:#f4f4f4;color:#999}
+.life-followups .life-followup-list p{margin:8px 0;font-size:10px;line-height:1.8}
+.life-followups .life-followup-list small{font-size:9px}
+.life-followups .life-followup-list summary{font-size:10px}
+.life-followups .life-followup-note{margin:12px 0 0;font-size:8px;line-height:1.7;color:#aaa}
+
+/* A quiet editorial timeline: one node and one card per release. */
+.release-notice-dialog{width:min(420px,calc(100vw - 32px));max-height:min(86dvh,780px);margin:auto;padding:0;overflow:hidden;border:1px solid #e5e5e5;border-radius:22px;background:#fdfdfd;color:#555;box-shadow:0 24px 90px #00000018,0 3px 12px #00000005;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.release-notice-dialog::backdrop{background:#16161630;backdrop-filter:blur(7px)}
+.release-notice-card{display:flex;flex-direction:column;max-height:inherit;padding:25px 27px 0;background:linear-gradient(135deg,#fff,#fcfcfc);box-sizing:border-box}
+.release-notice-card>header,.release-notice-card>footer{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.release-notice-brand{font:34px/1.1 "Great Vibes","Snell Roundhand",cursive;color:#555;letter-spacing:-.5px}
+.release-notice-card>header button{display:grid;place-items:center;flex:none;width:30px;height:30px;border:0;border-radius:50%;background:#f2f2f2;color:#999;font:20px/1 sans-serif;transition:background .18s,color .18s}
+.release-notice-card>header button:hover{background:#eaeaea;color:#555}
+.release-notice-heading{flex-shrink:0;padding:25px 0 26px}
+.release-notice-eyebrow{display:flex;align-items:center;gap:10px}
+.release-notice-eyebrow>span{width:18px;height:1px;background:#bdbdbd}
+.release-notice-eyebrow>small{font:400 8px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:2.2px;color:#999}
+.release-notice-heading h2{margin:12px 0 0;font-family:"Noto Serif SC","Songti SC","STSong",serif;font-size:25px;font-weight:400;line-height:1.4;letter-spacing:4px;color:#4d4d4d}
+.release-timeline{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin:0 -5px 0 -3px;padding:4px 5px 20px 3px;list-style:none;scrollbar-width:thin;scrollbar-color:#ddd transparent}
+.release-timeline-entry{position:relative;padding:0 0 20px 23px}
+.release-timeline-entry:last-child{padding-bottom:0}
+.release-timeline-entry:not(:last-child)::before{position:absolute;top:26px;bottom:-26px;left:4px;width:1px;background:#e3e3e3;content:""}
+.release-timeline-node{position:absolute;top:23px;left:0;width:9px;height:9px;box-sizing:border-box;border:1px solid #c7c7c7;border-radius:50%;background:#fdfdfd;box-shadow:0 0 0 4px #fdfdfd}
+.release-timeline-entry.is-current>.release-timeline-node{border:3px solid #666;background:#fff;box-shadow:0 0 0 4px #fdfdfd,0 0 0 5px #ededed}
+.release-timeline-entry>details{overflow:hidden;border:1px solid #e8e8e8;border-radius:12px;background:#fff;box-shadow:0 3px 10px #00000002}
+.release-timeline-entry.is-current>details{border-color:#e1e1e1;box-shadow:0 4px 15px #00000003}
+.release-timeline-entry>details>summary{padding:17px 17px 15px;cursor:pointer;list-style:none;-webkit-tap-highlight-color:transparent}
+.release-timeline-entry>details>summary::-webkit-details-marker{display:none}
+.release-version-line{display:flex;align-items:center;gap:10px;min-height:22px}
+.release-version-line strong{display:flex;align-items:baseline;gap:3px;font:22px/1.1 Georgia,"Times New Roman",serif;font-variant-numeric:lining-nums;letter-spacing:-.4px;color:#555}
+.release-version-line strong>span{font:italic 12px/1 Georgia,serif;color:#999}
+.release-version-line small{display:flex;align-items:center;gap:4px;margin-top:2px;font-size:8px;color:#999;white-space:nowrap}
+.release-version-line small>span{width:3px;height:3px;border-radius:50%;background:#aaa}
+.release-version-line i{flex:none;width:5px;height:5px;margin:0 2px 0 auto;border-right:1px solid #aaa;border-bottom:1px solid #aaa;transform:rotate(45deg);transition:transform .18s}
+.release-timeline-entry>details[open]>summary .release-version-line i{transform:rotate(225deg)}
+.release-timeline-entry time{display:block;margin-top:9px;font-size:8px;font-variant-numeric:tabular-nums;letter-spacing:1.2px;color:#aaa}
+.release-version-content{margin:0 17px;padding:16px 0 19px;border-top:1px solid #efefef}
+.release-version-content ul{display:grid;gap:13px;margin:0;padding:0;list-style:none}
+.release-version-content li{position:relative;padding-left:11px;font-size:11px;line-height:1.9;overflow-wrap:anywhere;color:#777}
+.release-version-content li::before{position:absolute;left:0;top:10px;width:3px;height:3px;border-radius:50%;background:#c5c5c5;content:""}
+.release-notice-card>footer{margin:0 -27px;padding:17px 27px 20px;border-top:1px solid #ededed;background:#fdfdfd}
+.release-notice-card>footer small{font-size:8px;line-height:1.7;color:#aaa;letter-spacing:.2px}
+.release-notice-card>footer button{display:flex;align-items:center;justify-content:space-between;gap:22px;flex:none;min-width:103px;padding:11px 15px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#666;font-size:10px;box-shadow:0 2px 3px #00000002;transition:border-color .18s,background .18s}
+.release-notice-card>footer button:hover{border-color:#bbb;background:#f7f7f7}
+.release-notice-card>footer button span{font-size:13px;color:#999}
+.release-notice-card button:focus-visible,.release-timeline-entry summary:focus-visible{outline:2px solid #888;outline-offset:-3px}
+@media(max-width:360px){.release-notice-card{padding:22px 20px 0}.release-notice-heading{padding:20px 0}.release-timeline-entry{padding-left:20px}.release-timeline-entry>details>summary{padding:15px 14px}.release-version-content{margin-inline:14px}.release-notice-card>footer{margin-inline:-20px;padding-inline:20px}.release-version-line strong{font-size:20px}}

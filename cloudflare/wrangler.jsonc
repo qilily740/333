@@ -5,6 +5,10 @@
   "main": "worker.js",
   "compatibility_date": "2026-10-18",
   "workers_dev": true,
+  "routes": [
+    { "pattern": "music-api.suri.us.ci", "custom_domain": true }
+  ],
+  "compatibility_flags": ["nodejs_compat"],
   "kv_namespaces": [
     {
       "binding": "MUSIC_STORE",
