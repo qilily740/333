@@ -8,10 +8,12 @@ test('same public version detects a newer resource revision without downgrading'
  for(const [installed,remote,expected] of [['5.7.9-r3','5.7.9-r4',true],['5.7.9-r4','5.7.9-r4',false],['5.7.9-r4','5.7.9-r3',false],['5.7.9-r4','5.7.9-r10',true]]){const c=versionContext(installed);c.remote={version:'5.7.9',release:remote};assert.equal(vm.runInContext('isAppUpdateAvailable(remote)',c),expected)}
  const c=versionContext('5.7.9-r4');c.remote={version:'5.8.0',release:'5.8.0-r1'};assert.equal(vm.runInContext('isAppUpdateAvailable(remote)',c),true);c.remote={version:'5.7.8',release:'5.7.8-r100'};assert.equal(vm.runInContext('isAppUpdateAvailable(remote)',c),false);
 });
-test('release remains 5.7.9 and all resource entry points use revision r4',()=>{
- for(const name of ['../version.json','../config/version.json']){const data=require(name);assert.equal(data.version,'5.7.9');assert.equal(data.release,'5.7.9-r4')}
- assert.match(app,/const APP_VERSION='5\.7\.9'/);assert.match(app,/const APP_RELEASE='5\.7\.9-r4'/);
- for(const file of ['../index.html','../scripts/storage-bootstrap.js']){const text=fs.readFileSync(require.resolve(file),'utf8');assert.match(text,/5\.7\.9-r4/);assert.doesNotMatch(text,/5\.7\.9-r3/)}
+test('release remains 5.7.9 and all resource entry points use the current revision',()=>{
+ const release=require('../version.json').release;
+ for(const name of ['../version.json','../config/version.json']){const data=require(name);assert.equal(data.version,'5.7.9');assert.equal(data.release,release)}
+ assert.match(app,/const APP_VERSION='5\.7\.9'/);assert.ok(app.includes(`const APP_RELEASE='${release}'`));
+ for(const file of ['../index.html','../scripts/storage-bootstrap.js']){const text=fs.readFileSync(require.resolve(file),'utf8');assert.ok(text.includes(release));assert.doesNotMatch(text,/5\.7\.9-r[34]/)}
+
 });
 test('first-message menus clamp below the header when opened and after scrolling',()=>{
  let rowTop=125;const style={top:'',left:'',right:''},row={getBoundingClientRect:()=>({top:rowTop,left:20})};
