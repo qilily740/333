@@ -143,7 +143,7 @@ async function click(dataset) {
   const restored=JSON.parse(JSON.stringify(state));
   assert.equal(C.roleWallet(restored,restored.characters[1].irisMarketId,0).accountNumber,number);
   await click({mWalletToggle:''});
-  wallet.currency='USD';
+  wallet.currency='USD';state.characters[1].currency='USD';
   state.messages={'1-0-chat':[{text:'当前角色线上行动',mine:false}],'1-0-offline':[{text:'当前角色线下行动',mine:false}],'0-0-chat':[{text:'其他角色私人信息'}],'1-1-chat':[{text:'其他面具私人信息'}]};
   const savedMessages=JSON.stringify(state.messages);
   await click({mWalletToggle:''});

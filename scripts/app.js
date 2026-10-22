@@ -1012,7 +1012,7 @@ function bindConversationMedia(container=$('#conversation')){
   const item=messages()[Number(button.dataset.messageIndex)],settings=currentRoleChatSettings(),userIndex=Number.isInteger(settings.userIndex)?settings.userIndex:state.user,user=state.users[userIndex];
   if(!item||item.type!=='transfer'||item.status!=='pending'||button.disabled)return;
   button.disabled=true;
-  try{const action=button.dataset.transferAction==='accept'?'accept':'return',currentIndex=state.users.indexOf(user);if(currentIndex<0)throw Error('面具已删除');let roleSettlement;if(action==='accept'){await applyTransferExchangeRates([item]);if(!item.mine&&item.characterId){const C=window.IrisMarketCore,wallet=C.roleWallet(state,item.characterId,currentIndex,true),known=Number.isSafeInteger(wallet.balanceCents)||Boolean(wallet.historyGeneratedAt)||wallet.ledger.some(row=>row.kind!=='opening'),roleCurrency=known?wallet.currency||'CNY':item.currency||'CNY',sourceCurrency=item.currency||'CNY';let amount;if(roleCurrency===sourceCurrency)amount=Number(item.amount);else{const cnyAmount=sourceCurrency==='CNY'?Number(item.amount):Number(item.cnyAmount);if(!Number.isFinite(cnyAmount))throw Error('汇率暂不可用，转账暂时无法入账');if(roleCurrency==='CNY')amount=cnyAmount;else{const rate=await exchangeRateToCny(roleCurrency);if(!rate?.rate)throw Error('角色钱包汇率暂不可用，转账暂时无法入账');amount=cnyAmount/rate.rate}}roleSettlement={roleCurrency,roleAmountCents:C.cents(amount)}}}window.IrisMarketCore.settleTransfer(state,currentIndex,item,action,roleSettlement);save();render()}catch(error){toast(error.message);button.disabled=false}
+  try{const action=button.dataset.transferAction==='accept'?'accept':'return',currentIndex=state.users.indexOf(user);if(currentIndex<0)throw Error('面具已删除');let roleSettlement;if(action==='accept'){await applyTransferExchangeRates([item]);if(!item.mine&&item.characterId){const C=window.IrisMarketCore,wallet=C.requireRoleWalletCurrency(state,item.characterId,currentIndex,true),roleCurrency=wallet.currency,sourceCurrency=item.currency||'CNY';let amount;if(roleCurrency===sourceCurrency)amount=Number(item.amount);else{const cnyAmount=sourceCurrency==='CNY'?Number(item.amount):Number(item.cnyAmount);if(!Number.isFinite(cnyAmount))throw Error('汇率暂不可用，转账暂时无法入账');if(roleCurrency==='CNY')amount=cnyAmount;else{const rate=await exchangeRateToCny(roleCurrency);if(!rate?.rate)throw Error('角色钱包汇率暂不可用，转账暂时无法入账');amount=cnyAmount/rate.rate}}roleSettlement={roleCurrency,roleAmountCents:C.cents(amount)}}}window.IrisMarketCore.settleTransfer(state,currentIndex,item,action,roleSettlement);save();render()}catch(error){toast(error.message);button.disabled=false}
  });
  container.querySelectorAll('[data-image-preview]').forEach(button=>button.onclick=event=>{if(messageSelectionMode){event.preventDefault();event.stopPropagation();toggleMessageSelection(Number(button.dataset.imagePreview));return}const image=button.querySelector('img');if(!image)return;sheet('Image',image.alt||'聊天图片',`<img class="image-preview-large" src="${esc(image.src)}" alt="${esc(image.alt)}">`,{centered:true})});
  container.querySelectorAll('[data-call-summary]').forEach(button=>button.onclick=()=>{const item=messages().find(message=>message.type==='call-summary'&&message.id===button.dataset.callSummary);if(!item)return;const time=item.createdAt?new Intl.DateTimeFormat('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(item.createdAt)):'';const hasSavedTranscript=Array.isArray(item.thread),transcript=hasSavedTranscript?item.thread:[],lines=transcript.map((line,index)=>{const lineTime=line.createdAt?new Intl.DateTimeFormat('zh-CN',{hour:'2-digit',minute:'2-digit'}).format(new Date(line.createdAt)):'';const speaker=line.mine?(item.userName||'用户'):(item.characterName||'角色');return `<article class="call-summary-transcript-line ${line.mine?'is-user':''}"><header><strong>${esc(speaker)}</strong><time>${esc(lineTime||String(index+1).padStart(2,'0'))}</time></header><p>${renderVideoCallText(line.text||'')}</p></article>`}).join(''),emptyTranscript=hasSavedTranscript?'本次通话没有文字记录。':'旧版本的通话只保存了总结，未保存逐条记录。';sheet('Call Summary',`${esc(item.characterName||'角色')} · ${esc(item.duration||'')} · ${esc(time)}`,`<div class="call-summary-detail"><section class="call-summary-overview"><small>通话总结</small><button type="button" class="summary-expandable call-summary-summary is-summary-collapsed" data-summary-expand aria-expanded="false">${esc(item.summary||'本次通话尚未生成总结。')}</button></section><section class="call-summary-transcript"><header><small>通话记录</small><span>${transcript.length} 条</span></header><div class="call-summary-transcript-list">${lines||`<p class="call-summary-transcript-empty">${emptyTranscript}</p>`}</div><button type="button" class="call-summary-delete" data-call-summary-delete="${esc(item.id)}">删除这条通话记录</button></section></div>`,{centered:true});$('#sheet').querySelector('[data-summary-expand]')?.addEventListener('click',event=>toggleSummaryExpansion(event.currentTarget));$('#sheet').querySelector('[data-call-summary-delete]').onclick=()=>{if(!window.confirm('删除后，这条通话记录会从当前聊天和对应的线上记忆中移除。确定删除吗？'))return;if(!deleteCallSummary(item.id))return;closeSheet();render();toast('通话记录已删除')}});
@@ -1679,36 +1679,8 @@ function sendStructuredMessage(message){const item={mine:true,createdAt:Date.now
 function enabledRoleStickers(roleSettings=currentRoleChatSettings()){
  return(state.emojis?.groups||[]).filter(group=>roleSettings.more?.emojiGroups?.[group.id]!==false).flatMap(group=>(group.items||[]).filter(item=>item.text&&item.url).map((item,index)=>({id:JSON.stringify([group.id,item.id||index]),text:String(item.text).trim(),url:String(item.url)}))).filter(item=>item.text&&item.url);
 }
-const transferCurrencyRules=[
- ['USD',/美国|美利坚|纽约|洛杉矶|旧金山|西雅图|波士顿|芝加哥|United States|\bUSA\b|\bAmerican\b|New York|Los Angeles|San Francisco|Seattle|Boston|Chicago/i],
- ['CAD',/加拿大|多伦多|温哥华|蒙特利尔|Canada|Toronto|Vancouver|Montreal/i],
- ['GBP',/英国|英格兰|苏格兰|威尔士|伦敦|United Kingdom|\bUK\b|England|Scotland|Wales|London/i],
- ['JPY',/日本|东京|大阪|京都|Japan|Tokyo|Osaka|Kyoto/i],
- ['KRW',/韩国|南韩|首尔|釜山|South Korea|Seoul|Busan/i],
- ['HKD',/香港|Hong Kong/i],['TWD',/台湾|台北|Taiwan|Taipei/i],['SGD',/新加坡|Singapore/i],
- ['AUD',/澳大利亚|澳洲|悉尼|墨尔本|Australia|Sydney|Melbourne/i],['NZD',/新西兰|奥克兰|New Zealand|Auckland/i],
- ['CHF',/瑞士|苏黎世|日内瓦|Switzerland|Zurich|Geneva/i],['RUB',/俄罗斯|莫斯科|Russia|Moscow/i],
- ['INR',/印度|孟买|新德里|India|Mumbai|New Delhi/i],['THB',/泰国|曼谷|Thailand|Bangkok/i],
- ['VND',/越南|河内|胡志明市|Vietnam|Hanoi|Ho Chi Minh/i],['MYR',/马来西亚|吉隆坡|Malaysia|Kuala Lumpur/i],
- ['IDR',/印度尼西亚|印尼|雅加达|Indonesia|Jakarta/i],['PHP',/菲律宾|马尼拉|Philippines|Manila/i],
- ['AED',/阿联酋|迪拜|阿布扎比|United Arab Emirates|Dubai|Abu Dhabi/i],['SAR',/沙特|利雅得|Saudi Arabia|Riyadh/i],
- ['MXN',/墨西哥|Mexico/i],['BRL',/巴西|Brazil/i],['TRY',/土耳其|伊斯坦布尔|Turkey|Istanbul/i],
- ['NOK',/挪威|奥斯陆|Norway|Oslo/i],['SEK',/瑞典|斯德哥尔摩|Sweden|Stockholm/i],['DKK',/丹麦|哥本哈根|Denmark|Copenhagen/i],
- ['EUR',/欧元区|欧洲|法国|德国|意大利|西班牙|葡萄牙|荷兰|比利时|奥地利|爱尔兰|芬兰|希腊|法国巴黎|France|Germany|Italy|Spain|Portugal|Netherlands|Belgium|Austria|Ireland|Finland|Greece|Eurozone/i],
- ['CNY',/中国|大陆|北京|上海|广州|深圳|杭州|China|Beijing|Shanghai|Guangzhou|Shenzhen|Hangzhou/i]
-];
 function characterResidence(character){return String(character?.residence||character?.location||character?.country||character?.hometown||'').trim()}
-function characterTransferCurrency(character){
- const explicit=String(character?.currency||character?.currencyCode||'').trim().toUpperCase();if(/^[A-Z]{3}$/.test(explicit))return explicit;
- const matchCurrency=text=>{const matches=transferCurrencyRules.filter(([,pattern])=>pattern.test(String(text||'')));return matches.length===1?matches[0][0]:null};
- // Resolve the current role's explicit residence before inspecting narrative background.
- for(const location of [character?.residence,character?.location,character?.country]){const currency=matchCurrency(location);if(currency)return currency}
- const description=[character?.details,character?.desc].filter(Boolean).join('\n');
- const residence=description.match(/(?:现居(?:地)?|常住(?:地)?|居住(?:地)?|所在地|current\s+(?:residence|location)|residence|location)\s*[:：=]\s*([^\n；;。]+)/i)?.[1];
- const localCurrency=matchCurrency(residence);if(localCurrency)return localCurrency;
- // Conflicting countries in backstory are not a reliable current currency.
- return matchCurrency(description)||matchCurrency(character?.hometown)||'CNY';
-}
+function characterTransferCurrency(character){return window.IrisMarketCore.currencyForRole(character)}
 function currencyPresentation(code){
  try{const formatter=new Intl.NumberFormat('zh-CN',{style:'currency',currency:code}),parts=formatter.formatToParts(1),symbol=parts.find(part=>part.type==='currency')?.value||code,digits=formatter.resolvedOptions().maximumFractionDigits;return{code,symbol,digits}}catch{return{code:'CNY',symbol:'¥',digits:2}}
 }
@@ -1927,7 +1899,7 @@ let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
 const APP_VERSION='5.7.9';
-const APP_RELEASE_NOTES={"date": "2026-10-22", "changes": ["新增「联系作者」。入口：教程悬浮圆形按键 → 联系作者。", "修复角色转账币种识别异常，优先采用当前角色的币种和居住地。", "优化「联系作者」面板：显示剩余次数，修复关闭按钮的异常外框。"]};
+const APP_RELEASE_NOTES={"date": "2026-10-22", "changes": ["新增「联系作者」。入口：教程悬浮圆形按键 → 联系作者。", "统一角色币种识别，修复私人钱包、代付、转账、购物、退款及经营分红的币种校验。", "优化「联系作者」面板：显示剩余次数，修复关闭按钮的异常外框。"]};
 const APP_RELEASE_HISTORY=[{version:APP_VERSION,...APP_RELEASE_NOTES},{version:'5.7.8',...{"date": "2026-10-21", "changes": ["线上聊天第一条消息长按后，操作面板显示在消息下方，避免顶部裁切，保持原有消息间距。", "心声与本轮回复一起准备，提前生成 X、备忘录、GPT 和当前自定义面板，打开即可查看。"]}},{version:'5.7.7',...{"date": "2026-10-21", "changes": ["普通聊天支持照片与表情读图，可在线上设置的“更多”中启用图片输入。", "优化真实图片展示：移除外层气泡，修正连续发消息后尺寸变化；多选时点击图片直接选中。", "修正心声面板打开后缺少内容的问题，生成失败时可查看错误并重试。", "将“事情有后续”移到线上设置的“更多”，整理开关与事项列表。", "新增版本更新提示，同一版本关闭后不再提醒。"]}},{version:'5.7.6',date:'2026-10-21',changes:['普通聊天支持照片与表情读图，可在线上设置的“更多”中启用图片输入。','优化真实图片展示：移除外层气泡，修正连续发消息后尺寸变化；多选时点击图片直接选中。','修正心声面板打开后缺少内容的问题，生成失败时可查看错误并重试。','将“事情有后续”移到线上设置的“更多”，整理开关与事项列表。','新增版本更新提示，同一版本关闭后不再提醒。']}];
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 let INSTALLED_APP_VERSION=APP_VERSION;

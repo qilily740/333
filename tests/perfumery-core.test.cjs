@@ -42,7 +42,7 @@ assert.equal(owner.wallet.balanceCents,initial-300000+81720);
 assert.equal(w.balanceCents,10000+27240);
 const pending=shop.pendingPayouts.find(x=>!x.claimed);assert.equal(pending.amountCents,27240);
 assert.throws(()=>C.claim(state,0,pending.id),/生成/);
-const hw=M.roleWallet(state,helper,0,true);hw.balanceCents=50000;hw.currency='USD';
+const hw=M.roleWallet(state,helper,0,true);hw.balanceCents=50000;hw.currency='USD';state.characters[1].currency='USD';
 assert.throws(()=>C.claim(state,0,pending.id,0),/汇率/);assert.equal(pending.claimed,false);
 C.claim(state,0,pending.id,7.2);assert.equal(hw.balanceCents,50000+Math.round(27240/7.2));
 assert.throws(()=>C.claim(state,0,pending.id,7.2),/已经/);

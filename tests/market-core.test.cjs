@@ -202,7 +202,7 @@ assert.equal(historyWallet.balanceCents,12000);
 assert.equal(historyWallet.accountNumber,savedNumber);
 assert.equal(historyWallet.ledger.length,3);
 // Existing opening-only AI wallets may gain history without changing their balance or card.
-const legacyRoleId='legacy-wallet';
+const legacyRoleId='legacy-wallet';historyState.characters.push({name:'旧钱包角色',irisMarketId:legacyRoleId});
 C.persona(historyState,0).roleWallets[legacyRoleId]={currency:'CNY',balanceCents:50000,generatedAt:1,accountNumber:'9900000000000000',ledger:[{kind:'opening',amountCents:50000}]};
 const upgraded=C.initializeRoleWallet(historyState,0,legacyRoleId,{...metadata,balance:1,transactions:[{kind:'expense',amount:10,description:'早餐',daysAgo:1}]});
 assert.equal(upgraded.balanceCents,50000);
