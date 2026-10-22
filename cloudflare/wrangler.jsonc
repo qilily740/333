@@ -20,7 +20,7 @@
     "APP_ORIGIN": "https://iris-public.suri.us.ci",
     "FEEDBACK_FROM": "Iris <onboarding@resend.dev>",
     "FEEDBACK_ALLOW_LOCAL_PREVIEW": "true",
-    "FEEDBACK_ALLOWED_ORIGINS": "https://qilily740.github.io",
+    "FEEDBACK_ALLOWED_ORIGINS": "https://qilily740.github.io,http://iris-public.suri.us.ci",
     "FEEDBACK_QUOTA_MODE": "estimate",
     "FEEDBACK_QUOTA_BASELINE": "{\"day\":\"2026-10-22\",\"month\":\"2026-10\",\"dailyUsed\":1,\"monthlyUsed\":1}"
   }
