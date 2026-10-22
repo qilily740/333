@@ -973,12 +973,25 @@ function toggleMessageSelection(index){
  if(messageSelectionThreadKey!==key()){selectedMessageIndices.clear();messageSelectionThreadKey=key()}
  messageSelectionMode=true;activeMessageActionIndex=null;if(selectedMessageIndices.has(index))selectedMessageIndices.delete(index);else selectedMessageIndices.add(index);render();
 }
+// Keep action toolbars inside the visible message area, below its header.
+function positionMessageActionMenu(container){
+ const menu=container?.querySelector('.message-action-menu');if(!menu)return;
+ menu.style.top='';menu.style.left='';menu.style.right='';
+ const box=container.getBoundingClientRect(),header=container.closest('.feature-screen')?.querySelector('.feature-page-topbar')||container.closest('.phone')?.querySelector(':scope > .topbar'),headerBottom=header?.getBoundingClientRect().bottom||0;
+ const viewport=window.visualViewport,viewTop=viewport?.offsetTop||0,viewBottom=viewTop+(viewport?.height||window.innerHeight);
+ const top=Math.max(box.top,headerBottom,viewTop)+6,bottom=Math.min(box.bottom,viewBottom)-6,left=Math.max(box.left,0)+6,right=Math.min(box.right,window.innerWidth)-6;
+ if(right<=left||bottom<=top)return;
+ menu.style.maxWidth=`${right-left}px`;
+ const rect=menu.getBoundingClientRect(),anchor=menu.parentElement.getBoundingClientRect();
+ const y=Math.max(top,Math.min(anchor.top-rect.height-8,bottom-rect.height)),x=Math.max(left,Math.min(rect.left,right-rect.width));
+ menu.style.top=`${menu.offsetTop+y-rect.top}px`;menu.style.left=`${menu.offsetLeft+x-rect.left}px`;menu.style.right='auto';
+}
 function bindConversationMedia(container=$('#conversation')){
  IrisMiniTheater.mount(container);
  if(!container.dataset.invitationToggleTracking){container.dataset.invitationToggleTracking='true';container.addEventListener('toggle',event=>{const letter=event.target;if(letter instanceof HTMLDetailsElement&&letter.matches('.role-invitation[data-invitation-id]'))roleInvitationLetterOpen.set(letter.dataset.invitationId,letter.open)},true)}
- if(container===$('#conversation')&&!container.dataset.chatScrollTracking){container.dataset.chatScrollTracking='true';container.addEventListener('scroll',()=>{chatPinnedToBottom=container.scrollHeight-container.clientHeight-container.scrollTop<48},{passive:true});container.addEventListener('load',event=>{if(event.target instanceof HTMLImageElement&&event.target.closest('.message')&&chatPinnedToBottom)requestAnimationFrame(()=>{if(container.isConnected&&chatPinnedToBottom)container.scrollTop=container.scrollHeight})},true)}
+ if(container===$('#conversation')&&!container.dataset.chatScrollTracking){container.dataset.chatScrollTracking='true';container.addEventListener('scroll',()=>{chatPinnedToBottom=container.scrollHeight-container.clientHeight-container.scrollTop<48;positionMessageActionMenu(container)},{passive:true});container.addEventListener('load',event=>{if(event.target instanceof HTMLImageElement&&event.target.closest('.message')&&chatPinnedToBottom)requestAnimationFrame(()=>{if(container.isConnected&&chatPinnedToBottom)container.scrollTop=container.scrollHeight})},true)}
  if(container===$('#conversation')&&!container.dataset.messageActions){
-  container.dataset.messageActions='true';
+  container.dataset.messageActions='true';window.addEventListener('resize',()=>positionMessageActionMenu(container));window.visualViewport?.addEventListener('resize',()=>positionMessageActionMenu(container));
   if(!document.documentElement.dataset.messageActionDismiss){document.documentElement.dataset.messageActionDismiss='true';document.addEventListener('click',event=>{if(activeMessageActionIndex===null)return;const target=event.target instanceof Element?event.target:null;if(target?.closest('.message-action-menu'))return;activeMessageActionIndex=null;render()})}
   const cancelLongPress=()=>{clearTimeout(messageLongPressTimer);messageLongPressTimer=null;messageLongPressStart=null};
   container.addEventListener('pointerdown',event=>{longPressDidTrigger=false;const target=event.target instanceof Element?event.target:null,message=target?.closest('.message[data-message-index],.call-summary-message[data-message-index]'),callSummary=message?.matches('.call-summary-message');if(!message||(!callSummary&&target.closest('button,a,input,textarea,summary,.offline-mini-theater,[contenteditable="true"]'))||(callSummary&&target.closest('.message-action-menu')))return;if(messageSelectionMode)return;cancelLongPress();const index=Number(message.dataset.messageIndex);messageLongPressStart={x:event.clientX,y:event.clientY,index};messageLongPressTimer=setTimeout(()=>{activeMessageActionIndex=index;longPressDidTrigger=true;messageLongPressTimer=null;messageLongPressStart=null;render()},520)});
@@ -1146,7 +1159,7 @@ function updateChatConversation(markup){
  chatRenderedMarkup=markup;chatRenderedKey=conversationKey;
  bindConversationMedia();
  const followLatest=changedConversation||nearBottom||roleInvitationNeedsFollowLatest;roleInvitationNeedsFollowLatest=false;chatPinnedToBottom=followLatest;
- container.scrollTop=followLatest?container.scrollHeight:previousScroll;
+ container.scrollTop=followLatest?container.scrollHeight:previousScroll;positionMessageActionMenu(container);
 }
 function keepLatestChatMessageVisible(duration=0){
  const started=performance.now();
@@ -1899,9 +1912,13 @@ let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
 const APP_VERSION='5.7.9';
+const APP_RELEASE='5.7.9-r4';
 const APP_RELEASE_NOTES={"date": "2026-10-22", "changes": ["新增「联系作者」。入口：教程悬浮圆形按键 → 联系作者。", "统一角色币种识别，修复私人钱包、代付、转账、购物、退款及经营分红的币种校验。"]};
 const APP_RELEASE_HISTORY=[{version:APP_VERSION,...APP_RELEASE_NOTES},{version:'5.7.8',...{"date": "2026-10-21", "changes": ["线上聊天第一条消息长按后，操作面板显示在消息下方，避免顶部裁切，保持原有消息间距。", "心声与本轮回复一起准备，提前生成 X、备忘录、GPT 和当前自定义面板，打开即可查看。"]}},{version:'5.7.7',...{"date": "2026-10-21", "changes": ["普通聊天支持照片与表情读图，可在线上设置的“更多”中启用图片输入。", "优化真实图片展示：移除外层气泡，修正连续发消息后尺寸变化；多选时点击图片直接选中。", "修正心声面板打开后缺少内容的问题，生成失败时可查看错误并重试。", "将“事情有后续”移到线上设置的“更多”，整理开关与事项列表。", "新增版本更新提示，同一版本关闭后不再提醒。"]}},{version:'5.7.6',date:'2026-10-21',changes:['普通聊天支持照片与表情读图，可在线上设置的“更多”中启用图片输入。','优化真实图片展示：移除外层气泡，修正连续发消息后尺寸变化；多选时点击图片直接选中。','修正心声面板打开后缺少内容的问题，生成失败时可查看错误并重试。','将“事情有后续”移到线上设置的“更多”，整理开关与事项列表。','新增版本更新提示，同一版本关闭后不再提醒。']}];
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
+const compareAppReleases=(left,right)=>{const parse=value=>{const match=String(value||'0').match(/^(.*?)(?:-r(\d+))?$/);return{version:match[1],revision:Number(match[2])||0}},a=parse(left),b=parse(right);return compareAppVersions(a.version,b.version)||Math.sign(a.revision-b.revision)};
+const isAppUpdateAvailable=remote=>compareAppVersions(remote.version,APP_VERSION)>0||(compareAppVersions(remote.version,APP_VERSION)===0&&compareAppReleases(remote.release||remote.version,APP_RELEASE)>0);
+window.IRIS_CODE_RELEASE=APP_RELEASE;
 let INSTALLED_APP_VERSION=APP_VERSION;
 window.IRIS_CODE_VERSION=APP_VERSION;
 try{localStorage.setItem('iris-installed-version',APP_VERSION)}catch{}
@@ -3268,7 +3285,7 @@ function refreshSettings(){
  }else if(section==='version'){
   let savedCheck=null;try{savedCheck=JSON.parse(localStorage.getItem('iris-last-version-check')||'null')}catch{}
   if(savedCheck?.version&&compareAppVersions(savedCheck.version,INSTALLED_APP_VERSION)<0)savedCheck=null;
-  const savedAvailable=savedCheck?.version&&compareAppVersions(savedCheck.version,INSTALLED_APP_VERSION)>0;
+  const savedAvailable=savedCheck?.version&&isAppUpdateAvailable(savedCheck);
   content.innerHTML=globalTabs+pageHead+`<div class="settings-page-body version-page"><div class="version-caption"><span>IRIS</span><i></i><small>版本信息</small></div><div class="version-comparison"><div class="version-current"><small>INSTALLED</small><b>${esc(INSTALLED_APP_VERSION)}</b><span>当前版本</span></div><i class="version-divider" aria-hidden="true"></i><div class="version-available" data-version-latest><small>LATEST</small><b data-version-number>${esc(savedCheck?.version||INSTALLED_APP_VERSION)}</b><span>最新版本</span></div></div><p class="version-status ${savedAvailable?'is-update':''}" data-version-status role="status"><i></i><span>${savedCheck?(savedAvailable?`发现新版本${savedCheck.notes?`：${esc(savedCheck.notes)}`:'，可以更新。'}`:'正在查验最新版本…'):'正在查验最新版本…'}</span></p><div class="version-actions ${savedAvailable?'has-update':''}"><button type="button" id="checkVersion"><span class="version-check-icon">${icon('retry')}</span><span>查验版本</span><small>CHECK</small></button><button type="button" id="updateVersion" ${savedAvailable?'':'hidden'}><span>立即更新</span><i>↗</i></button></div></div>`;
   const diagnostics=document.createElement('details');diagnostics.className='version-diagnostics';
   diagnostics.innerHTML='<summary>布局诊断</summary><p>仅收集页面尺寸、运行版本和布局样式，不包含聊天内容、图片或账号数据。</p><button type="button" class="primary" data-copy-layout>复制布局诊断</button><textarea readonly hidden aria-label="布局诊断结果"></textarea>';
@@ -3278,7 +3295,7 @@ function refreshSettings(){
    try{const text=JSON.stringify(window.IrisLayoutDiagnostics.collect(),null,2);output.value=text;output.hidden=false;if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text);toast('布局诊断已复制，可以粘贴发送')}else toast('请长按诊断结果，选择全选并复制')}catch{toast('未能复制，请长按诊断结果手动复制')}
   };
   if(savedCheck){$('#updateVersion').dataset.version=String(savedCheck.version);$('#updateVersion').dataset.release=String(savedCheck.release||savedCheck.version)}
-  $('#checkVersion').onclick=async()=>{const check=$('#checkVersion'),update=$('#updateVersion'),status=$('[data-version-status]'),statusText=status.querySelector('span'),latest=$('[data-version-latest]'),actions=check.parentElement;check.disabled=true;check.querySelector('span:nth-child(2)').textContent='正在查验…';statusText.textContent='正在连接版本信息…';try{const manifestLink=document.querySelector('link[rel="manifest"]'),manifestUrl=new URL(manifestLink?.href||'manifest.webmanifest',location.href),versionUrl=new URL('../version.json',manifestUrl);versionUrl.searchParams.set('_',String(Date.now()));const response=await fetch(versionUrl,{cache:'no-store'});if(!response.ok)throw Error(`请求失败（${response.status}）`);const remote=await response.json();if(!remote.version)throw Error('版本信息格式不正确。');const checked={version:String(remote.version),release:String(remote.release||remote.version),notes:String(remote.notes||'')};try{localStorage.setItem('iris-last-version-check',JSON.stringify(checked))}catch{}$('[data-version-number]').textContent=checked.version;latest.hidden=false;const available=compareAppVersions(checked.version,INSTALLED_APP_VERSION)>0;update.hidden=!available;actions.classList.toggle('has-update',available);status.classList.toggle('is-update',available);update.dataset.version=checked.version;update.dataset.release=checked.release;statusText.textContent=available?`发现新版本${checked.notes?`：${checked.notes}`:'，可以更新。'}`:'当前已是最新版本。'}catch(error){status.classList.remove('is-update');statusText.textContent=`查验失败：${error.message||'请检查网络后重试。'}`}finally{check.disabled=false;check.querySelector('span:nth-child(2)').textContent='查验版本'}};
+  $('#checkVersion').onclick=async()=>{const check=$('#checkVersion'),update=$('#updateVersion'),status=$('[data-version-status]'),statusText=status.querySelector('span'),latest=$('[data-version-latest]'),actions=check.parentElement;check.disabled=true;check.querySelector('span:nth-child(2)').textContent='正在查验…';statusText.textContent='正在连接版本信息…';try{const manifestLink=document.querySelector('link[rel="manifest"]'),manifestUrl=new URL(manifestLink?.href||'manifest.webmanifest',location.href),versionUrl=new URL('../version.json',manifestUrl);versionUrl.searchParams.set('_',String(Date.now()));const response=await fetch(versionUrl,{cache:'no-store'});if(!response.ok)throw Error(`请求失败（${response.status}）`);const remote=await response.json();if(!remote.version)throw Error('版本信息格式不正确。');const checked={version:String(remote.version),release:String(remote.release||remote.version),notes:String(remote.notes||'')};try{localStorage.setItem('iris-last-version-check',JSON.stringify(checked))}catch{}$('[data-version-number]').textContent=checked.version;latest.hidden=false;const available=isAppUpdateAvailable(checked);update.hidden=!available;actions.classList.toggle('has-update',available);status.classList.toggle('is-update',available);update.dataset.version=checked.version;update.dataset.release=checked.release;statusText.textContent=available?`发现新版本${checked.notes?`：${checked.notes}`:'，可以更新。'}`:'当前已是最新版本。'}catch(error){status.classList.remove('is-update');statusText.textContent=`查验失败：${error.message||'请检查网络后重试。'}`}finally{check.disabled=false;check.querySelector('span:nth-child(2)').textContent='查验版本'}};
   $('#checkVersion').click();
   $('#updateVersion').onclick=()=>{const version=$('#updateVersion').dataset.release;if(!version)return;const url=new URL(location.href);url.searchParams.set('iris-release',version);location.replace(url.href)};
  }else{
