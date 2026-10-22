@@ -38,8 +38,8 @@ function fixture() {
   vm.runInContext(source.slice(source.indexOf('function reflectionReplyTarget('), source.indexOf('async function generateOnlineReflection(')), context);
   const propose = (count = 1) => {
     const raw = Array(count).fill('[[IRIS_ACTION {"type":"video_call","reason":"想陪你说说话"}]]').join('\n');
-    context.parseRoleActions(raw, thread, [], {}, { enabled: true, roleIndex: 0, userIndex: 0 });
-    thread.push(...context.pendingRoleActions);
+    const parsed=context.parseRoleActions(raw, thread, [], {}, { enabled: true, roleIndex: 0, userIndex: 0 });
+    thread.push(...parsed.actions);
     return thread.at(-1);
   };
   return { context, now, role, user, thread, timers, opened, dialogs, propose };
