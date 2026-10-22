@@ -234,6 +234,111 @@ async function completePlaylist(playlist, client) {
   };
 }
 
+function feedbackOriginAllowed(env, origin) {
+  const allowed = [env.APP_ORIGIN, ...(env.FEEDBACK_ALLOWED_ORIGINS || '').split(',')].map(value => value?.trim()).filter(Boolean);
+  if (origin && allowed.includes(origin)) return true;
+  if (env.FEEDBACK_ALLOW_LOCAL_PREVIEW === 'true') {
+    try { const page = new URL(origin); return ['http:', 'https:'].includes(page.protocol) && ['localhost', '127.0.0.1', '[::1]'].includes(page.hostname); } catch {}
+  }
+  return false;
+}
+const feedbackQuotaKey = () => 'feedback:quota:' + new Date().toISOString().slice(0, 10);
+function feedbackQuotaFromHeaders(response) {
+  const daily = response.headers.get('x-resend-daily-quota'), monthly = response.headers.get('x-resend-monthly-quota');
+  // These are provider-reported USED counts, not HTTP request-rate remaining counts.
+  if (daily === null || !/^\d+$/.test(daily)) return null;
+  return { remainingDaily: Math.max(0, 100 - Number(daily)), remainingMonthly: monthly !== null && /^\d+$/.test(monthly) ? Math.max(0, 3000 - Number(monthly)) : null, dailyLimit: 100, checkedAt: Date.now(), resetsAt: new Date((Math.floor(Date.now() / 86400000) + 1) * 86400000).toISOString() };
+}
+async function cacheFeedbackQuota(env, quota) {
+  if (!quota) return;
+  try { await env.MUSIC_STORE.put(feedbackQuotaKey(), JSON.stringify(quota), { expirationTtl: 300 }); } catch {}
+}
+async function feedbackUsageEstimate(env, sentId = '', observed = null) {
+  const now = new Date(), day = now.toISOString().slice(0, 10), month = day.slice(0, 7);
+  let usage;
+  try { usage = JSON.parse(await env.MUSIC_STORE.get('feedback:usage-estimate') || 'null'); } catch {}
+  if (!usage) { try { usage = JSON.parse(env.FEEDBACK_QUOTA_BASELINE || 'null'); } catch {} }
+  usage = { day, month, dailyUsed: usage?.day === day ? Math.max(0, Number(usage.dailyUsed) || 0) : 0, monthlyUsed: usage?.month === month ? Math.max(0, Number(usage.monthlyUsed) || 0) : 0 };
+  if (sentId) {
+    const counted = await env.MUSIC_STORE.get('feedback:counted:' + sentId);
+    if (!counted) {
+      usage.dailyUsed++; usage.monthlyUsed++;
+      if (observed) {
+        if (Number.isFinite(observed.remainingDaily)) usage.dailyUsed = Math.max(usage.dailyUsed, 100 - observed.remainingDaily);
+        if (Number.isFinite(observed.remainingMonthly)) usage.monthlyUsed = Math.max(usage.monthlyUsed, 3000 - observed.remainingMonthly);
+      }
+      await env.MUSIC_STORE.put('feedback:usage-estimate', JSON.stringify(usage));
+      await env.MUSIC_STORE.put('feedback:counted:' + sentId, '1', { expirationTtl: 172800 });
+    }
+  }
+  return { remainingDaily: Math.max(0, 100 - usage.dailyUsed), remainingMonthly: Math.max(0, 3000 - usage.monthlyUsed), dailyLimit: 100, source: 'iris-estimate', checkedAt: now.getTime(), resetsAt: new Date((Math.floor(now.getTime() / 86400000) + 1) * 86400000).toISOString() };
+}
+async function readFeedbackQuota(request, env, origin) {
+  // File previews send an opaque null origin. Public remaining counts are read-only; sending stays restricted.
+  if (origin && origin !== 'null' && !feedbackOriginAllowed(env, origin)) return json({ error: '当前页面地址尚未获准发送反馈。' }, 403, origin);
+  if (!env.RESEND_API_KEY || !env.MUSIC_STORE) return json({ ok: true, quota: null }, 200, origin);
+  if (env.FEEDBACK_QUOTA_MODE === 'estimate') return json({ ok: true, quota: await feedbackUsageEstimate(env) }, 200, origin);
+  let cached;
+  try { cached = JSON.parse(await env.MUSIC_STORE.get(feedbackQuotaKey()) || 'null'); } catch {}
+  const valid = quota => quota && Number.isFinite(quota.checkedAt) && Date.now() - quota.checkedAt < 300000 && Date.parse(quota.resetsAt) > Date.now();
+  if (valid(cached) && Date.now() - cached.checkedAt < 30000) return json({ ok: true, quota: cached }, 200, origin);
+  let quota;
+  try {
+    const response = await fetch('https://api.resend.com/usage', { headers: { authorization: 'Bearer ' + env.RESEND_API_KEY }, signal: AbortSignal.timeout(7000) });
+    quota = feedbackQuotaFromHeaders(response);
+    if (response.ok) {
+      const usage = await response.json(), daily = usage?.emails?.daily, monthly = usage?.emails?.monthly;
+      const validWindow = window => window && (window.limit === null || Number.isFinite(window.limit) && window.limit >= 0) && Number.isFinite(window.used) && window.used >= 0;
+      if (validWindow(daily) && validWindow(monthly)) quota = { remainingDaily: daily.limit === null ? null : Math.max(0, daily.limit - daily.used), remainingMonthly: monthly.limit === null ? null : Math.max(0, monthly.limit - monthly.used), dailyLimit: daily.limit, checkedAt: Date.now(), resetsAt: daily.resets_at };
+    }
+  } catch {}
+  if (quota) await cacheFeedbackQuota(env, quota);
+  return json({ ok: true, quota: quota || (valid(cached) ? cached : null) }, 200, origin);
+}
+
+// Feedback only sends to the author; client requests cannot choose recipients or credentials.
+async function sendAuthorFeedback(request, env, origin) {
+  if (!feedbackOriginAllowed(env, origin)) return json({ error: '当前页面地址尚未获准发送反馈。' }, 403, origin);
+  if (!env.RESEND_API_KEY || !env.FEEDBACK_FROM || !env.MUSIC_STORE) return json({ error: '作者尚未启用邮件反馈服务，请稍后再试。' }, 503, origin);
+  if (!request.headers.get('content-type')?.startsWith('multipart/form-data')) return json({ error: '反馈格式不正确。' }, 400, origin);
+  const limit = 7 * 1024 * 1024;
+  if (Number(request.headers.get('content-length')) > limit) return json({ error: '反馈附件过大。' }, 413, origin);
+  const reader = request.body?.getReader();
+  if (!reader) return json({ error: '请填写反馈内容。' }, 400, origin);
+  const chunks = []; let length = 0;
+  while (true) { const { done, value } = await reader.read(); if (done) break; length += value.byteLength; if (length > limit) { await reader.cancel(); return json({ error: '反馈附件过大。' }, 413, origin); } chunks.push(value); }
+  const bytes = new Uint8Array(length); let offset = 0; for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  let form; try { form = await new Response(bytes, { headers: { 'content-type': request.headers.get('content-type') } }).formData(); } catch { return json({ error: '无法读取反馈内容。' }, 400, origin); }
+  const topic = form.get('topic') === '功能建议' ? '功能优化' : form.get('topic'), description = form.get('description'), replyTo = form.get('replyTo') || '', version = form.get('version'), requestId = form.get('requestId'), images = form.getAll('images');
+  if (!['Bug 反馈', '功能优化', '其他问题'].includes(topic) || typeof description !== 'string' || !description.trim() || description.length > 6000 || typeof version !== 'string' || version.length > 80 || /[\r\n]/.test(version) || typeof requestId !== 'string' || !/^[a-f0-9-]{36}$/i.test(requestId) || images.length > 3 || typeof replyTo !== 'string' || replyTo.length > 254 || /[\r\n]/.test(replyTo)) return json({ error: '请检查反馈文字、联系信息及图片数量。' }, 400, origin);
+  const attachments = [];
+  for (let index = 0; index < images.length; index++) {
+    const image = images[index];
+    if (!image || typeof image.arrayBuffer !== 'function' || !image.size || image.size > 2 * 1024 * 1024 || !['image/png', 'image/jpeg', 'image/webp'].includes(image.type)) return json({ error: '图片须为 PNG、JPG 或 WebP，每张不超过 2 MB。' }, 400, origin);
+    const data = new Uint8Array(await image.arrayBuffer());
+    const png = data[0] === 137 && data[1] === 80 && data[2] === 78 && data[3] === 71 && data[4] === 13 && data[5] === 10 && data[6] === 26 && data[7] === 10;
+    const jpg = data[0] === 255 && data[1] === 216 && data[2] === 255;
+    const webp = String.fromCharCode(...data.slice(0,4)) === 'RIFF' && String.fromCharCode(...data.slice(8,12)) === 'WEBP';
+    if (!(image.type === 'image/png' && png || image.type === 'image/jpeg' && jpg || image.type === 'image/webp' && webp)) return json({ error: '截图文件内容与图片格式不符。' }, 400, origin);
+    let binary = ''; for (let i = 0; i < data.length; i += 8192) binary += String.fromCharCode(...data.subarray(i, i + 8192));
+    attachments.push({ filename: `screenshot-${index + 1}.${png ? 'png' : jpg ? 'jpg' : 'webp'}`, content: btoa(binary) });
+  }
+  const ip = request.headers.get('cf-connecting-ip') || 'unknown';
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(ip));
+  const rateKey = 'feedback:rate:' + Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('') + ':' + Math.floor(Date.now() / 3600000);
+  const attempts = Number(await env.MUSIC_STORE.get(rateKey) || 0);
+  if (attempts >= 5) return json({ error: '反馈发送较频繁，请稍后再试。' }, 429, origin);
+  await env.MUSIC_STORE.put(rateKey, String(attempts + 1), { expirationTtl: 3600 });
+  let response;
+  try { response = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { authorization: 'Bearer ' + env.RESEND_API_KEY, 'content-type': 'application/json', 'Idempotency-Key': 'iris-feedback-' + requestId }, body: JSON.stringify({ from: env.FEEDBACK_FROM, to: ['weishengrongqing@gmail.com'], subject: `Iris ${topic} · ${version}`, text: `Iris 版本：${version}\n反馈类型：${topic}\n联系信息：${replyTo.trim() || '未填写'}\n\n${description.trim()}`, ...(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(replyTo.trim()) ? { reply_to: replyTo.trim() } : {}), attachments }), signal: AbortSignal.timeout(20000) }); } catch { return json({ error: '邮件服务暂时不可用，反馈内容已保留，请重试。' }, 502, origin); }
+  let quota = feedbackQuotaFromHeaders(response);
+  await cacheFeedbackQuota(env, quota);
+  let result; try { result = await response.json(); } catch {}
+  if (!response.ok || !result?.id) return json({ error: '邮件发送未成功，反馈内容已保留，请稍后重试。' }, 502, origin);
+  if (env.FEEDBACK_QUOTA_MODE === 'estimate') { try { quota = await feedbackUsageEstimate(env, result.id, quota); } catch { /* Accepted mail stays successful even if approximate counters cannot be persisted. */ } }
+  return json({ ok: true, id: result.id, quota }, 200, origin);
+}
+
 async function route(request, env, url) {
   const path = url.pathname, origin = request.headers.get('origin') || '';
   if (request.method === 'OPTIONS') {
@@ -244,6 +349,8 @@ async function route(request, env, url) {
     headers.set('access-control-max-age', '86400');
     return new Response(null, { status: 204, headers });
   }
+  if (request.method === 'GET' && path === '/feedback/quota') return readFeedbackQuota(request, env, origin);
+  if (request.method === 'POST' && path === '/feedback') return sendAuthorFeedback(request, env, origin);
   if (request.method === 'GET' && path === '/health') return json({ ok: true, service: 'iris-music' }, 200, origin);
 
   if (request.method === 'GET' && path === '/auth/qr/start') {
