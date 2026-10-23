@@ -882,7 +882,7 @@ function showChatUserWallet(userIndex){
   flipper.classList.toggle('is-flipped',value);flipper.classList.toggle('is-turning-back',!value);flipper.classList.add('is-turning');
   window.setTimeout(()=>{flipper.classList.remove('is-turning','is-turning-back');flipBusy=false;front.inert=value;back.inert=!value;if(flipper.isConnected)(value?back.querySelector('button'):front).focus({preventScroll:true})},reduced?0:820);
  };
- front.onclick=()=>{renderLedger();flip(true)};front.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();front.click()}};panel.querySelector('[data-bank-front]').onclick=()=>flip(false);
+ const setCardHeight=face=>{const height=Math.ceil(face.getBoundingClientRect().height);if(height>0)flipper.querySelector('.chat-bank-rotor').style.gridTemplateRows=`${height}px`};setCardHeight(front);front.onclick=()=>{renderLedger();setCardHeight(back);flip(true)};front.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();front.click()}};panel.querySelector('[data-bank-front]').onclick=()=>{flip(false);window.setTimeout(()=>{if(flipper.isConnected)setCardHeight(front)},window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:830)};
  panel.querySelectorAll('[data-bank-kind]').forEach(button=>button.onclick=()=>{kind=button.dataset.bankKind;panel.querySelectorAll('[data-bank-kind]').forEach(node=>{node.classList.toggle('is-active',node===button);node.setAttribute('aria-pressed',String(node===button))});renderLedger()});panel.querySelector('.chat-bank-period select').onchange=event=>{days=Number(event.target.value);renderLedger()};panel.querySelector('[data-bank-sort]').onclick=event=>{ascending=!ascending;event.currentTarget.textContent=ascending?'最早在前 ↑':'最新在前 ↓';renderLedger()};
 }
 function recordChatPat(actor){
@@ -1955,7 +1955,7 @@ let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
 const APP_VERSION='5.8.0';
-const APP_RELEASE='5.8.0-r2';
+const APP_RELEASE='5.8.0-r3';
 const APP_RELEASE_NOTES={"date": "2026-10-23", "changes": ["优化线上聊天回复速度", "优化常住地币种识别", "完善私人钱包收支"], "noticeId": "5.8.0-wallet"};
 const APP_RELEASE_HISTORY=[{version:APP_VERSION,...APP_RELEASE_NOTES},{version:'5.7.9',...{"date": "2026-10-22", "changes": ["新增功能按钮名称中英文切换，入口：主页面加号菜单底部「中 / EN」；选择会自动记住。", "新增「联系作者」。入口：教程悬浮圆形按键 → 联系作者。", "统一角色币种识别，修复私人钱包、代付、转账、购物、退款及经营分红的币种校验。"], "noticeId": "5.7.9-menu-language"}},{version:'5.7.8',...{"date": "2026-10-21", "changes": ["线上聊天第一条消息长按后，操作面板显示在消息下方，避免顶部裁切，保持原有消息间距。", "心声与本轮回复一起准备，提前生成 X、备忘录、GPT 和当前自定义面板，打开即可查看。"]}},{version:'5.7.7',...{"date": "2026-10-21", "changes": ["普通聊天支持照片与表情读图，可在线上设置的“更多”中启用图片输入。", "优化真实图片展示：移除外层气泡，修正连续发消息后尺寸变化；多选时点击图片直接选中。", "修正心声面板打开后缺少内容的问题，生成失败时可查看错误并重试。", "将“事情有后续”移到线上设置的“更多”，整理开关与事项列表。", "新增版本更新提示，同一版本关闭后不再提醒。"]}},{version:'5.7.6',date:'2026-10-21',changes:['普通聊天支持照片与表情读图，可在线上设置的“更多”中启用图片输入。','优化真实图片展示：移除外层气泡，修正连续发消息后尺寸变化；多选时点击图片直接选中。','修正心声面板打开后缺少内容的问题，生成失败时可查看错误并重试。','将“事情有后续”移到线上设置的“更多”，整理开关与事项列表。','新增版本更新提示，同一版本关闭后不再提醒。']}];
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
