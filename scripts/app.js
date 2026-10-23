@@ -899,6 +899,7 @@ function renderConversation(user,character,conversationItems=messages(),videoCal
  if(!videoCall&&!state.offline)syncChatGifts(user);
  if(!videoCall&&cleanSplitInternalReplyLeakage(conversationItems))save();
  const items=conversationItems;
+ const hiddenStickerContext=new Set(items.flatMap((message,index)=>!videoCall&&!state.offline&&typeof isStickerContextLeakage==='function'&&isStickerContextLeakage(message)?[index]:[]));
  const latestTurn=videoCall?null:latestReplyTurn(items),latestReplyIndex=latestTurn?.lastReplyIndex??-1;
  const threadKey=key();
  const foldStarts=new Map(),foldedMessageIndexes=new Set();
@@ -914,6 +915,7 @@ function renderConversation(user,character,conversationItems=messages(),videoCal
   }
  }
  const rendered=items.map((message,index)=>{
+  if(hiddenStickerContext.has(index))return "";
   const fold=foldStarts.get(index);
   const foldMarkup=fold?`<button type="button" class="offline-stage-fold" data-offline-stage-fold="${esc(fold.foldKey)}" aria-expanded="${fold.expanded?'true':'false'}" aria-label="${fold.expanded?'收起':'展开'}已总结的第 ${fold.fromRound} 至 ${fold.toRound} 轮">${fold.expanded?'▾':'▸'} 已总结 · 第${fold.fromRound}—${fold.toRound}轮</button>`:'';
   if(fold&&!fold.expanded)return foldMarkup;
@@ -922,7 +924,8 @@ function renderConversation(user,character,conversationItems=messages(),videoCal
   if((type==='gift-card'||(type==='market-event'&&message.marketEvent?.type==='role-gift'))&&!videoCall)return `<div class="chat-gift-row">${giftCardMarkup(message,index,user,character)}</div>`;
   if(type==='pat')return `<div class="chat-pat-row" data-message-index="${index}" role="status"><span class="chat-pat-card">${esc(message.patBy==='role'?`${message.actorName||character?.name||'角色'}拍了拍我`:`我拍了拍${message.targetName||character?.name||'角色'}`)}</span></div>`;
   if(!videoCall&&type==='call-summary'){const time=message.createdAt?new Intl.DateTimeFormat('zh-CN',{hour:'2-digit',minute:'2-digit'}).format(new Date(message.createdAt)):'';const callAction=activeMessageActionIndex===index&&!messageSelectionMode?`<div class="message-action-menu" role="toolbar" aria-label="通话记录操作"><button type="button" data-message-action="delete" data-message-index="${index}">删除</button></div>`:'';return `<article class="call-summary-message" data-message-index="${index}">${callAction}<div class="call-summary-kicker"><i></i><span>Video Call</span><i></i></div><button type="button" class="call-summary-open" data-call-summary="${esc(message.id||'')}" aria-label="${message.callStatus&&message.callStatus!=='ended'?'查看来电记录':'查看通话总结和逐条记录'}"><span class="call-summary-copy"><strong>${esc(({pending:'视频来电',accepted:'视频通话中',declined:'已拒绝视频通话',missed:'未接视频通话'})[message.callStatus]||(message.endedBy==='role'?'角色已结束视频通话':'视频通话已结束'))}</strong><small>${esc(message.characterName||character?.name||'角色')} · ${esc(message.duration||'')} · ${esc(time)}</small></span><span class="call-summary-link">${message.callStatus&&message.callStatus!=='ended'?'查看记录':'查看回顾'} <i>›</i></span></button></article>`}
-  const previousSame=!foldedMessageIndexes.has(index-1)&&!foldStarts.has(index)&&items[index-1]?.mine===message.mine,nextSame=!foldedMessageIndexes.has(index+1)&&!foldStarts.has(index+1)&&items[index+1]?.mine===message.mine;
+  let previousVisibleIndex=index-1,nextVisibleIndex=index+1;while(hiddenStickerContext.has(previousVisibleIndex))previousVisibleIndex--;while(hiddenStickerContext.has(nextVisibleIndex))nextVisibleIndex++;
+  const previousSame=!foldedMessageIndexes.has(previousVisibleIndex)&&!foldStarts.has(index)&&items[previousVisibleIndex]?.mine===message.mine,nextSame=!foldedMessageIndexes.has(nextVisibleIndex)&&!foldStarts.has(nextVisibleIndex)&&items[nextVisibleIndex]?.mine===message.mine;
   const groupClass=previousSame?(nextSame?'group-middle':'group-last'):(nextSame?'group-first':'group-single');
   const avatarClass=videoCall?(previousSame?' is-group-hidden':''):(nextSame?' is-group-hidden':'');
   let messageAvatar=message.mine?`<button type="button" class="avatar chat-user-wallet-avatar${avatarClass}" data-chat-user-wallet="${Math.max(0,state.users?.indexOf(user)??state.user)}" aria-label="查看${esc(user?.nickname||user?.name||'用户')}的银行卡">${user?.avatar?`<img src="${esc(user.avatar)}" alt="">`:esc((user?.nickname||user?.name||'').slice(0,1))}</button>`:avatar(character).replace('class="avatar',`class="avatar${avatarClass}`);
@@ -1716,7 +1719,7 @@ function applyOfflineRegexRules(value,settings=currentRoleOfflineData().settings
 function filterOfflineSystemDisplay(value,streaming=false){let source=String(value??'').replace(/&lt;\s*!--/gi,'<!--').replace(/--\s*&gt;/gi,'-->');source=source.replace(/<!--[\s\S]*?-->/g,'');const open=source.lastIndexOf('<!--');if(open>=0)return source.slice(0,open);if(!streaming)return source;source=source.replace(/&lt;(?!!?\s*!--)\s*!?-?$/i,match=>match.replace(/&lt;/i,'<'));const partial=source.match(/<(?:!|!-)?$/);return partial?source.slice(0,-partial[0].length):source}
 function offlineMainStoryContent(message){const copy={...message,text:IrisMiniTheater.filterHistory(message?.text||'')};if(message?.quote)copy.quote={...message.quote,text:IrisMiniTheater.filterHistory(message.quote.text||'')};return messagePromptContent(copy)}
 function offlineContextMessage(message,settings=currentRoleOfflineData().settings,target=message?.mine?'user':'ai'){if(!message||message.type&&message.type!=='text')return messagePromptContent(message||{});const copy={...message,text:applyOfflineRegexRules(message.text,settings,target,'context')};if(message.quote)copy.quote={...message.quote,text:applyOfflineRegexRules(message.quote.text,settings,target,'context')};return offlineMainStoryContent(copy)}
-function messagePromptContent(message){const sender=message.mine?'用户':'你';if(message.quote)return `${sender}引用了${message.quote.speaker||'一条消息'}的内容「${message.quote.text||''}」${message.text?`，并回复：${message.text}`:'。'}`;switch(message.type){case'market-event':if(message.marketEvent?.type!=='role-gift')return message.text||'';case'gift-card':{const order=window.IrisMarketCore?.giftOrder(state,message.marketEvent);return order?`【赠礼事件卡片】${order.kind==='role-gift'?`${order.characterName||'你'}给用户购买了`:`用户给${order.characterName||'收礼人'}购买了`}${order.items.map(item=>item.name).join('、')}。当前状态：${chatGiftStatus(order)}。附言（故事内容）：${order.note||'无'}。这是一张事件卡片，不是人物说出的台词。`: '【赠礼事件卡片】订单已不可用，不推测状态。'}case'pat':return message.patBy==='role'?'你拍了拍用户。':'用户拍了拍你。';case'image':return message.imageDescription?`${sender}发送了一条图片描述：${message.imageDescription}`:`${sender}发送了一张图片。当前文字模型无法读取图片像素，请根据此前对图片的描述或上下文回应，不要臆测画面内容。`;case'voice':return `${sender}发送了一条约 ${Math.max(1,Number(message.duration)||1)} 秒的语音消息，语音文字内容是：「${message.voiceText||''}」${message.voiceTranslation?`（译文：「${message.voiceTranslation}」）`:''}`;case'transfer':return `${sender}发起了一笔转账：${message.currency||'CNY'} ${formatTransferNumber(message.amount,message.currency||'CNY')}${message.mine&&(message.currency||'CNY')==='CNY'&&Number.isFinite(Number(message.characterAmount))?`（按角色本地币种 ${message.characterCurrency||'CNY'} 参考汇率约合 ${formatTransferNumber(message.characterAmount,message.characterCurrency||'CNY')}）`:''}。状态：${message.status||'pending'}。备注：${message.note||'无'}${message.noteTranslation?`（备注译文：${message.noteTranslation}）`:''}`;case'location':return `${sender}分享了位置：${message.placeName||'未命名地点'}。距离：${message.distance||'未注明'}。${message.detail||''} ${message.coordinates||''}`;case'sticker':return `【${message.mine?'用户':'角色'}实际发送的表情包】名称：${message.sticker||''}。这是图片表情消息，不是聊天台词。`;case'call-summary':return `【视频通话事件】${({pending:'角色发起来电，等待用户接听',accepted:'用户已接听，通话中',declined:'用户拒接',missed:'用户未接听'})[message.callStatus]||(message.endedBy==='role'?'角色已结束视频通话':'视频通话已结束')}。${message.summary||''}`;default:return message.text||''}}
+function messagePromptContent(message){const sender=message.mine?'用户':'你';if(message.quote)return `${sender}引用了${message.quote.speaker||'一条消息'}的内容「${message.quote.text||''}」${message.text?`，并回复：${message.text}`:'。'}`;switch(message.type){case'market-event':if(message.marketEvent?.type!=='role-gift')return message.text||'';case'gift-card':{const order=window.IrisMarketCore?.giftOrder(state,message.marketEvent);return order?`【赠礼事件卡片】${order.kind==='role-gift'?`${order.characterName||'你'}给用户购买了`:`用户给${order.characterName||'收礼人'}购买了`}${order.items.map(item=>item.name).join('、')}。当前状态：${chatGiftStatus(order)}。附言（故事内容）：${order.note||'无'}。这是一张事件卡片，不是人物说出的台词。`: '【赠礼事件卡片】订单已不可用，不推测状态。'}case'pat':return message.patBy==='role'?'你拍了拍用户。':'用户拍了拍你。';case'image':return message.imageDescription?`${sender}发送了一条图片描述：${message.imageDescription}`:`${sender}发送了一张图片。当前文字模型无法读取图片像素，请根据此前对图片的描述或上下文回应，不要臆测画面内容。`;case'voice':return `${sender}发送了一条约 ${Math.max(1,Number(message.duration)||1)} 秒的语音消息，语音文字内容是：「${message.voiceText||''}」${message.voiceTranslation?`（译文：「${message.voiceTranslation}」）`:''}`;case'transfer':return `${sender}发起了一笔转账：${message.currency||'CNY'} ${formatTransferNumber(message.amount,message.currency||'CNY')}${message.mine&&(message.currency||'CNY')==='CNY'&&Number.isFinite(Number(message.characterAmount))?`（按角色本地币种 ${message.characterCurrency||'CNY'} 参考汇率约合 ${formatTransferNumber(message.characterAmount,message.characterCurrency||'CNY')}）`:''}。状态：${message.status||'pending'}。备注：${message.note||'无'}${message.noteTranslation?`（备注译文：${message.noteTranslation}）`:''}`;case'location':return `${sender}分享了位置：${message.placeName||'未命名地点'}。距离：${message.distance||'未注明'}。${message.detail||''} ${message.coordinates||''}`;case'sticker':return `[表情包：${message.sticker||''}]`;case'call-summary':return `【视频通话事件】${({pending:'角色发起来电，等待用户接听',accepted:'用户已接听，通话中',declined:'用户拒接',missed:'用户未接听'})[message.callStatus]||(message.endedBy==='role'?'角色已结束视频通话':'视频通话已结束')}。${message.summary||''}`;default:return message.mine?message.text||'':removeInternalReplyLeakage(String(message.text||'').replace(/【(?:角色|用户)实际发送的表情包】\s*名称[：:][^。\n]+。?/g,''))}}
 function sendStructuredMessage(message){const item={mine:true,createdAt:Date.now(),...message};if(item.type==='transfer'){const settings=currentRoleChatSettings(),userIndex=Number.isInteger(settings.userIndex)?settings.userIndex:state.user;window.IrisMarketCore.settleTransfer(state,userIndex,item,'send')}messages().push(item);save();render();if(item.type==='transfer'){item.characterCurrency=characterTransferCurrency(chars[state.char]);void applyTransferExchangeRates([item],item.characterCurrency).then(()=>{save();render()})}}
 function enabledRoleStickers(roleSettings=currentRoleChatSettings()){
  return(state.emojis?.groups||[]).filter(group=>roleSettings.more?.emojiGroups?.[group.id]!==false).flatMap(group=>(group.items||[]).filter(item=>item.text&&item.url).map((item,index)=>({id:JSON.stringify([group.id,item.id||index]),text:String(item.text).trim(),url:String(item.url)}))).filter(item=>item.text&&item.url);
@@ -1955,8 +1958,8 @@ let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
 const APP_VERSION='5.8.0';
-const APP_RELEASE='5.8.0-r9';
-const APP_RELEASE_NOTES={"date": "2026-10-23", "changes": ["优化线上聊天回复速度", "优化常住地币种识别", "完善私人钱包收支", "优化表情包面板显示", "修复角色表情包显示"], "noticeId": "5.8.0-role-sticker"};
+const APP_RELEASE='5.8.0-r10';
+const APP_RELEASE_NOTES={"date": "2026-10-23", "changes": ["优化线上聊天回复速度", "优化常住地币种识别", "完善私人钱包收支", "优化表情包面板显示", "修复角色表情包及说明文字显示"], "noticeId": "5.8.0-sticker-context"};
 const APP_RELEASE_HISTORY=[{version:APP_VERSION,...APP_RELEASE_NOTES},{version:'5.7.9',...{"date": "2026-10-22", "changes": ["新增功能按钮名称中英文切换，入口：主页面加号菜单底部「中 / EN」；选择会自动记住。", "新增「联系作者」。入口：教程悬浮圆形按键 → 联系作者。", "统一角色币种识别，修复私人钱包、代付、转账、购物、退款及经营分红的币种校验。"], "noticeId": "5.7.9-menu-language"}},{version:'5.7.8',...{"date": "2026-10-21", "changes": ["线上聊天第一条消息长按后，操作面板显示在消息下方，避免顶部裁切，保持原有消息间距。", "心声与本轮回复一起准备，提前生成 X、备忘录、GPT 和当前自定义面板，打开即可查看。"]}},{version:'5.7.7',...{"date": "2026-10-21", "changes": ["普通聊天支持照片与表情读图，可在线上设置的“更多”中启用图片输入。", "优化真实图片展示：移除外层气泡，修正连续发消息后尺寸变化；多选时点击图片直接选中。", "修正心声面板打开后缺少内容的问题，生成失败时可查看错误并重试。", "将“事情有后续”移到线上设置的“更多”，整理开关与事项列表。", "新增版本更新提示，同一版本关闭后不再提醒。"]}},{version:'5.7.6',date:'2026-10-21',changes:['普通聊天支持照片与表情读图，可在线上设置的“更多”中启用图片输入。','优化真实图片展示：移除外层气泡，修正连续发消息后尺寸变化；多选时点击图片直接选中。','修正心声面板打开后缺少内容的问题，生成失败时可查看错误并重试。','将“事情有后续”移到线上设置的“更多”，整理开关与事项列表。','新增版本更新提示，同一版本关闭后不再提醒。']}];
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 const compareAppReleases=(left,right)=>{const parse=value=>{const match=String(value||'0').match(/^(.*?)(?:-r(\d+))?$/);return{version:match[1],revision:Number(match[2])||0}},a=parse(left),b=parse(right);return compareAppVersions(a.version,b.version)||Math.sign(a.revision-b.revision)};
@@ -3554,25 +3557,31 @@ function splitOnlineBubbleText(value){
   .split(/\r?\n+/).map(part=>restore(part.trim())).filter(Boolean);
  return chunks;
 }
-function removeInternalReplyLeakage(value){return String(value||'').replace(/[【\[]\s*仅供角色状态连续性参考[:：][\s\S]*?(?:[】\]]|$)/g,'').replace(/(?:^|\n)\s*[\]}]\s*$/,'').trim()}
+function removeInternalReplyLeakage(value){return String(value||'').replace(/(?:^|\n)[ \t]*这是图片表情消息[，,]不是聊天台词[。.]?[ \t]*(?=\n|$)/g,'').replace(/[【\[]\s*仅供角色状态连续性参考[:：][\s\S]*?(?:[】\]]|$)/g,'').replace(/(?:^|\n)\s*[\]}]\s*$/,'').trim()}
 function cleanSplitInternalReplyLeakage(items){let changed=false;for(let index=0;index<items.length;){const first=items[index];if(first.mine||first.type&&first.type!=='text'){index++;continue}const firstText=String(first.text||''),opening=/[【\[]\s*仅供角色状态连续性参考[:：]/.exec(firstText);if(!opening){index++;continue}let endIndex=index,closingIndex=-1;for(let cursor=index;cursor<items.length;cursor++){const item=items[cursor];if(item.mine||item.type&&item.type!=='text')break;const text=String(item.text||''),searchFrom=cursor===index?opening.index+opening[0].length:0,found=/[】\]]/.exec(text.slice(searchFrom));if(found){endIndex=cursor;closingIndex=searchFrom+found.index;break}endIndex=cursor}if(closingIndex<0){index=endIndex+1;continue}const prefix=firstText.slice(0,opening.index),last=items[endIndex],suffix=String(last.text||'').slice(closingIndex+1),replacement=[];if(endIndex===index){const clean=prefix+suffix;if(clean)replacement.push({...first,text:clean})}else{if(prefix)replacement.push({...first,text:prefix});if(suffix)replacement.push({...last,text:suffix})}items.splice(index,endIndex-index+1,...replacement);changed=true;index+=replacement.length}return changed}
+function isStickerContextLeakage(message){
+ if(message?.mine||message?.quote||message?.type&&message.type!=='text')return false;
+ const text=String(message?.text||'').trim();
+ return /^【(?:角色|用户)实际发送的表情包】\s*名称[：:][^。\r\n]+。?$/.test(text)||/^这是图片表情消息[，,]不是聊天台词[。.]?$/.test(text);
+}
 function expandOnlineReplyMessages(messages,stickerCatalog=[]){
  const asSticker=message=>{
   if(message.mine||message.quote||message.type&&message.type!=='text')return message;
-  const match=String(message.text||'').trim().match(/^(?:你|我|角色)发送了?表情包\s*[：:]\s*(.+?)\s*$/);
+  const rawText=String(message.text||'').trim(),internal=rawText.match(/^【(?:角色|用户)实际发送的表情包】\s*名称[：:]\s*(.+?)\s*$/)||rawText.match(/^\[表情包[：:]\s*(.+?)\]$/),match=internal||rawText.match(/^(?:你|我|角色)发送了?表情包\s*[：:]\s*(.+?)\s*$/);
   if(!match)return message;
-  const sticker=stickerCatalog.find(item=>item.text===match[1]&&item.url);
-  if(!sticker)return message;
+  const sticker=stickerCatalog.find(item=>item.text===match[1]&&item.url)||(internal?stickerCatalog.find(item=>item.text===match[1].replace(/[。.]$/,'')&&item.url):null);
+  if(!sticker)return internal?null:message;
   const {text,translation,...rest}=message;return{...rest,type:'sticker',sticker:sticker.text,stickerUrl:sticker.url};
  };
  return messages.flatMap(message=>{
-  if(message.type&&message.type!=='text')return[message];
-  const parts=splitOnlineBubbleText(message.text);
-  if(parts.length<2)return[asSticker(message)];
+  if(message.mine||message.quote||message.type&&message.type!=='text')return[message];
+  const parts=splitOnlineBubbleText(message.text).map(removeInternalReplyLeakage).filter(Boolean);
+  if(!parts.length)return[];
+  if(parts.length<2)return[asSticker({...message,text:parts[0]})].filter(Boolean);
   const translations=message.translation?splitOnlineBubbleText(message.translation):[];
   // A mismatched translation cannot safely be assigned to individual sentences.
   if(translations.length&&translations.length!==parts.length)return[message];
-  return parts.map((text,index)=>asSticker({...message,text,translation:translations[index]||''}));
+  return parts.map((text,index)=>asSticker({...message,text,translation:translations[index]||''})).filter(Boolean);
  });
 }
 function balancedJsonValue(source,start){
