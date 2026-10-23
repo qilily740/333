@@ -3841,3 +3841,10 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 
 /* Extend the sticker panel background through the shell gutters. */
 .bottom #emojiInlinePanel{width:calc(100% + 2 * var(--app-shell-gutter,48px));max-width:none;margin-inline:calc(0px - var(--app-shell-gutter,48px));padding-inline:var(--app-shell-gutter,48px);background:#fff}
+
+/* Three sticker rows, with the scroll area ending at the bottom of the panel. */
+.bottom:has(#emojiInlinePanel:not([hidden])){padding-bottom:0}
+.bottom #emojiInlinePanel{--emoji-row-height:91px;--emoji-row-gap:6px;--emoji-three-rows:calc(3 * var(--emoji-row-height) + 2 * var(--emoji-row-gap));padding-bottom:env(safe-area-inset-bottom,0px)}
+#emojiInlinePanel .emoji-picker-panel{display:flex;flex-direction:column;gap:5px;height:auto;min-height:0;max-height:calc(var(--app-viewport-height,100dvh) - 140px);padding-bottom:0}
+#emojiInlinePanel .emoji-picker-toolbar,#emojiInlinePanel .emoji-picker-tabs{flex-shrink:0}
+#emojiInlinePanel .emoji-picker-grid{flex:0 1 var(--emoji-three-rows);height:var(--emoji-three-rows);min-height:0;max-height:var(--emoji-three-rows);grid-auto-rows:var(--emoji-row-height);row-gap:var(--emoji-row-gap);align-content:start;padding:0 1px;overflow-y:auto}
