@@ -11,7 +11,7 @@ test('current residence wins over foreign backstory and role switches do not sha
  assert.equal(c.characterTransferCurrency(british),'GBP');assert.equal(c.characterTransferCurrency(chinese),'CNY');assert.equal(c.characterTransferCurrency(british),'GBP');
  assert.equal(c.characterTransferCurrency({details:'过去在英国留学。\n现居地：上海\n朋友在伦敦'}),'CNY');
  assert.equal(c.characterTransferCurrency({details:'现居地：伦敦\n出生于中国'}),'GBP');
- assert.equal(c.characterTransferCurrency({currency:'CNY',residence:'英国'}),'CNY');
+ assert.equal(c.characterTransferCurrency({currency:'CNY',residence:'英国'}),'GBP');
  assert.equal(c.characterTransferCurrency({details:'朋友在英国，家人在中国'}),'CNY');
 });
 function deferred(){let resolve;const promise=new Promise(r=>resolve=r);return{promise,resolve}}

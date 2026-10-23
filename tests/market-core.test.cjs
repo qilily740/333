@@ -228,3 +228,28 @@ assert.throws(()=>C.updateRoleWallet(historyState,0,historyRoleId,{transactions:
 C.updateRoleWallet(historyState,0,historyRoleId,{transactions:[]},{requestId:'refresh-empty',since:checkedAt,now:checkedAt});
 assert.equal(historyWallet.balanceCents,11000);
 console.log('market-core: all assertions passed');
+
+assert.equal(C.currencyForRole({details:'国籍：中国。出生地：上海。常住地：伦敦。'}),'GBP');
+assert.equal(C.currencyForRole({currency:'CNY',residence:'London',nationality:'中国'}),'GBP','current residence overrides a stale default currency');
+assert.equal(C.currencyForRole({country:'美国',hometown:'上海',residence:'巴黎'}),'EUR');
+assert.equal(C.currencyForRole({details:'以前居住在伦敦，目前住在东京。国籍：中国。'}),'JPY');
+assert.equal(C.currencyForRole({details:'Chinese citizen currently living in London.'}),'GBP');
+assert.equal(C.currencyForRole({country:'美国',hometown:'上海',details:'国籍：中国。出生地：北京。'},'GBP'),'GBP','nationality and birthplace cannot override an existing wallet');
+const residenceState={char:0,user:0,users:[{name:'用户'}],characters:[{name:'常住地未知',details:'国籍：中国。出生地：上海。'}]};
+C.normalize(residenceState);const residenceRole=residenceState.characters[0];C.persona(residenceState,0).roleWallets[residenceRole.irisMarketId]={roleId:residenceRole.irisMarketId,currency:'GBP',balanceCents:12345,ledger:[{id:'old',amountCents:12345,currency:'GBP'}]};
+assert.equal(C.requireRoleWalletCurrency(residenceState,residenceRole.irisMarketId,0).currency,'GBP');
+assert.equal(C.requireRoleWalletCurrency(residenceState,residenceRole.irisMarketId,0).balanceCents,12345);
+
+const incomeState={char:0,user:0,users:[{name:'本人'},{name:'其他面具'}],characters:[{name:'上班角色',occupation:'设计师',residence:'伦敦'}]};
+C.normalize(incomeState);const incomeRole=incomeState.characters[0],incomeWallet=C.roleWallet(incomeState,incomeRole.irisMarketId,0,true);incomeWallet.balanceCents=100000;
+const salary=[{key:'design-salary',description:'设计工作月薪',basis:'角色固定设计工作',currency:'GBP',amount:3000,payDay:25}];
+C.setRoleIncomePlan(incomeState,0,incomeRole.irisMarketId,salary,new Date('2030-01-10T12:00:00').getTime());
+assert.equal(incomeWallet.incomePlans[0].nextDue,'2030-01-25');
+assert.equal(C.settleRoleIncomes(incomeState,new Date('2030-01-24T12:00:00').getTime()).length,0);
+C.settleRoleIncomes(incomeState,new Date('2030-01-25T12:00:00').getTime());assert.equal(incomeWallet.balanceCents,400000);assert.equal(incomeWallet.ledger[0].kind,'personal-income');assert.equal(incomeWallet.ledger[0].currency,'GBP');
+assert.equal(C.settleRoleIncomes(incomeState,new Date('2030-01-25T18:00:00').getTime()).length,0);
+C.setRoleIncomePlan(incomeState,0,incomeRole.irisMarketId,salary,new Date('2030-01-25T18:00:00').getTime());assert.equal(incomeWallet.incomePlans[0].nextDue,'2030-02-25');
+C.settleRoleIncomes(incomeState,new Date('2030-03-01T12:00:00').getTime());assert.equal(incomeWallet.balanceCents,700000);assert.equal(incomeWallet.ledger.length,2);
+const planSnapshot=JSON.stringify(incomeWallet);assert.throws(()=>C.setRoleIncomePlan(incomeState,0,incomeRole.irisMarketId,[{...salary[0],amount:-1}],new Date('2030-03-01').getTime()),/无效/);assert.equal(JSON.stringify(incomeWallet),planSnapshot);
+assert.equal(C.roleWallet(incomeState,incomeRole.irisMarketId,1).balanceCents,null,'other persona must not receive this salary');
+incomeRole.occupation='已经离职';assert.equal(C.settleRoleIncomes(incomeState,new Date('2030-04-30').getTime()).length,0,'a changed job requires reviewing income rather than continuing old salary');

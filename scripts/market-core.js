@@ -84,28 +84,30 @@ const roleCurrencyRules=[
  ['AED',/阿联酋|迪拜|阿布扎比|United Arab Emirates|Dubai|Abu Dhabi/i],['SAR',/沙特|利雅得|Saudi Arabia|Riyadh/i],
  ['MXN',/墨西哥|Mexico/i],['BRL',/巴西|Brazil/i],['TRY',/土耳其|伊斯坦布尔|Turkey|Istanbul/i],
  ['NOK',/挪威|奥斯陆|Norway|Oslo/i],['SEK',/瑞典|斯德哥尔摩|Sweden|Stockholm/i],['DKK',/丹麦|哥本哈根|Denmark|Copenhagen/i],
- ['EUR',/欧元区|欧洲|法国|德国|意大利|西班牙|葡萄牙|荷兰|比利时|奥地利|爱尔兰|芬兰|希腊|法国巴黎|France|Germany|Italy|Spain|Portugal|Netherlands|Belgium|Austria|Ireland|Finland|Greece|Eurozone/i],
+ ['EUR',/巴黎|柏林|罗马|马德里|里斯本|阿姆斯特丹|布鲁塞尔|维也纳|都柏林|赫尔辛基|雅典|Paris|Berlin|Rome|Madrid|Lisbon|Amsterdam|Brussels|Vienna|Dublin|Helsinki|Athens|欧元区|欧洲|法国|德国|意大利|西班牙|葡萄牙|荷兰|比利时|奥地利|爱尔兰|芬兰|希腊|法国巴黎|France|Germany|Italy|Spain|Portugal|Netherlands|Belgium|Austria|Ireland|Finland|Greece|Eurozone/i],
  ['CNY',/中国|大陆|北京|上海|广州|深圳|杭州|China|Beijing|Shanghai|Guangzhou|Shenzhen|Hangzhou/i]
 ];
-function currencyForRole(character){
- const explicit=String(character?.currency||character?.currencyCode||'').trim().toUpperCase();if(/^[A-Z]{3}$/.test(explicit))return explicit;
- const matchCurrency=text=>{const matches=roleCurrencyRules.filter(([,pattern])=>pattern.test(String(text||'')));return matches.length===1?matches[0][0]:null};
- // Resolve the current role's explicit residence before inspecting narrative background.
- for(const location of [character?.residence,character?.location,character?.country]){const currency=matchCurrency(location);if(currency)return currency}
+function roleResidence(character){
+ for(const location of [character?.residence,character?.currentResidence,character?.permanentResidence,character?.residenceCity,character?.residentCountry,character?.location])if(typeof location==='string'&&location.trim())return location.trim();
  const description=[character?.details,character?.desc].filter(Boolean).join('\n');
- const residence=description.match(/(?:现居(?:地)?|常住(?:地)?|居住(?:地)?|所在地|current\s+(?:residence|location)|residence|location)\s*[:：=]\s*([^\n；;。]+)/i)?.[1];
- const localCurrency=matchCurrency(residence);if(localCurrency)return localCurrency;
- // Conflicting countries in backstory are not a reliable current currency.
- return matchCurrency(description)||matchCurrency(character?.hometown)||'CNY';
+ const current=description.match(/(?:现居(?:地)?|常住(?:地)?|长期居住(?:地)?|目前(?:居住|住)|现在(?:居住|住)|定居(?:地)?|current\s+residence|permanent\s+residence|currently\s+liv(?:es?|ing)\s+in|based\s+in)\s*(?:[:：=]|于|在)?\s*([^\n；;。，,]+)/i)?.[1];
+ if(current)return current.trim();
+ return description.match(/(?:居住(?:地)?|所在地|residence|liv(?:es?|ing)\s+in)\s*(?:[:：=]|于|在)?\s*([^\n；;。，,]+)/i)?.[1]?.trim()||'';
 }
-  const roleLocation=role=>String(role?.residence||role?.location||role?.country||role?.hometown||'').trim();
+function currencyForRole(character,fallback='CNY'){
+ const residence=roleResidence(character),matches=roleCurrencyRules.filter(([,pattern])=>pattern.test(residence));if(matches.length===1)return matches[0][0];
+ const explicit=String(character?.currency||character?.currencyCode||'').trim().toUpperCase();if(/^[A-Z]{3}$/.test(explicit))return explicit;
+ // Nationality, birthplace and hometown do not identify the current residence.
+ return fallback;
+}
+  const roleLocation=role=>roleResidence(role);
   const accountExpiry=()=>`${String(1+Math.floor(Math.random()*12)).padStart(2,'0')}/${String(new Date().getFullYear()+4).slice(-2)}`;
   const initializeRoleWallet=(state,userIndex,roleId,data)=>{
     const wallet=requireRoleWalletCurrency(state,roleId,userIndex,true);
     // Upgrade a previously generated opening balance without replacing saved shopping facts.
     if((wallet.historyGeneratedAt&&Number.isSafeInteger(wallet.balanceCents))||(Number.isSafeInteger(wallet.balanceCents)&&!wallet.generatedAt))return wallet;
     if(!data||typeof data.bankName!=='string'||!data.bankName.trim()||!['numeric','token'].includes(data.accountStyle))throw Error('钱包资料格式无效');
-    const currency=String(data.currency||'').trim().toUpperCase(),expected=currencyForRole(state.characters?.find(role=>role.irisMarketId===roleId));if(currency!==expected)throw Error(`角色钱包必须使用 ${expected}，模型返回了 ${currency||'空币种'}，未保存。`);
+    const currency=String(data.currency||'').trim().toUpperCase(),expected=currencyForRole(state.characters?.find(role=>role.irisMarketId===roleId),wallet.currency);if(currency!==expected)throw Error(`角色钱包必须使用 ${expected}，模型返回了 ${currency||'空币种'}，未保存。`);
     if(data.balance!==null&&(typeof data.balance!=='number'||!Number.isFinite(data.balance)))throw Error('钱包余额格式无效');
     const amount=Number.isSafeInteger(wallet.balanceCents)?wallet.balanceCents:data.balance===null?null:cents(data.balance);if(amount!==null&&amount>100000000000)throw Error('钱包金额超出范围');
     if(!Array.isArray(data.transactions)||data.transactions.length>6)throw Error('近期交易格式无效');
@@ -126,9 +128,18 @@ function currencyForRole(character){
     if(!data||!Array.isArray(data.transactions)||data.transactions.length>6)throw Error('钱包更新格式无效');if(data.currency&&String(data.currency).trim().toUpperCase()!==wallet.currency)throw Error('钱包更新不得改变当前角色币种');
     const events=data.transactions.map(row=>{if(!row||row.currency&&String(row.currency).toUpperCase()!==wallet.currency||typeof row.eventKey!=='string'||!row.eventKey.trim()||row.eventKey.length>100||!['expense','income'].includes(row.kind)||typeof row.amount!=='number'||!Number.isFinite(row.amount)||row.amount<=0||typeof row.description!=='string'||!row.description.trim()||!Number.isInteger(row.secondsAgo)||row.secondsAgo<0)throw Error('钱包更新交易无效');const createdAt=now-row.secondsAgo*1000,value=cents(row.amount);if(createdAt<since||!Number.isSafeInteger(value)||value<1||value>100000000000)throw Error('钱包更新超出时间或金额范围');return {id:id('role-tx'),eventKey:row.eventKey.trim(),kind:row.kind==='expense'?'personal-expense':'personal-income',amountCents:row.kind==='expense'?-value:value,description:row.description.trim().slice(0,80),createdAt,source:'ai-wallet-update',sourceRequestId:requestId};}).sort((a,b)=>a.createdAt-b.createdAt);
     const fresh=[],keys=new Set(wallet.ledger.map(row=>row.eventKey).filter(Boolean));let balance=wallet.balanceCents;
-    for(const event of events){if(keys.has(event.eventKey)||[...wallet.ledger,...fresh].some(row=>(row.currency||wallet.currency)===wallet.currency&&row.amountCents===event.amountCents&&row.description===event.description&&Math.abs(row.createdAt-event.createdAt)<60000))continue;keys.add(event.eventKey);balance+=event.amountCents;if(!Number.isSafeInteger(balance)||balance<0)throw Error('角色余额不足，更新未记账');fresh.push(event)}
+    for(const event of events){if(event.kind==='personal-income'&&(wallet.incomePlans||[]).some(p=>p.currency===wallet.currency&&p.amountCents===event.amountCents&&(p.description===event.description||event.description.includes(p.description))))continue;if(keys.has(event.eventKey)||[...wallet.ledger,...fresh].some(row=>(row.currency||wallet.currency)===wallet.currency&&row.amountCents===event.amountCents&&row.description===event.description&&Math.abs(row.createdAt-event.createdAt)<60000))continue;keys.add(event.eventKey);balance+=event.amountCents;if(!Number.isSafeInteger(balance)||balance<0)throw Error('角色余额不足，更新未记账');fresh.push(event)}
     wallet.balanceCents=balance;wallet.ledger=[...fresh].reverse().concat(wallet.ledger);wallet.lastCheckedAt=now;wallet.refreshRequests=[...(wallet.refreshRequests||[]),requestId].slice(-100);return wallet;
   };
+  const roleIncomeProfile=role=>JSON.stringify({details:role?.details||role?.desc||'',job:role?.occupation||role?.job||'',income:role?.income||role?.financialSituation||'',residence:roleResidence(role)});
+  const walletDay=now=>{const d=new Date(now);return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
+  const monthlyDue=(year,month,payDay)=>{const last=new Date(Date.UTC(year,month+1,0)).getUTCDate();return [year,String(month+1).padStart(2,'0'),String(Math.min(payDay,last)).padStart(2,'0')].join('-')};
+  const nextIncomeDay=(after,payDay)=>{const [year,month]=after.split('-').map(Number);const inMonth=monthlyDue(year,month-1,payDay);return inMonth>after?inMonth:monthlyDue(month===12?year+1:year,month===12?0:month,payDay)};
+  const validateRoleIncomePlans=(wallet,plans,now=Date.now())=>{
+    if(plans===undefined)return;if(!Array.isArray(plans)||plans.length>6)throw Error('收入安排格式无效');const existing=new Map((wallet.incomePlans||[]).map(p=>[p.key,p])),seen=new Set(),today=walletDay(now),next=plans.map(p=>{if(!p||typeof p.key!=='string'||!p.key.trim()||seen.has(p.key)||typeof p.description!=='string'||!p.description.trim()||typeof p.basis!=='string'||!p.basis.trim()||p.currency!==wallet.currency||!Number.isInteger(p.payDay)||p.payDay<1||p.payDay>31||!Number.isFinite(p.amount)||p.amount<=0)throw Error('收入来源、发放日期或币种无效');seen.add(p.key);const amountCents=cents(p.amount);if(!Number.isSafeInteger(amountCents)||amountCents<1||amountCents>100000000000)throw Error('收入金额无效');const old=existing.get(p.key);return{key:p.key.trim().slice(0,80),description:p.description.trim().slice(0,80),basis:p.basis.trim().slice(0,500),currency:p.currency,amountCents,payDay:p.payDay,nextDue:old?.payDay===p.payDay&&old.currency===p.currency?old.nextDue:nextIncomeDay(today,p.payDay),createdAt:old?.createdAt||now}});return next;
+  };
+  const setRoleIncomePlan=(state,userIndex,roleId,plans,now=Date.now())=>{const wallet=requireRoleWalletCurrency(state,roleId,userIndex,true),next=validateRoleIncomePlans(wallet,plans,now);if(next!==undefined)wallet.incomePlans=next;wallet.incomePlanCheckedAt=now;wallet.incomePlanProfile=roleIncomeProfile(state.characters?.find(r=>r.irisMarketId===roleId));return wallet};
+  const settleRoleIncomes=(state,now=Date.now())=>{const today=walletDay(now),changes=[];for(const persona of Object.values(state.market?.personas||{}))for(const wallet of Object.values(persona.roleWallets||{})){if(!Number.isSafeInteger(wallet.balanceCents)||!Array.isArray(wallet.incomePlans))continue;const incomeRole=state.characters?.find(r=>r.irisMarketId===wallet.roleId);if(!incomeRole||wallet.incomePlanProfile&&wallet.incomePlanProfile!==roleIncomeProfile(incomeRole))continue;let before=null;const snapshot=()=>{if(!before)before=JSON.parse(JSON.stringify(wallet))};for(const plan of wallet.incomePlans){if(plan.currency!==wallet.currency||!Number.isSafeInteger(plan.amountCents)||plan.amountCents<1||!/^\d{4}-\d{2}-\d{2}$/.test(plan.nextDue||'')||!Number.isInteger(plan.payDay)||plan.payDay<1||plan.payDay>31)continue;let count=0;while(plan.nextDue<=today&&count++<1200){const eventKey='scheduled-income:'+plan.key+':'+plan.nextDue;if(!wallet.ledger.some(row=>row.eventKey===eventKey)){const balance=wallet.balanceCents+plan.amountCents;if(!Number.isSafeInteger(balance))break;snapshot();wallet.balanceCents=balance;wallet.ledger.unshift({id:id('role-tx'),eventKey,kind:'personal-income',amountCents:plan.amountCents,currency:wallet.currency,description:plan.description,createdAt:new Date(plan.nextDue+'T00:00:00').getTime(),incomeDate:plan.nextDue,source:'scheduled-role-income',incomePlanKey:plan.key})}snapshot();plan.nextDue=nextIncomeDay(plan.nextDue,plan.payDay)}}if(before)changes.push({wallet,before,addedIds:wallet.ledger.filter(row=>!before.ledger.some(old=>old.id===row.id)).map(row=>row.id),nextPlans:JSON.stringify(wallet.incomePlans)})}return changes};
   const yuan = cents => (Math.max(0, Number(cents)||0)/100).toFixed(2).replace(/\.00$/,'');
   const catalogReviewText={
     '鲜花':['花材状态不错，拆开后简单修剪就插瓶了。','颜色比想象中柔和，摆在桌上刚好。','包装路上压了一点，好在花枝没有折。'],
@@ -189,7 +200,7 @@ function currencyForRole(character){
   const personaId=(state,index=state.user)=>state.users?.[index]?.irisMarketId||'';
   const persona=(state,index=state.user)=>normalize(state).personas[personaId(state,index)];
   const roleWallet=(state,roleId,userIndex=state.user,create=false)=>{
-    if(!roleId)throw Error('角色实例无效');const p=persona(state,userIndex),role=state.characters?.find(role=>role.irisMarketId===roleId),currency=currencyForRole(role),wallet=p.roleWallets[roleId]||(create?(p.roleWallets[roleId]={roleId,currency,balanceCents:null,ledger:[]}):{roleId,currency,balanceCents:null,ledger:[]});
+    if(!roleId)throw Error('角色实例无效');const p=persona(state,userIndex),role=state.characters?.find(role=>role.irisMarketId===roleId),currency=currencyForRole(role,p.roleWallets[roleId]?.currency||'CNY'),wallet=p.roleWallets[roleId]||(create?(p.roleWallets[roleId]={roleId,currency,balanceCents:null,ledger:[]}):{roleId,currency,balanceCents:null,ledger:[]});
     if(!Array.isArray(wallet.ledger))wallet.ledger=[];
     if(wallet.balanceCents===null&&!wallet.ledger.length)wallet.currency=currency;
     if(role&&wallet.currency!==currency)wallet.currencyMismatch={expected:currency,actual:wallet.currency};else delete wallet.currencyMismatch;
@@ -207,7 +218,7 @@ function currencyForRole(character){
     const result=Math.round(amount*sourceRate/targetRate);if(!Number.isSafeInteger(result)||result<0)throw Error('换汇金额超出范围');return result;
   };
   const reconcileRoleWalletCurrency=(state,userIndex,roleId,exchange={})=>{
-    const role=state.characters?.find(role=>role.irisMarketId===roleId);if(!role||Number.isInteger(role.chatSettings?.userIndex)&&role.chatSettings.userIndex!==userIndex)throw Error('角色钱包与当前面具不匹配');const wallet=roleWallet(state,roleId,userIndex,true),target=currencyForRole(role),source=wallet.currency;
+    const role=state.characters?.find(role=>role.irisMarketId===roleId);if(!role||Number.isInteger(role.chatSettings?.userIndex)&&role.chatSettings.userIndex!==userIndex)throw Error('角色钱包与当前面具不匹配');const wallet=roleWallet(state,roleId,userIndex,true),target=currencyForRole(role,wallet.currency),source=wallet.currency;
     if(source===target)return wallet;if(exchange.expectedBalanceCents!==wallet.balanceCents)throw Error('钱包余额已变化，请重新校准');
     const balance=convertRoleMoney(wallet.balanceCents,source,target,exchange),now=Date.now();
     wallet.ledger=wallet.ledger.map(row=>({...row,currency:row.currency||source}));wallet.ledger.unshift({id:id('role-tx'),kind:'currency-conversion',amountCents:0,currency:target,sourceCurrency:source,sourceBalanceCents:wallet.balanceCents,targetBalanceCents:balance,createdAt:now,description:`钱包币种校准：${source} ${yuan(wallet.balanceCents)} → ${target} ${yuan(balance)}`});
@@ -328,5 +339,5 @@ function currencyForRole(character){
     return{id:reactionId,mine:false,type:'text',text,createdAt:now,marketEvent:{type:'gift-received',orderId:order.id,characterId:roleId,userId:order.userId,decision}};
   };
   const favorites=(state,userIndex=state.user)=>persona(state,userIndex).favorites;
-  window.IrisMarketCore={currencyForRole,requireRoleWalletCurrency,reconcileRoleWalletCurrency,giftStatus,giftOrder,syncGiftCards,decideGift,settleTransfer,categories,normalize,personaId,persona,shippingSummary,roleWallet,initializeRoleWallet,updateRoleWallet,chargeRoleOrder,quoteRolePayment,payRoleOrder,refundRoleOrder,product,linePrice,cartTotal,addCart,cents,transition,createOrder,payOrder,schedule,advance,refund,saveGenerated,saveGeneratedBatch,favorites,yuan,id};
+  window.IrisMarketCore={roleResidence,roleIncomeProfile,validateRoleIncomePlans,setRoleIncomePlan,settleRoleIncomes,currencyForRole,requireRoleWalletCurrency,reconcileRoleWalletCurrency,giftStatus,giftOrder,syncGiftCards,decideGift,settleTransfer,categories,normalize,personaId,persona,shippingSummary,roleWallet,initializeRoleWallet,updateRoleWallet,chargeRoleOrder,quoteRolePayment,payRoleOrder,refundRoleOrder,product,linePrice,cartTotal,addCart,cents,transition,createOrder,payOrder,schedule,advance,refund,saveGenerated,saveGeneratedBatch,favorites,yuan,id};
 })();
