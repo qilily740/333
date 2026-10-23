@@ -930,8 +930,9 @@ function renderConversation(user,character,conversationItems=messages(),videoCal
   const avatarClass=videoCall?(previousSame?' is-group-hidden':''):(nextSame?' is-group-hidden':'');
   let messageAvatar=message.mine?`<button type="button" class="avatar chat-user-wallet-avatar${avatarClass}" data-chat-user-wallet="${Math.max(0,state.users?.indexOf(user)??state.user)}" aria-label="查看${esc(user?.nickname||user?.name||'用户')}的银行卡">${user?.avatar?`<img src="${esc(user.avatar)}" alt="">`:esc((user?.nickname||user?.name||'').slice(0,1))}</button>`:avatar(character).replace('class="avatar',`class="avatar${avatarClass}`);
   const reflectionHasContent=message.reflection&&[message.reflection.thought,message.reflection.status,message.reflection.thoughtTranslation,message.reflection.statusTranslation].some(value=>String(value||'').trim());
-  if(!videoCall&&!message.mine&&reflectionHasContent){
-   const hasUnreadThought=Boolean(String(message.reflection.thought||'').trim()||String(message.reflection.thoughtTranslation||'').trim()),unread=Boolean(hasUnreadThought&&message.reflection.generatedAt&&!message.reflection.readAt),animateReflection=unread&&!message.reflection.animationPlayedAt&&!animatedReflectionInstances.has(message.reflection);if(animateReflection){animatedReflectionInstances.add(message.reflection);message.reflection.animationPlayedAt=Date.now();save()}
+  if(!videoCall&&!message.mine&&(reflectionHasContent||!state.offline&&!nextSame)){
+   const reflection=message.reflection||{};
+   const hasUnreadThought=Boolean(String(reflection.thought||'').trim()||String(reflection.thoughtTranslation||'').trim()),unread=Boolean(hasUnreadThought&&reflection.generatedAt&&!reflection.readAt),animateReflection=unread&&!reflection.animationPlayedAt&&!animatedReflectionInstances.has(reflection);if(animateReflection){animatedReflectionInstances.add(reflection);reflection.animationPlayedAt=Date.now();save()}
    messageAvatar=avatar(character).replace('<span class="avatar','<button type="button" data-role-reflection="'+index+'" aria-label="'+(unread?'查看未读心声与状态':'查看心声与状态')+'" class="avatar reflection-avatar').replace('</span>',(unread?'<span class="reflection-unread-tag'+(animateReflection?' is-new':'')+'" aria-hidden="true"><svg viewBox="0 0 28 18"><path d="M5 1H21Q22 1 22.7 1.7L26.3 5.3Q27 6 27 7V13Q27 17 23 17H5Q1 17 1 13V5Q1 1 5 1Z"/></svg><span class="reflection-tag-dots"><i></i><i></i><i></i></span></span>':'')+'</button>');
   }
   const timestamp=!state.offline&&!nextSame&&message.createdAt?`<time class="message-time">${formatMessageTime(message.createdAt,message.mine)}</time>`:'';
@@ -1027,7 +1028,7 @@ function bindConversationMedia(container=$('#conversation')){
    if(activeMessageActionIndex!==null&&!target.closest('.message-action-menu')){activeMessageActionIndex=null;render()}
   });
  }
- container.querySelectorAll('[data-role-reflection]').forEach(button=>button.onclick=()=>{if(!button.classList.contains('reflection-avatar')){openRoleReflection(Number(button.dataset.roleReflection));return}if(suppressReflectionAvatarClick===button){suppressReflectionAvatarClick=null;return}const previous=reflectionAvatarClickTimers.get(button);if(previous)clearTimeout(previous);reflectionAvatarClickTimers.set(button,setTimeout(()=>{reflectionAvatarClickTimers.delete(button);if(button.isConnected)openRoleReflection(Number(button.dataset.roleReflection))},480))});
+ container.querySelectorAll('[data-role-reflection]').forEach(button=>button.onclick=()=>{if(!button.classList.contains('reflection-avatar')){openRoleReflection(Number(button.dataset.roleReflection));return}if(suppressReflectionAvatarClick===button){suppressReflectionAvatarClick=null;return}const previous=reflectionAvatarClickTimers.get(button);if(previous)clearTimeout(previous);const clickedThread=messages(),clickedMessage=clickedThread[Number(button.dataset.roleReflection)],clickedKey=key();reflectionAvatarClickTimers.set(button,setTimeout(()=>{reflectionAvatarClickTimers.delete(button);if(key()===clickedKey&&messages()===clickedThread&&clickedThread.includes(clickedMessage))openRoleReflection(clickedThread.indexOf(clickedMessage))},480))});
  container.querySelectorAll('[data-reply-previous]').forEach(button=>button.onclick=()=>selectReplyVersion(key(),Number(button.dataset.replyPrevious),-1));
  container.querySelectorAll('[data-reply-next]').forEach(button=>button.onclick=()=>advanceReplyVersionOrGenerate(key(),Number(button.dataset.replyNext)));
  container.querySelectorAll('[data-offline-opening-previous]').forEach(button=>button.onclick=()=>void rerollInvitationOpening(button.dataset.offlineOpeningPrevious,-1));
@@ -1599,8 +1600,32 @@ function openReflectionManager(index,editing){
  $('#sheet').querySelectorAll('[data-theme-delete]').forEach(button=>button.onclick=()=>{state.reflectionThemes=customReflectionThemes().filter(v=>v.id!==button.dataset.themeDelete);if(state.reflectionPanel===button.dataset.themeDelete)state.reflectionPanel='original';save();openReflectionManager(index)});
  $('[data-theme-new]').onclick=()=>openReflectionManager(index,'new');$('[data-theme-return]').onclick=()=>openRoleReflection(index);
 }
+function openPendingRoleReflection(index){
+ const thread=messages(),selected=thread[index],threadKey=key(),character=chars[state.char],roleSettings=currentRoleChatSettings(),userIndex=Number.isInteger(roleSettings.userIndex)?roleSettings.userIndex:state.user,bound=state.users[userIndex];
+ if(!selected||selected.mine||!character||!bound)return;
+ let ownerIndex=index;while(ownerIndex>=0&&!thread[ownerIndex].mine)ownerIndex--;const owner=thread[ownerIndex];
+ sheet('Inner Voice','心声',`<div class="reflection-pending-host"><p data-reflection-status role="status">心声正在生成…</p><button type="button" class="primary" data-reflection-retry hidden>重试生成心声</button></div>`,{centered:true});
+ const host=$('.reflection-pending-host'),status=host.querySelector('[data-reflection-status]'),retry=host.querySelector('[data-reflection-retry]');let busy=false;
+ const current=()=>host.isConnected&&!$('#sheet').hidden&&key()===threadKey&&state.messages[threadKey]===thread&&chars[state.char]===character&&state.users[userIndex]===bound;
+ const run=async()=>{
+  if(busy)return;busy=true;retry.hidden=true;status.textContent='心声正在生成…';
+  try{
+   while(chatReplyInFlight.has(threadKey)){if(!current())return;await new Promise(resolve=>setTimeout(resolve,100))}
+   if(!current())return;
+   const start=owner?thread.indexOf(owner)+1:0;if(owner&&start===0)throw Error('这轮聊天已被删除');let end=start;while(end<thread.length&&!thread[end].mine&&thread[end].type!=='call-summary')end++;
+   const target=reflectionReplyTarget(thread.slice(start,end));if(!target)throw Error('这轮还没有可生成心声的回复');
+   const targetIndex=thread.indexOf(target);
+   if(!target.reflection?.status||!target.reflection?.thought)await prepareOnlineReflection(character,bound,roleSettings,thread.slice(0,targetIndex),[target]);
+   if(state.messages[threadKey]!==thread||!thread.includes(target)||owner&&!thread.includes(owner)||!chars.includes(character)||state.users[userIndex]!==bound)return;
+   if(!target.reflection?.status||!target.reflection?.thought)throw Error(target.reflection?.generationError||'心声暂未生成，请重试');
+   const liveStart=owner?thread.indexOf(owner)+1:0;let liveEnd=liveStart;while(liveEnd<thread.length&&!thread[liveEnd].mine&&thread[liveEnd].type!=='call-summary')liveEnd++;if(owner?.replyVersions?.[owner.activeReplyVersion])owner.replyVersions[owner.activeReplyVersion]=cloneReplyMessages(thread.slice(liveStart,liveEnd).filter(item=>item.type!=='pat'));
+   save();if(key()===threadKey)render();if(current())openRoleReflection(thread.indexOf(target));
+  }catch(error){if(current()){status.textContent=error.message||'心声生成失败，请重试';retry.hidden=false}}finally{busy=false}
+ };
+ retry.onclick=()=>{void run()};void run();
+}
 function openRoleReflection(index){
- const thread=messages(),message=thread[index],reflection=message?.reflection,character=chars[state.char];if(!reflection)return;
+ const thread=messages(),message=thread[index],reflection=message?.reflection,character=chars[state.char];if(!message||message.mine)return;if(!reflection?.status||!reflection?.thought){openPendingRoleReflection(index);return;}
  const custom=customReflectionThemes().find(v=>v.id===state.reflectionPanel),type=custom?custom.id:Object.hasOwn(reflectionPanelNames,state.reflectionPanel)?state.reflectionPanel:'original';
  sheet('','', '<div class="reflection-panel-host"></div>',{centered:true});
  let autoGenerationStarted=false;const host=$('.reflection-panel-host'),shell=$('#sheet');shell.classList.add('is-reflection-app');shell.dataset.panel=custom?'custom':type;
@@ -1958,8 +1983,8 @@ let offlineRegexDraft=null;
 let offlineRequirementDraftRole=null;
 let systemSettingsTab='api';
 const APP_VERSION='5.8.0';
-const APP_RELEASE='5.8.0-r10';
-const APP_RELEASE_NOTES={"date": "2026-10-23", "changes": ["优化线上聊天回复速度", "优化常住地币种识别", "完善私人钱包收支", "优化表情包面板显示", "修复角色表情包及说明文字显示"], "noticeId": "5.8.0-sticker-context"};
+const APP_RELEASE='5.8.0-r11';
+const APP_RELEASE_NOTES={"date": "2026-10-23", "changes": ["优化线上聊天回复速度", "优化常住地币种识别", "完善私人钱包收支", "优化表情包面板显示", "修复角色表情包及说明文字显示", "修复心声面板打开异常"], "noticeId": "5.8.0-reflection-avatar"};
 const APP_RELEASE_HISTORY=[{version:APP_VERSION,...APP_RELEASE_NOTES},{version:'5.7.9',...{"date": "2026-10-22", "changes": ["新增功能按钮名称中英文切换，入口：主页面加号菜单底部「中 / EN」；选择会自动记住。", "新增「联系作者」。入口：教程悬浮圆形按键 → 联系作者。", "统一角色币种识别，修复私人钱包、代付、转账、购物、退款及经营分红的币种校验。"], "noticeId": "5.7.9-menu-language"}},{version:'5.7.8',...{"date": "2026-10-21", "changes": ["线上聊天第一条消息长按后，操作面板显示在消息下方，避免顶部裁切，保持原有消息间距。", "心声与本轮回复一起准备，提前生成 X、备忘录、GPT 和当前自定义面板，打开即可查看。"]}},{version:'5.7.7',...{"date": "2026-10-21", "changes": ["普通聊天支持照片与表情读图，可在线上设置的“更多”中启用图片输入。", "优化真实图片展示：移除外层气泡，修正连续发消息后尺寸变化；多选时点击图片直接选中。", "修正心声面板打开后缺少内容的问题，生成失败时可查看错误并重试。", "将“事情有后续”移到线上设置的“更多”，整理开关与事项列表。", "新增版本更新提示，同一版本关闭后不再提醒。"]}},{version:'5.7.6',date:'2026-10-21',changes:['普通聊天支持照片与表情读图，可在线上设置的“更多”中启用图片输入。','优化真实图片展示：移除外层气泡，修正连续发消息后尺寸变化；多选时点击图片直接选中。','修正心声面板打开后缺少内容的问题，生成失败时可查看错误并重试。','将“事情有后续”移到线上设置的“更多”，整理开关与事项列表。','新增版本更新提示，同一版本关闭后不再提醒。']}];
 const compareAppVersions=(left,right)=>{const a=String(left||'0').split('.').map(Number),b=String(right||'0').split('.').map(Number);for(let i=0;i<Math.max(a.length,b.length);i++){const delta=(a[i]||0)-(b[i]||0);if(delta)return Math.sign(delta)}return 0};
 const compareAppReleases=(left,right)=>{const parse=value=>{const match=String(value||'0').match(/^(.*?)(?:-r(\d+))?$/);return{version:match[1],revision:Number(match[2])||0}},a=parse(left),b=parse(right);return compareAppVersions(a.version,b.version)||Math.sign(a.revision-b.revision)};
@@ -3641,13 +3666,20 @@ function decodeOnlineReply(answer,conversationItems,stickerCatalog,transferDefau
 }
 async function prepareOnlineReflection(character,bound,roleSettings,thread,replyMessages){
  const target=reflectionReplyTarget(replyMessages);if(!target)return;
- try{
-  if(hasDedicatedReflectionApi()||!target.reflection?.status||!target.reflection?.thought){
-   const reflection=await generateOnlineReflection(character,bound,roleSettings,thread,replyMessages);
-   replyMessages.forEach(item=>{delete item.reflection});target.reflection=reflection;
-  }
-
- }catch(error){toast(error.message||'心声生成失败，可在面板中重试')}
+ const jobs=prepareOnlineReflection.jobs||(prepareOnlineReflection.jobs=new WeakMap());
+ if(jobs.has(target))return jobs.get(target);
+ if(target.reflection?.generationState==='ready'&&target.reflection.status&&target.reflection.thought)return;
+ const reflection=target.reflection||(target.reflection={});reflection.generationState='loading';delete reflection.generationError;
+ const work=Promise.resolve().then(async()=>{
+  try{
+   if(hasDedicatedReflectionApi()||!reflection.status||!reflection.thought){
+    const result=await generateOnlineReflection(character,bound,roleSettings,thread,replyMessages);
+    replyMessages.forEach(item=>{if(item!==target)delete item.reflection});Object.assign(reflection,result);target.reflection=reflection;
+   }
+   reflection.generationState='ready';
+  }catch(error){reflection.generationState='error';reflection.generationError=error.message||'心声生成失败，可重试';toast(reflection.generationError)}
+ }).finally(()=>{if(jobs.get(target)===work)jobs.delete(target)});
+ jobs.set(target,work);return work;
 }
 async function generateOnlineReflection(character,bound,roleSettings,thread,replyMessages){
  const config=apiConfigForFeature('reflection'),model=apiModelForFeature('reflection',config);if(!config?.url||!config?.key||!model)throw Error('请先为心声配置可用的 API 和模型');
