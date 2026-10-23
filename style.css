@@ -3778,12 +3778,10 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .release-notice-brand{font:34px/1.1 "Great Vibes","Snell Roundhand",cursive;color:#555;letter-spacing:-.5px}
 #irisReleaseNotice .release-notice-close{appearance:none;-webkit-appearance:none;box-sizing:border-box;display:grid;place-items:center;flex:0 0 40px;width:40px;min-width:40px;max-width:40px;height:40px;min-height:40px;max-height:40px;margin:-5px;padding:5px;border:0;border-radius:50%;background:transparent;color:#999;line-height:0;box-shadow:none;transform:none}
 #irisReleaseNotice .release-notice-close>svg{display:block;flex:none;width:30px;height:30px;max-width:none;max-height:none;overflow:visible}
-#irisReleaseNotice .release-notice-close circle{fill:#f2f2f2;stroke:none}
 #irisReleaseNotice .release-notice-close path{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
-#irisReleaseNotice .release-notice-close:hover circle{fill:#eaeaea}
 #irisReleaseNotice .release-notice-close:hover{color:#555}
 #irisReleaseNotice .release-notice-close:focus,#irisReleaseNotice .release-notice-close:focus-visible{outline:none}
-#irisReleaseNotice .release-notice-close:focus-visible circle{stroke:#888;stroke-width:1.5}
+#irisReleaseNotice .release-notice-close:focus-visible{outline:1px solid #888;outline-offset:2px;border-radius:4px}
 .release-notice-heading{flex-shrink:0;padding:25px 0 26px}
 .release-notice-eyebrow{display:flex;align-items:center;gap:10px}
 .release-notice-eyebrow>span{width:18px;height:1px;background:#bdbdbd}
