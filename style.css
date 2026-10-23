@@ -3838,3 +3838,6 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 #quickFeatures .quick-action-row>button>span:last-child{display:flex;align-items:center;justify-content:center;box-sizing:border-box;flex:1;min-width:0;height:28px;min-height:28px;max-height:28px;margin:0;padding:3px 4px;border-radius:14px;background:#fff;color:#555;box-shadow:0 2px 12px #0000000c;font-size:10px;line-height:11px;text-align:center;white-space:normal;overflow-wrap:normal;word-break:normal}
 #quickFeatures .quick-action-row>.quick-exit{font-size:10px}
 @media(max-width:360px){#quickFeatures .quick-action-row{gap:4px}#quickFeatures .quick-action-row>button>.quick-icon{flex-basis:32px;width:32px;height:32px}#quickFeatures .quick-action-row>button>.quick-icon svg{width:32px;height:32px;padding:8px}}
+
+/* Extend the sticker panel background through the shell gutters. */
+.bottom #emojiInlinePanel{width:calc(100% + 2 * var(--app-shell-gutter,48px));max-width:none;margin-inline:calc(0px - var(--app-shell-gutter,48px));padding-inline:var(--app-shell-gutter,48px);background:#fff}
