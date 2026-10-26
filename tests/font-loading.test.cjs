@@ -58,10 +58,17 @@ test('multiple font imports stay before faces and media rules; component scoping
  assert.ok(css.indexOf('b.css')<css.indexOf('@font-face'));
  assert.ok(css.includes(`@media(max-width:480px){${root} :is(.topbar,#conversation,.bottom) .bubble{font-family:X}}`));
 });
-test('built-in fonts register before the boot font request and do not depend on font CDN stylesheets',()=>{
+test('built-in boot fonts stay self-hosted while travel handwriting can use its URL stylesheet',()=>{
  const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
  assert.ok(html.indexOf('assets/fonts/fonts.css')<html.indexOf('document.fonts?.load'));
- assert.doesNotMatch(html,/fonts\.googleapis|fontsapi\.zeoseven|cdn\.jsdelivr/);
+ const localCss=fs.readFileSync(path.join(__dirname,'../assets/fonts/fonts.css'),'utf8');
+ assert.match(localCss,/font-family:\s*['"]Great Vibes['"]/);
+ assert.doesNotMatch(localCss,/@import|https?:\/\//);
+ assert.ok(fs.existsSync(path.join(__dirname,'../assets/fonts/great-vibes/great-vibes-regular.woff2')));
+ assert.match(html,/rel="preload"[^>]+assets\/fonts\/great-vibes\/great-vibes-regular\.woff2/);
+ const remoteStyles=[...html.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*href="(https?:[^"]+)"/g)].map(m=>new URL(m[1]));
+ assert.ok(remoteStyles.some(url=>url.hostname==='fonts.googleapis.com'&&url.searchParams.getAll('family').includes('Zhi Mang Xing')));
+ for(const url of remoteStyles)assert.equal(url.hostname,'fonts.googleapis.com');
 });
 test('beautify preview allows fonts and puts custom imports at the beginning of a separate stylesheet',()=>{
  const preview=source.slice(source.indexOf('function beautifyPreviewDocument('),source.indexOf('function beautifyTutorialMarkup('));

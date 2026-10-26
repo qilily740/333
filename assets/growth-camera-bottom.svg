@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="600" viewBox="0 1420 1240 600">
+ <defs><linearGradient id="bar" x2="1" y2="1"><stop stop-color="#181818"/><stop offset="1" stop-color="#080808"/></linearGradient><radialGradient id="disc"><stop stop-color="#292929"/><stop offset="1" stop-color="#202020"/></radialGradient></defs>
+<path fill="url(#bar)" d="M0 1544h1240v476H0z"/>
+ <rect x="474" y="1424" width="293" height="96" rx="48" fill="url(#disc)"/><circle cx="620" cy="1472" r="45" fill="#181818"/>
+ <g fill="#eee" font-family="Arial,sans-serif" font-size="34" text-anchor="middle"><text x="526" y="1485">.5</text><text x="620" y="1485" fill="#ffdc00" font-weight="bold">1x</text><text x="716" y="1485">3</text></g>
+ <circle cx="620" cy="1636" r="7" fill="#ffdc00"/>
+ <circle cx="620" cy="1748" r="90" fill="none" stroke="#f5f5f5" stroke-width="5"/><circle cx="620" cy="1748" r="80" fill="#fdfdfd"/>
+ <rect x="171" y="1691" width="126" height="126" rx="15" fill="#484848"/>
+ <circle cx="234" cy="1734" r="19" fill="#fff"/><path d="M199 1790a36 36 0 0 1 70 0q-35 23-70 0" fill="#fff"/>
+ <circle cx="1011" cy="1754" r="65" fill="url(#disc)"/>
+ <g fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"><path d="M986 1728a38 38 0 0 1 60 20M1038 1779a38 38 0 0 1-60-20"/></g><path fill="#fff" d="m1033 1743 25 1-14 17zM966 1759l25 3-15-19z"/>
+</svg>

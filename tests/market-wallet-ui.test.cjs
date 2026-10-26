@@ -46,7 +46,7 @@ context.window.IrisMarket.render({
   esc: value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char])),
   save: () => { saves += 1; },
   exchangeRateToCny: async code => {fxCalls+=1;assert.equal(code,'USD');return {rate:7.2,date:'2026-10-14'};},
-  request: async prompt => { prompts.push(prompt);apiCalls += 1; if(apiFailure)throw Error('钱包 API 失败');if(prompt.includes('搜索需求：'))return searchResponse();if(prompt.includes('仅返回本次检查区间'))return JSON.stringify({transactions:[]}); return JSON.stringify({balance:8520,currency:'CNY',bankName:'虚拟城市银行',accountStyle:'numeric',transactions:[{kind:'expense',amount:22,description:'奶茶',daysAgo:0},{kind:'expense',amount:168,description:'工作用品',daysAgo:1},{kind:'income',amount:4000,description:'工作收入',daysAgo:5}]}); }
+  request: async prompt => { prompts.push(prompt);apiCalls += 1; if(apiFailure)throw Error('钱包 API 失败');if(prompt.includes('搜索需求：'))return searchResponse();if(prompt.includes('仅返回本次检查区间'))return JSON.stringify({transactions:[]}); return JSON.stringify({balance:8520,currency:'CNY',incomePlans:[{key:'monthly-work',description:'工作月薪',basis:'角色稳定工作收入',currency:'CNY',amount:4000,payDay:25}],bankName:'虚拟城市银行',accountStyle:'numeric',transactions:[{kind:'expense',amount:22,description:'奶茶',daysAgo:0},{kind:'expense',amount:168,description:'工作用品',daysAgo:1},{kind:'income',amount:4000,description:'工作收入',daysAgo:5}]}); }
 });
 assert.match(content.innerHTML, /market-product-art/);
 assert.match(content.innerHTML, /<svg viewBox="0 0 24 24" aria-hidden="true">/);
@@ -106,6 +106,9 @@ async function click(dataset) {
   assert.equal(C.roleWallet(state,state.characters[0].irisMarketId,0).ledger.length,4);
   assert.equal(apiCalls,1);
   const generated=C.roleWallet(state,state.characters[0].irisMarketId,0);
+  assert.equal(generated.incomePlans[0].key,'monthly-work','first wallet generation must persist the income plan');
+  assert.equal(generated.incomePlans[0].amountCents,400000);
+  assert.match(content.innerHTML,/最近收支|工作月薪/);
   assert.equal(generated.ledger.reduce((sum,row)=>sum+row.amountCents,0),generated.balanceCents);
   assert.ok(generated.ledger.some(row=>row.amountCents<0));
   assert.match(content.innerHTML,/工作用品/);

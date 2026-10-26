@@ -31,6 +31,8 @@ test('offline quick actions place masking immediately above save', () => {
   const menu = { innerHTML: '' };
   const context = vm.createContext({
     state: { offline: true }, chars: [],
+    applyFunctionButtonLanguage() {}, // Menu ordering is independent of the tested language formatter.
+
     $: selector => selector === '#quickFeatures' ? menu : null,
     icon: name => `<svg data-icon="${name}"></svg>`
   });

@@ -180,7 +180,7 @@ test('wires the forum entry to local state and its dedicated API route', () => {
   assert.match(app, /apiConfigForFeature\('market'\).*requestConfiguredChatCompletion/);
   assert.match(app, /\['forum','论坛'\].*\['market','商场'\]/);
   assert.match(app, /IrisForumCore\?\.chatContext\?\.\(state,character,bound\)/);
-  assert.match(app, /forumContext=window\.IrisForumCore\?\.chatContext\?\.\(state,character,user\)/);
+  assert.match(app, /forumContext=ifContext\?'':window\.IrisForumCore\?\.chatContext\?\.\(state,character,user\)/);
   assert.match(moduleSource, /allowStoryContext/);
   assert.match(moduleSource, /sourcePersonaId/);
   assert.match(moduleSource, /roleMember\.permissions\?\.allowStoryContext===true/);

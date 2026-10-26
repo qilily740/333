@@ -552,10 +552,229 @@ paragraphRequirement|段落要求|补充对段落长度、分段方式或对话�
 pacing|故事推进节奏|选择线下事件如何推进，后续生成按节奏要求继续故事，并以已经发生的情节作为前文。
 style|故事文风选择|选择后续线下生成使用的文风，完整内容可以在文风编辑中查看和修改。
 `);
+ define('[aria-label="返回 IF 世界列表"]','返回 IF 世界列表','返回时间线节点与开场列表，当前分支的已保存剧情会保留。',true);
+ define('.if-opening-new','新建 IF 开场','在同一来源节点下创建另一条独立分支，之后可选择世界与生成开场。',true);
+ define('[data-if-node]','IF 时间线节点','选择人生时间线的分叉点。有已生成开场时可选择进入或新建开场；没有开场时进入当前节点的分支设置与介入点填写。',true);
+ define('[data-if-open]','进入 IF 开场','进入这条开场及其后续剧情，从顶部开始阅读；只打开已有记录，不调用 API。',true);
+ define('[data-if-view="settings"]','IF 分支设置','查看当前分支的通用、文风、世界与额外要求。修改后点击保存设置，下一次生成使用新的要求。',true);
+ define('[data-if-view="story"]','返回 IF 剧情','返回当前分支的剧情及介入点输入，不会因此请求模型。',true);
+ define('[data-if-setting-tab="general"]','IF 通用设置','设置人称、抢话或不抢话、字数、段落数、长短组织、推进速度与绑定年龄。 修改后点击保存设置，下一次生成使用这些要求。',true);
+ define('[data-if-setting-tab="style"]','IF 文风设置','选择或自定义当前分支的叙述风格。 修改后点击保存设置，下一次生成使用这些要求。',true);
+ define('[data-if-setting-tab="world"]','IF 世界设置','选择当前分支的世界背景，查看具体设定，或新增自定义世界。 修改后点击保存设置，下一次生成使用这些要求。',true);
+ define('[data-if-setting-tab="extra"]','IF 其他设置','启用并填写只作用于当前分支的额外要求。 修改后点击保存设置，下一次生成使用这些要求。',true);
+ define('[data-if-tools-toggle]','IF 功能菜单','展开输入框左侧的功能菜单：记入梦境、封存、清空与删除。',true);
+ define('[data-if-story-tool="dream"]','记入梦境','将当前分支故事保存为梦境，可分别选择注入线上或线下；仅此操作不会改写主线人生时间线。',true);
+ define('[data-if-story-tool="seal"]','封存 IF','调用经历 API 总结并封存当前分支，不注入线上或线下。');
+ define('[data-if-story-tool="clear"]','清空 IF 剧情','确认后清空当前分支的剧情和介入内容，保留来源时间线节点及分支设置。');
+ define('[data-if-story-tool="delete"]','删除 IF 分支','确认后删除当前 IF 分支及其剧情；来源时间线和已经保存的梦境保留。');
+ define('[data-if-send]','发送 IF 消息','把输入内容加入当前分支。已有开场时只发送消息，不自动请求角色回复；尚无开场时会请求生成开场。');
+ define('[data-if-reply]','请求 IF 回复','使用经历接口继续当前分支，按当前通用、文风、世界与额外要求生成；不会把未发送的输入当成已经发生的行动。');
+ define('[data-if-settings] button[type="submit"]','保存 IF 设置','保存当前分支的人称、用户参与、字数、段落、推进速度和世界等要求，下一次生成生效。');
+ define('[data-if-message-action="edit"]','编辑 IF 消息','修改选中消息的正文并保存，后续剧情会参考修改后的记录。',true);
+ define('[data-if-message-action="delete"]','删除 IF 消息','确认后删除这一条 IF 消息，不删除整条分支。');
+ define('[data-if-message-action="select"]','多选 IF 消息','进入多选模式，勾选需要删除的消息后再确认删除。',true);
+ define('[data-if-selection-delete]','删除所选 IF 消息','确认后只删除当前勾选的 IF 消息，未选中的剧情保留。');
+ define('[data-if-world-add]','保存自定义 IF 世界','保存填写的世界名称与具体设定，并应用于当前分支；首次生成会把身份适配和剧情合并为一次经历 API 请求。');
+ define('[data-if-style-add]','保存自定义 IF 文风','保存当前文风说明并选用，下一次生成会读取这份文风要求。');
+
+ // Control-specific help: do not turn changing roster labels into tutorial text.
+ const experienceStart=entries.length;
+ const experienceRows=`
+[data-timeline-role]|切换角色|选择要查看经历的角色，人生时间线、成长档案、地球路线、人物成就和 IF 分支随所选角色切换。这里只切换查看对象，不删除资料。|进入
+[data-r-role],[data-r-role-option]|切换角色|选择阅读时的陪读角色；之后的共读讨论与批注使用所选角色资料。|进入
+[data-user-select],[data-member-role-picker-toggle],[data-r-user],[data-r-user-option],[data-m-toggle-masks],[data-m-switch-user],[data-p-mask-toggle],[data-p-mask-option],[data-sms-user],[data-sms-user-select],#smsUserToggle|切换用户|展开用户身份列表或选用一张用户面具，当前功能的数据随用户身份切换。|进入
+[data-m-pick-role]|选择代付角色|为当前代付或赠礼操作选择角色，之后仍需确认具体操作。|进入
+[data-dock-feature="experiences"]|经历|打开当前角色的人生时间线、成长档案、地球地图、人物与成就以及 IF 世界。|进入
+#experience-tab-0|人生时间线|查看、生成和核对角色在不同年龄与年份发生的事情；确认后的事件可关联成长档案或创建 IF 分支。|进入
+#experience-tab-1|成长档案|按年龄阶段整理照片、性格、外貌和阶段经历；点击相机或阶段照片进入具体档案。|进入
+#experience-tab-2|地球地图|查看单人或双人旅行航线，点路线打开机票与旅途记录；待定位城市可映射到真实城市。|进入
+#experience-tab-3|人物与成就|管理角色结识的人物、对角色的阶段评价，以及正式或趣味成就。|进入
+#experience-tab-4|IF 世界|从时间线节点或自定义设定进入独立分支，生成开场并继续故事，也可保存梦境或封存。|进入
+[data-timeline-analyze]|重新生成人生时间线|调用经历 API，根据角色与世界设定整理年龄、年份及事件；成功后用新时间线替换旧时间线，失败保留已有记录。
+[data-timeline-confirm-all]|确认全部事件|将当前可确认的时间线事件标为已确认；先检查事件、年龄和来源是否符合设定。
+[data-timeline-confirm]|确认这条事件|把这一条人生事件标为已确认，确认后可被成长档案关联。
+[data-timeline-edit]|编辑人生事件|打开这一条事件，修改标题、时间、地点与事件内容，完成后保存。|进入
+[data-timeline-delete]|删除人生事件|确认后删除这一条时间线记录，不是清空整个角色的经历。
+[data-timeline-if]|从这里进入 IF|以这条人生事件为分叉点，查看已有开场或创建另一条 IF 故事。|进入
+[data-timeline-up]|上移人生事件|将这条事件在手动顺序中向前移动一位。
+[data-timeline-down]|下移人生事件|将这条事件在手动顺序中向后移动一位。
+[data-timeline-sort]|切换时间线排序|选择按年龄、按日期或手动排序，改变列表展示顺序，不改事件正文。
+[data-timeline-filter]|筛选人生事件|选择全部、已确认或待确认，只显示对应状态的事件，其他事件仍保留。
+[data-timeline-bulk]|批量处理人生事件|对当前选定范围执行此处标明的批量操作，确认前核对事件范围。
+[data-timeline-cancel]|取消事件编辑|关闭尚未保存的事件编辑，返回人生时间线。|进入
+[data-timeline-editor] button[type="submit"]|保存人生事件|保存当前表单填写的年龄、年份、地点和事件内容，更新这一条人生事件。
+[data-growth-open],[data-growth-shutter],[data-growth-thumbnail]|打开当前阶段档案|打开相机当前选中的年龄阶段，填写或查看照片、性格、外貌、经历和关联事件。|进入
+[data-growth-prev],[data-growth-previous]|上一成长阶段|切换到前一个成长阶段；有未保存的修改时先处理保存或放弃。|进入
+[data-growth-next],[data-growth-following]|下一成长阶段|切换到后一个成长阶段；不会自动生成新的阶段内容。|进入
+[data-growth-ruler]|选择年龄阶段|左右拖动刻度切换当前阶段，再点击快门或照片进入档案。
+[data-growth-cycle]|循环查看成长阶段|切换相机展示的成长阶段，不修改阶段正文。
+[data-growth-flash]|相机闪光预览|切换相机的闪光显示效果，只影响预览，不会拍摄或上传照片。
+[data-growth-grid]|取景辅助网格|显示或隐藏照片预览的构图网格，不改变原照片。
+[data-growth-empty-new],[data-growth-new]|新建成长阶段|新建一份成长档案，填写阶段名称与起止年龄，再保存。|进入
+[data-growth-save]|保存成长档案|保存当前阶段的照片、起止年龄和已填写内容，保存后停留在阶段档案。
+[data-growth-delete]|删除成长阶段|确认后删除当前阶段档案，不会因此删除原始人生时间线。
+[data-growth-api]|API 填写成长档案|展开本阶段的生成区域，选择资料来源后点击整理，先审核结果再采用。|进入
+[data-growth-source]|选择成长资料来源|决定本次整理是否参考人设、世界书或已确认的人生经历；勾选本身不调用 API。
+[data-growth-stage-generate]|整理当前成长阶段|调用经历 API，按本阶段起止年龄整理性格、外貌、穿着等内容，先显示候选结果，不直接覆盖档案。
+[data-growth-apply-field]|勾选成长建议|选择要写入档案的候选字段；只有点击采用后才填入当前阶段。
+[data-growth-apply]|采用勾选内容|将勾选的生成建议填入当前档案，收起审核区域并回到照片区域；之后点击保存才保存档案。
+[data-growth-review]|审核生成的成长阶段|打开这份阶段建议，核对年龄、内容和关联经历，再决定采用。|进入
+[data-growth-dismiss],[data-growth-ignore]|忽略成长建议|忽略这一份未采用的建议，不删除已经保存的成长档案。
+[data-growth-photo]|选择阶段照片|从本机选择照片并填入当前阶段，完成后点击保存档案。
+[data-growth-photo-remove]|移除阶段照片|从当前编辑的阶段移除照片；保存后生效，不删除其他阶段的照片。
+.growth-upload|添加或更换阶段照片|选择一张本地图片作为当前阶段的拍立得照片，最后点击保存档案。|进入
+.growth-form input[name="name"]|阶段名称|填写这一阶段的名称，例如少年、大学时期；修改后保存档案。
+.growth-form input[name="startAge"]|开始年龄|填写这个阶段开始时的年龄，用来关联这一年龄范围内已确认的人生事件。
+.growth-form input[name="endAge"]|结束年龄|填写这个阶段结束时的年龄，不能早于开始年龄；范围内的已确认经历可关联到档案。
+.growth-form input[name="timelineIds"]|关联人生经历|勾选这一条已确认事件，使它成为当前成长阶段的关联经历；保存档案后保留关联。
+.growth-form textarea|填写成长档案内容|填写当前标签对应的性格、外貌、穿着、阶段经历或来源说明，完成后点击保存档案。
+[data-earth-route-mode="solo"]|查看单人旅行|只展示角色自己的旅行路线与单人旅途片段。|进入
+[data-earth-route-mode="shared"]|查看双人旅行|展示角色和用户已安排的共同旅行路线，未来航段为虚线，到日期后按航段时间展示。|进入
+[data-earth-generate]|生成单人旅行路线|一次调用经历 API，同时生成单人旅行路线和有依据的现实城市映射，之后只在本地核验坐标，不额外调用映射 API；无法确认的地点可手动映射。
+[data-earth-generate-memories]|生成旅行片段|调用经历 API，为单人已保存行程生成旅途记录；已有记录再次生成时会更新片段。
+[data-earth-together]|邀请一起旅行|填写地点、出发时间与天数，确认后把旅行邀请发送到线上聊天，由角色决定回应。|进入
+[data-earth-geocode]|补全城市定位|核对已保存路线的城市位置，需要时调用经历 API 参考设定；不能确定的城市仍保留待定位。
+[data-route-map]|手动定位这段旅程|打开这段旅程的编辑，在出发或目的城市右侧展开映射现实城市，可手动选择对应城市。|进入
+[data-edit-map-end]|映射现实城市|展开原城市旁的映射设置，输入现实城市并从列表选择，保存修改后才更新地图。|进入
+[data-edit-city-search]|搜索对应现实城市|输入原城市要映射的真实城市名称，唯一匹配会自动选中；同名城市需选择具体位置。保存后立即补全可定位航线，不修改故事中的原城市名。
+.earth-city-mapping select|选择现实城市候选|从核验后的城市候选中选择对应位置，注意国家和行政区；保存路线后生效。
+[data-route-show]|查看这段旅行|打开这段航线的机票，点击机票可查看停留天数、出发时间与旅行原因，再翻看记录。|进入
+[data-earth-ticket]|展开或收起旅行详情|点击机票展开停留时间、出发日期和出行原因，再点一次收起，不调用 API。|进入
+[data-earth-memory-flip]|翻看旅途片段|翻到这段旅程的记录页；双人旅行可按天切换记录，翻页本身不生成内容。|进入
+[data-earth-memory-back]|返回旅行详情|从手写记录页回到机票下的停留时间、日期和旅行原因。|进入
+[data-route-edit]|编辑或定位这段旅行|修改行程资料与城市映射；双人出行安排会打开对应旅行预订，完成后保存。|进入
+[data-route-ignore]|隐藏或显示这条路线|切换这段路线是否在地球和行程列表中显示；隐藏不会删除保存的路线。
+[data-route-delete]|删除这条旅行路线|确认后删除这一段单人路线及其附带记录，其他路线保留。
+[data-earth-play]|播放或暂停路线|控制飞机沿已定位航段播放，暂停保留当前进度，不生成新的行程。
+[data-earth-replay]|从头播放路线|把路线播放进度重置到起点并重新播放，不改动旅程记录。
+[data-earth-speed]|设置播放速度|改变飞机沿路线演示的速度，不改变实际旅行日期或天数。
+[data-earth-seek]|拖动航线进度|拖动时间轴查看不同航段的位置，不代表旅行已经实际出发。
+[data-earth-zoom]|缩放地球|放大或缩小地球显示，地标与飞机会随缩放调整，不修改城市坐标。
+[data-earth-landmarks]|地标显示|切换地图地标显示，方便查看城市位置，不改变保存的航线。
+[data-earth-review]|检查已保存路线|根据已保存路线重新核对定位与补画连线；不生成新的行程或覆盖旅程正文。
+[data-earth-review-close]|收起路线检查|关闭本次路线检查结果，已有路线保持不变。|进入
+[data-earth-reset]|重置地球视角|将地球的旋转和缩放恢复到初始视角，不清空路线。
+[data-earth-retry]|重新加载地球|重试加载地图素材，已保存的旅行路线保留。
+[data-earth-shared-trip]|查看这次共同旅行|在地球页面打开这次双人旅行的攻略、出行和住宿安排。|进入
+[data-earth-travel-shortcut-toggle]|开关旅行快捷入口|开启或关闭聊天输入框上方的旅行胶囊入口，关闭不取消旅行。
+[data-people-tab="reviews"]|人物关系|查看与角色有交集的人物，进入具体人物可查看阶段评价。|进入
+[data-people-tab="awards"]|成就与奖项|查看角色的正式和趣味奖项，点击具体奖项查看内容或编辑。|进入
+[data-people-generate]|生成人物或成就|调用经历 API，按当前分类生成角色关联人物或奖项，生成后保存到当前角色。
+[data-people-add]|新增人物或奖项|打开当前分类的手动新增表单，填写资料后保存。|进入
+[data-people-person]|查看人物档案|打开这个人物的身份、与角色的关系及阶段评价，不调用 API。|进入
+[data-people-award]|查看成就证书|打开这项奖项的证书和授予说明，不代表现实世界认证。|进入
+[data-people-edit],[data-award-edit]|编辑人物或成就|打开所选条目的编辑表单，修改完成后保存。|进入
+[data-people-delete],[data-award-delete]|删除人物或成就|确认后删除当前条目，其他人物和奖项保留。
+[data-people-npc-generate]|补全人物评价|调用经历 API，根据这个人物知道的事件生成对角色的评价，不把未知经历当作已知。
+[data-people-reroll]|重新生成人物或奖项|调用经历 API，为当前条目重新生成内容，先核对是否要替换已有结果。
+[data-people-stage]|查看人物阶段评价|切换这个人物在不同年龄阶段对角色的评价。|进入
+[data-people-back]|返回人物与成就|回到人物或奖项列表，不删除当前条目。|进入
+[data-people-close],[data-form-cancel]|关闭编辑面板|关闭当前人物或奖项表单，尚未保存的修改不会提交。|进入
+.people-form button[type="submit"]|保存人物或成就|保存当前表单的身份、关系、评价或奖项说明到所选角色。
+[data-if-custom]|自定义 IF|设定故事名称、角色年龄、绑定成长档案与具体背景，创建独立 IF 分支。|进入
+[data-if-custom-branch]|进入自定义 IF|打开这条自定义分支的已有剧情；未生成开场时先设置背景与介入内容。|进入
+[data-custom-cancel]|关闭自定义 IF|关闭当前自定义分支设定表单，不提交未保存的设定。|进入
+.if-custom-dialog button[type="submit"]|创建自定义 IF|按填写的名称、年龄、档案绑定和背景创建分支，之后可生成开场。
+[data-if-open]|进入 IF 开场|打开这条开场及后续剧情，已有内容从最新剧情继续查看；不调用 API。|进入
+[data-if-delete-opening]|删除 IF 开场|确认后删除这条开场和后续剧情，来源时间线、独立封存和已保存梦境保留。
+[data-if-dream-summary]|摘要梦境|调用经历 API，读取这条分支全部最新内容，重新整理梦境摘要，避免注入过长正文。
+[data-if-dream-update]|更新梦境|把分支已有摘要或最新保存内容同步到这条梦境，保留已选线上、线下范围；本按钮不调用摘要 API。
+[data-if-dream-delete]|删除梦境|删除这一条已保存梦境及其注入，不删除原 IF 剧情。
+[data-if-dream-online]|梦境注入线上|勾选后允许线上聊天读取这条梦境摘要；再次点击取消，不改变原分支。
+[data-if-dream-offline]|梦境注入线下|勾选后允许线下故事读取这条梦境摘要；再次点击取消，不改变原分支。
+[data-if-archive-view]|查看封存全文|只读查看已封存的故事和摘要，不能继续回复或重 roll。|进入
+[data-if-rename]|重命名 IF 分支|修改当前分支的显示名称，不重写已有剧情。|进入
+[data-if-selection-cancel]|退出消息多选|取消本次 IF 消息选择，返回正常阅读，不删除消息。|进入
+[data-if-edit-cancel]|取消消息编辑|退出当前 IF 消息编辑，原消息保持不变。|进入
+[data-travel-record-font]|旅行记录字体|打开字体面板，切换默认手写体、系统字体或导入字体，统一作用于单人和双人旅行记录正文。|进入
+[data-font-choose]|切换记录字体|立即应用所选字体并保存，只影响旅行记录正文；导入字体在选用时才加载。
+[data-font-delete]|删除导入字体|删除这一款旅行记录字体；正在使用时恢复默认手写体，其他字体保留。
+[data-font-file-open],[data-font-file]|导入字体文件|可多选 woff2、woff、ttf 或 otf 字体，导入成功后应用第一款；超过容量或重复的文件会提示。|进入
+[data-font-url]|填写字体 URL|每行粘贴一个可直接加载的字体文件链接，再点击导入链接。
+[data-font-url-add]|导入字体链接|批量保存输入的字体链接并应用第一款，重复链接跳过，其他字体选用时加载。
+[data-font-default]|恢复默认手写体|立即选用内置手写体，已导入的字体仍保留供之后切换。
+[data-font-close]|关闭记录字体|关闭字体面板，已经成功保存的字体选择仍生效。|进入
+[data-daily-previous]|查看前一天记录|显示共同旅行前一天的记录，切换日期不请求 API。|进入
+[data-daily-next]|查看后一天记录|显示共同旅行后一天的记录，切换日期不请求 API。|进入
+[data-map-back],[data-booking-back],[data-bill-back]|返回共同攻略|从地图、预订或账单返回这次共同旅行的攻略面板，不发送聊天消息。|进入
+[data-map-search] input|搜索真实地点|填写城市和具体景点、餐厅或酒店名称，再点搜索；支持中文查询全球地点。
+[data-map-search] button[type="submit"]|搜索地图地点|联网检索真实地点，核对地址后选择第几天和时段加入共同攻略。
+[data-place-result]|选择地图搜索结果|在这一条搜索结果下展开第几天与时段，再确认加入攻略。|进入
+[data-map-confirm] input[name="day"]|安排第几天|填写这个地点安排在旅行的第几天，不能超过旅行天数。
+[data-map-confirm] select[name="period"]|安排当天时段|选择上午、午后、傍晚或夜间，确认后地点按天数和时段排列。
+[data-map-confirm] button[type="submit"]|加入共同攻略|保存选中的真实地点、旅行天数和时段，并在地图标注。
+[data-place-focus]|查看攻略地点|在地图定位这个已加入的地点；位置或日程待补全时打开搜索进行补全。|进入
+[data-place-remove]|移除攻略地点|从本次共同攻略移除这个地点，不删除整趟旅行。
+[data-map-confirm-plan]|确定共同攻略|核对全部地点均已定位且日程完整后确认攻略，之后可整理出行和住宿安排。
+[data-map-retry]|重试加载攻略地图|重新加载地图显示，已有共同攻略地点不会清空。
+[data-travel-generate-places]|生成具体旅行地点|调用经历 API，按旅游天数和角色资料补全具体地点、日期与时段，再加入共同攻略。
+[data-travel-map]|打开攻略地图|查看共同旅行已确定的地点和地图标注，也可搜索并加入新的具体地点。|进入
+[data-travel-booking="flight"]|出行安排|打开这次旅行的出行订单，整理民航、私人飞机或其他已商量的交通方案。|进入
+[data-travel-booking="hotel"]|住宿安排|打开住宿订单，整理酒店、私人住所或其他已商量的住宿安排。|进入
+[data-booking-refresh]|整理或重生成预订|调用经历 API，按聊天约定补齐当前出行或住宿方案；已有选定方案时重新生成选定方案。
+[data-booking-generate]|生成预订备选|调用经历 API，生成当前出行或住宿的可选方案，生成后仍需选择。
+[data-booking-choose]|选用这份预订|把这份备选设为当前选定的出行或住宿方案，本操作不等于立即付款。
+[data-booking-delete]|删除这份备选|只删除当前这份出行或住宿备选，其他方案保留。
+[data-booking-pay]|核对预订与付款|打开账单核对已选出行与住宿的金额、币种和分摊，确认账单后才记账。|进入
+[data-booking-switch]|切换出行或住宿订单|切换查看这趟旅行的另一类订单，已有方案和正在进行的生成不会因此清空。|进入
+[data-bill-quote]|拟定旅行预算与分摊|调用经历 API，整理交通、住宿和其他可能消费，结合双方条件拟定预算及分摊，之后再核对账单。
+[data-bill-pay]|确认这笔旅行付款|按当前核对的账单和分摊结算，记录实际扣款；未来预算不会因此全部提前扣除。
+[data-bill-select]|选择旅行账单|选中要查看和核对的这笔账单，不代表已经付款。|进入
+[data-bill-refund]|核对旅行退款|查看这笔已付费用可否退款及对应金额，确认后才写入退款账目。
+[data-bill-country]|搜索消费国家或地区|输入实际消费地，选择对应国家或地区，用于核对当地币种；不是按角色国籍决定币种。
+[data-country-result]|选择消费地|选择这笔消费所在的国家或地区，用于后续币种与费用核对。
+[data-travel-chat]|返回来源页面|回到这次旅行来源的线上聊天或地球地图，不发送默认用户发言。|进入
+[data-travel-do="cancel"]|取消这次旅行|确认后取消这次共同旅行，已付款项仍需按账单核对退款。
+[data-travel-do="finish"],[data-journal-finish]|结束旅行并保存回忆|确认结束当前共同旅行，核对待结算费用后整理旅行记录，不把预算当实际消费。
+[data-journal-next]|推进旅行场景|在旅行中推进到下一幕，调用经历 API 描写角色与环境；新消费会列为待核对，不自动替用户付款。
+[data-journal-form] button[type="submit"]|发送旅行行动|发送明确输入的行动或发言，并请求本幕旅行回应，不代替用户补完未输入的行为。
+[data-journal-memories]|整理共同旅行回忆|调用经历 API，按实际旅行记录整理每天一页的回忆，保留双方已经发生的互动。
+`;
+ for(const row of experienceRows.trim().split('\n')){const [selector,title,description,mode]=row.split('|');define(selector,title,description,mode==='进入')}
+ entries.unshift(...entries.splice(experienceStart));
+ const fieldHelp={
+  personality:['阶段性格表现','填写这个年龄阶段的性格表现与性格形成背景，区别于长期不变的人设。'],interests:['阶段兴趣','填写这一阶段的兴趣、爱好和日常关注的事情。'],relationships:['阶段人际相处','填写这一时期的人际关系与待人方式，避免把后来认识的人提前写入。'],speech:['阶段表达方式','填写这一阶段的说话习惯、措辞和表达特点。'],appearance:['阶段外貌','填写这一年龄阶段的长相与体态，不默认沿用成年外貌。'],clothing:['阶段穿着','填写这个阶段常见的衣着、配饰和打扮习惯。'],influences:['阶段经历与影响','记录这一年龄范围内发生的重要事情及其对角色的影响。'],source:['资料来源说明','补充本阶段资料来源，区分明确设定与合理推断。']
+ };
+ const extraFieldsStart=entries.length;
+ const extraFieldRows=`
+[data-if-settings] [name="rolePerspective"]|角色叙述人称|选择故事描写角色时使用第几人称；保存设置后，下一次生成按此要求组织正文。
+[data-if-settings] [name="userPerspective"]|用户叙述人称|选择正文如何称呼用户，配合用户行动权限生效；保存后影响后续生成。
+[data-if-settings] [name="userAgency"]|抢话与用户行动权限|选择是否允许模型描写用户的行动和发言；不抢话时由用户自己输入反应，保存后用于后续回复。
+[data-if-settings] [name="wordCount"]|IF 回复目标字数|填写每次回复期望的字数，保存后使用当前数值，不固定限制为默认字数。
+[data-if-settings] [name="paragraphCountMin"]|IF 最少段落|填写后续回复的最少段落数，不能超过最多段落；保存后生效。
+[data-if-settings] [name="paragraphCountMax"]|IF 最多段落|填写后续回复的最多段落数，配合目标字数和最少段落设置；保存后生效。
+[data-if-settings] [name="paragraphRequirement"]|IF 段落组织|补充长短交替、对白或分段要求，保存后用于之后生成的正文。
+[data-if-settings] [name="pacing"]|IF 推进节奏|选择本分支剧情推进速度，保存后影响后续回复，不重写旧剧情。
+[data-if-settings] [name="style"]|IF 文风|选择这个分支使用的文风，保存后应用于下一次生成。
+[data-if-settings] [name="worldId"]|IF 世界背景|选择这个分支的世界观；首次生成会把角色身份适配与开场合并处理。
+[data-if-settings] [name="ifAge"]|IF 角色年龄|设定分支中的角色年龄，用于阶段身份和成长资料适配，保存后用于后续剧情。
+[data-if-settings] [name="ifGrowthStage"]|绑定成长档案|选择分支参考的成长阶段，读取这一阶段已保存的资料，不改变原成长档案。
+[data-if-settings] [name="customPromptEnabled"]|启用 IF 额外要求|决定是否把额外要求附加到本分支的生成规则，修改后保存设置。
+[data-if-settings] [name="customPrompt"]|IF 额外要求|填写仅作用于当前分支的补充规则，启用后保存，不替换整个内置叙事规则。
+.if-custom-dialog [name="title"]|自定义 IF 名称|填写这张自定义分支卡片的名称，创建后可进入对应故事。
+.if-custom-dialog [name="age"]|自定义 IF 年龄|填写角色在这个故事中的年龄，不修改角色原档案的生日或年龄。
+.if-custom-dialog [name="stage"]|自定义 IF 绑定档案|选择用于适配角色阶段状态的成长档案，原档案内容保持不变。
+.if-custom-dialog [name="details"]|自定义 IF 具体设定|填写故事背景、人物身份和希望发生的情境；这是分支设定，不作为用户已发送的对白。
+.timeline-editor [name="title"]|人生事件标题|用短标题概括这条人生事件，保存后显示在时间线卡片上。
+.timeline-editor [name="description"]|人生事件正文|填写这一事件发生的具体情况，原文依据与推断请分清后保存。
+.timeline-editor [name="type"]|人生事件类型|选择这条事件属于哪一类别，不改变事件的确认状态。
+.timeline-editor [name="startAge"]|事件开始年龄|填写事件开始时的年龄，明确年份时可参考角色生日倒推。
+.timeline-editor [name="endAge"]|事件结束年龄|填写持续事件的结束年龄，不能早于开始年龄；单次事件可使用同一年龄。
+.timeline-editor [name="date"]|事件日期或年份|填写已知年份或完整日期，未知时可留空，不需要编造具体月日。
+.timeline-editor [name="location"]|事件地点|填写事件发生的地点，用于时间线说明；不会直接改成地球路线。
+.earth-editor [name="from"]|出发城市|保留故事中的原始出发城市；虚构或待定位城市可使用右侧映射现实城市。
+.earth-editor [name="to"]|目的城市|填写故事中的目的城市；实际地图位置可在右侧另外映射，不必修改原名。
+.earth-editor button[type="submit"]|保存路线修改|保存行程资料和已选城市映射后更新地球；识别或选择候选本身不算保存。
+[data-edit-close],[data-edit-cancel],[data-map-close],[data-map-cancel]|关闭路线编辑|关闭当前路线或城市对应表单，未提交的映射和行程修改不保存。|进入
+[data-people-type]|筛选奖项类型|选择查看正式奖项、趣味奖项或全部成就，只筛选列表，不删除条目。
+`;
+ for(const row of extraFieldRows.trim().split('\n')){const [selector,title,description,mode]=row.split('|');define(selector,title,description,mode==='进入')}
+ entries.unshift(...entries.splice(extraFieldsStart).reverse());
  function chinese(raw){return String(raw||'').replace(/[A-Za-z][A-Za-z0-9_-]*/g,word=>textLabels[word.toLowerCase()]||'').replace(/\s+/g,' ').trim()}
- function pageName(element){const parent=element.closest('.iris-market,.iris-reading,.iris-perfumery,[class*="forum-"],#characterDialog,#profileDialog,#settingsScreen,#sheet,#featureScreen');if(!parent)return'当前页面';if(parent.id==='characterDialog')return'角色资料';if(parent.id==='profileDialog')return'用户资料';if(parent.id==='settingsScreen')return'当前设置';if(parent.matches('[class*="forum-"]'))return'论坛';return'当前功能'}
+ function pageName(element){if(element.closest('.growth-panel'))return'成长档案';if(element.closest('.earth-panel'))return'地球地图';if(element.closest('.people-panel'))return'人物与成就';if(element.closest('.experiences-page'))return'经历';if(element.closest('.if-world,.if-opening-picker'))return'IF 世界';const parent=element.closest('.iris-market,.iris-reading,.iris-perfumery,[class*="forum-"],#characterDialog,#profileDialog,#settingsScreen,#sheet,#featureScreen');if(!parent)return'当前页面';if(parent.id==='characterDialog')return'角色资料';if(parent.id==='profileDialog')return'用户资料';if(parent.id==='settingsScreen')return'当前设置';if(parent.matches('[class*="forum-"]'))return'论坛';return'当前功能'}
  function behaviorFor(element,result){
   const form=element.form||element.closest('form');
+  if(form?.matches('[data-if-settings]'))return '修改后点击“保存设置”，下一次生成生效；这里只设置当前 IF 分支。';
   if(element.matches('.reading-preferences input[type="range"]'))return '拖动滑杆立即更新正文和预览，并自动保存，不需要另点保存。';
   if(element.matches('[data-r-preview]'))return '这是排版效果预览，不能编辑，不需要保存。';
   if(element.matches('[data-r-save-thought]'))return '只保存当前想法到这条记号，不请求角色回应。';
@@ -621,6 +840,10 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
   ['#fetchModels,[data-model-url]','联网请求服务商的模型列表接口，需要有效地址及权限；这一步不生成聊天回复。'],
   ['[data-user-phone-random],[data-regex-test]','在本地处理，不调用模型 API。']
  ];
+ apiRules.push(['[data-if-reply],.if-compose button[type="submit"]','使用设置中的经历 API；非原世界首次身份适配与开场合并为一次请求，后续沿用分支身份。']);
+ apiRules.push(['[data-if-send]','已有开场时只在本地发送，不请求模型；尚无开场时会调用经历 API。']);
+ apiRules.push(['[data-if-story-tool="seal"]','调用经历 API 总结当前分支，摘要只在 IF 世界封存。']);
+ apiRules.unshift(['[data-timeline-analyze],[data-growth-stage-generate],[data-earth-generate],[data-earth-generate-memories],[data-earth-geocode],[data-people-generate],[data-people-npc-generate],[data-people-reroll],[data-if-dream-summary],[data-travel-generate-places],[data-booking-refresh],[data-booking-generate],[data-bill-quote],[data-journal-next],[data-journal-memories]','生成或识别使用设置 → API 配置中分配的经历接口和模型；只点击查看、切换或填写不会请求生成。']);
  function get(element){
   let result;
   const specific=entries.find(entry=>entry.selectors.some(selector=>selector.includes('="')&&element.matches(selector)));
@@ -628,6 +851,7 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
   if(entry)result={key:'control:'+entry.selectors[0],title:entry.title,description:entry.description,navigation:entry.navigation};
   for(const[attr,options]of Object.entries(pageGuides)){const value=element.getAttribute('data-'+attr),data=options[value];if(data){result={key:'page:'+attr+':'+value,title:data[0],description:data[1],navigation:true};break}}
   if(!result){for(const[family,title]of Object.entries(editorFamilies)){const attr=element.getAttributeNames().find(name=>name.startsWith('data-'+family+'-'));if(!attr)continue;const operation=attr.slice(('data-'+family+'-').length).split('-').find(part=>operationText[part]);result={title:title+(words[operation]||'选项'),description:operationText[operation]||'查看当前配置项目的内容和作用范围，再根据页面说明调整。',navigation:['edit','view','tab','close','cancel','add'].includes(operation)};break}}
+  if(element.matches('.growth-form textarea')&&fieldHelp[element.name]){const [title,description]=fieldHelp[element.name];result={key:'growth-field:'+element.name,title,description:description+' 修改后点击保存档案。',navigation:false}}
   const label=chinese(element.getAttribute('aria-label')||element.title||element.innerText||element.textContent)||'当前功能';
   if(!result&&element.matches('input,textarea,select')){const field=chinese(element.closest('label')?.innerText)||chinese(element.placeholder)||chinese(element.name)||'资料';result={title:field,description:element.type==='checkbox'?'勾选或取消选择此项，先核对对应说明与作用范围。':element.type==='file'?'选择此页面支持的本地文件，导入方式和后续步骤以当前功能说明为准。':`填写或选择${field}，先核对字段提示和正在操作的对象。`,navigation:false}}
   if(!result&&element.matches('summary'))result={title:label,description:`展开“${label}”的完整说明和设置。展开后可继续查看内部按键与输入项，再次点击可收起；展开本身不会自动保存或生成内容。`,navigation:true};

@@ -34,6 +34,7 @@ function fixture() {
     }
   });
   vm.runInContext(source.slice(source.indexOf('function incomingVideoPolicy('), source.indexOf('const chatNodeMarkup=')), context);
+  vm.runInContext(source.slice(source.indexOf('function hasOngoingSharedTravel('), source.indexOf('function isSharedTravelReply(')), context);
   vm.runInContext(source.slice(source.indexOf('function parseRoleActions('), source.indexOf('function openTransferComposer(')), context);
   vm.runInContext(source.slice(source.indexOf('function reflectionReplyTarget('), source.indexOf('async function generateOnlineReflection(')), context);
   const propose = (count = 1) => {

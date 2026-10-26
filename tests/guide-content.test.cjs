@@ -151,3 +151,16 @@ test('together listening describes local playback, direct-link validation and mu
  assert.match(info(control('data-music-remember')).description,/不调用总结/);
  const form=new Element('form',{'data-music-edit-form':''});assert.match(info(new Element('input',{name:'lyrics'},form)).behavior,/保存/);
 });
+
+test('IF story tools and settings tabs have distinct explanations and tutorial keys',()=>{const tools=['dream','seal','clear','delete'].map(value=>info(control('data-if-story-tool',value)));assert.equal(new Set(tools.map(item=>item.key)).size,4);assert.match(tools[0].description,/线上或线下/);assert.match(tools[1].description,/封存/);assert.match(tools[2].description,/清空/);assert.match(tools[3].description,/删除/);const tabs=['general','style','world','extra'].map(value=>info(control('data-if-setting-tab',value)));assert.equal(new Set(tabs.map(item=>item.key)).size,4);assert.match(tabs[0].description,/抢话或不抢话/);assert.match(info(control('data-if-reply')).api,/经历 API/)});
+
+test('feature identity switch tutorials describe the action without listing role or user names',()=>{
+ for(const attr of ['data-timeline-role','data-r-role','data-r-role-option','data-r-user','data-r-user-option','data-p-mask-toggle','data-p-mask-option','data-m-toggle-masks','data-m-switch-user','data-sms-user-select']){
+  const entry=info(new Element('button',{[attr]:'3','aria-label':'苏雨豪 苏茜理 长角色名字',text:'苏雨豪 苏茜理 长角色名字'}));assert.doesNotMatch(entry.title+entry.description,/苏雨豪|苏茜理|长角色名字/);assert.match(entry.title,/切换用户|切换角色/);
+ }
+});
+test('experience controls have distinct task help and identify the Experiences API where used',()=>{
+ const cases=[['data-growth-save','保存成长档案','照片'],['data-growth-api','API 填写成长档案','审核'],['data-earth-generate','生成单人旅行路线','单人'],['data-earth-generate-memories','生成旅行片段','记录'],['data-route-map','手动定位这段旅程','现实城市'],['data-timeline-confirm','确认这条事件','已确认'],['data-if-dream-summary','摘要梦境','最新内容']];
+ for(const [attr,title,text] of cases){const entry=info(control(attr));assert.equal(entry.title,title);assert.ok(entry.description.includes(text));assert.doesNotMatch(entry.description,/以页面反馈为准|查看当前配置项目/)}
+ assert.match(info(control('data-earth-generate')).api,/经历接口/);assert.match(info(control('data-earth-generate')).description,/不额外调用/);assert.notEqual(info(control('data-growth-save')).key,info(control('data-growth-api')).key);
+});

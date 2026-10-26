@@ -34,6 +34,7 @@ function fixture(respond = async () => ({ decision: 'accept', reply: '这个小�
   const order = C.createOrder(state, { items: [{ productId: 'p-toy-bear', specId: 'default', quantity: 1 }], kind: 'gift', characterIndex: 0, requestId: 'gift-test' });
   C.advance(state, 0, order.shippingEvents.at(-1).at);
   vm.runInContext(source.slice(source.indexOf('let activeGiftReactionCard='), source.indexOf('function chatGiftOrder(')), context);
+  vm.runInContext(source.slice(source.indexOf('function hasOngoingSharedTravel('), source.indexOf('function isSharedTravelReply(')), context);
   vm.runInContext(source.slice(source.indexOf('function parseRoleActions('), source.indexOf('function openTransferComposer(')), context);
   vm.runInContext(source.slice(source.indexOf('function reflectionReplyTarget('), source.indexOf('async function generateOnlineReflection(')), context);
   return { context, C, state, order, dialogs, requests, jobs, views, notices };

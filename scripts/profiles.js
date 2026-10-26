@@ -58,7 +58,8 @@ function drawProfileList() {
     drawProfile();
     profileDialog.querySelector('[name="name"]').focus();
   };
-  profileDialog.querySelectorAll('[data-user-select]').forEach(button => button.onclick = () => {
+  profileDialog.querySelectorAll('[data-user-select]').forEach(button => button.onclick = (approved=false) => {
+    if(approved!==true&&activeFeaturePage==='experiences'&&window.IrisExperiences?.requestLeave?.(()=>button.onclick(true))===false)return;
     const index = Number(button.dataset.userSelect);
     if (!profileDrafts[index].name.trim()) { profilePage = index; drawProfile(); profileDialog.querySelector('[name="name"]').focus(); return; }
     state.users = profileDrafts.map(profile => ({...profile,name:profile.name.trim(),nickname:profile.nickname.trim()}));
@@ -88,31 +89,8 @@ function drawProfileList() {
 function deleteProfileAt(index) {
   const user = profileDrafts[index];
   if (!confirm(`确定删除“${user.name.trim() || '未命名用户'}”吗？此操作无法撤销。`)) return;
-  window.IrisReadingCore?.removeIdentity(state,{userId:user.irisMarketId});
-  profileDrafts.splice(index, 1);
-  remapSmsThreadsForUserDeletion(index);
-  state.users = profileDrafts.map(profile => ({...profile,name:profile.name.trim(),nickname:profile.nickname.trim()}));
-  if (state.user === index) state.user = state.users.length ? Math.min(index, state.users.length - 1) : -1;
-  else if (state.user > index) state.user--;
-  if (Number.isInteger(state.settings.onlineUserIndex)) {
-    if (state.settings.onlineUserIndex === index) state.settings.onlineUserIndex = null;
-    else if (state.settings.onlineUserIndex > index) state.settings.onlineUserIndex--;
-  }
-  for (const role of state.characters || []) {
-    const settings = role.chatSettings;
-    if (!settings || !Number.isInteger(settings.userIndex)) continue;
-    if (settings.userIndex === index) settings.userIndex = null;
-    else if (settings.userIndex > index) settings.userIndex--;
-  }
-  const remappedMessages = {};
-  for (const [messageKey, value] of Object.entries(state.messages || {})) {
-    const match = messageKey.match(/^(-?\d+)-(-?\d+)-(chat|offline)$/);
-    if (!match) { remappedMessages[messageKey] = value; continue; }
-    const userIndex = Number(match[2]);
-    if (userIndex === index) continue;
-    remappedMessages[`${match[1]}-${userIndex > index ? userIndex - 1 : userIndex}-${match[3]}`] = value;
-  }
-  state.messages = remappedMessages;
+  if(index<state.users.length)removeLocalIdentity('user',index);
+  profileDrafts.splice(index,1);
   profilePage = state.users.length ? Math.min(profilePage, state.users.length - 1) : 0;
   save();
   render();
@@ -170,8 +148,8 @@ function drawProfile() {
         <label class="profile-wide details-note">具体信息 <span>ABOUT YOU</span><span class="note-decoration" aria-hidden="true">${icon('music')}</span><textarea name="details" maxlength="2000" rows="3" placeholder="性格、喜好，或想被记住的小事…">${esc(user.details)}</textarea></label>
       </div>
       <div class="profile-pagination"><button type="button" id="previousProfile" ${profilePage === 0 ? 'disabled' : ''}><span aria-hidden="true">←</span> 上一页</button><span aria-live="polite">${number}<i>/</i>${String(profileDrafts.length).padStart(2, '0')}</span><button type="button" id="nextProfile" ${profilePage === profileDrafts.length - 1 ? 'disabled' : ''}>下一页 <span aria-hidden="true">→</span></button></div>
-      <button type="submit" class="profile-confirm">确认使用此身份 <span aria-hidden="true">↗</span></button>
-      <p class="profile-footnote" id="profileFeedback" role="status">确认后保存资料并切换用户</p>
+      <div class="profile-save-actions"><button type="button" class="profile-confirm profile-save-only" id="saveProfileOnly">保存资料</button><button type="submit" class="profile-confirm">确认使用此身份 <span aria-hidden="true">↗</span></button></div>
+      <p class="profile-footnote" id="profileFeedback" role="status">保存资料后无需切换用户</p>
     </form>`;
   profileDialog.querySelector('.profile-roster')?.remove();
   updateProfilePreview();
@@ -187,6 +165,12 @@ function drawProfile() {
     if (event.target.name === 'name' || event.target.name === 'nickname') updateProfilePreview();
   });
   form.addEventListener('change', event => {if(event.target.name==='gender')user.gender=event.target.value});
+  document.getElementById('saveProfileOnly').onclick=()=>{
+    if(pendingPortraits){profileNotice('头像处理中，请稍候');return}
+    if(!user.name.trim()){profileNotice('请先填写名字');form.elements.name.focus();return}
+    state.users[profilePage]={...user,name:user.name.trim(),nickname:user.nickname.trim()};
+    save();render();profileNotice('资料已保存');
+  };
   form.onsubmit = event => {
     event.preventDefault();
     if (pendingPortraits) { profileNotice('头像处理中，请稍候'); return; }

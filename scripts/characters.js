@@ -46,23 +46,9 @@ async function generateCharacterPhone(character) {
 function deleteCharacterAt(index) {
   const character=characterDrafts[index];
   if(!confirm(`确定删除“${character.name.trim()||'未命名角色'}”吗？该角色的聊天记录也会删除。此操作无法撤销。`))return;
-  window.IrisReadingCore?.removeIdentity(state,{roleId:character.irisMarketId});
+  if(index<chars.length)removeLocalIdentity('role',index);
   characterDrafts.splice(index,1);
-  remapSmsThreadsForRoleDeletion(index);
-  chars.splice(0,chars.length,...characterDrafts);
-  state.characters=chars;
-  if(state.char===index)state.char=chars.length?Math.min(index,chars.length-1):-1;
-  else if(state.char>index)state.char--;
-  const remapped={};
-  for(const [messageKey,value] of Object.entries(state.messages||{})){
-    const match=messageKey.match(/^(-?\d+)-(-?\d+)-(chat|offline)$/);
-    if(!match){remapped[messageKey]=value;continue}
-    const roleIndex=Number(match[1]);
-    if(roleIndex===index)continue;
-    remapped[`${roleIndex>index?roleIndex-1:roleIndex}-${match[2]}-${match[3]}`]=value;
-  }
-  state.messages=remapped;
-  save();render();drawCharacterList();
+  drawCharacterList();
 }
 function characterHeader(title) {
   return `<header class="profile-heading"><span class="profile-eyebrow">IRIS / CHAR</span><button type="button" class="profile-close" aria-label="关闭角色面板">×</button></header><div class="profile-title-row"><h2 id="characterTitle">${title}</h2><button type="button" class="character-back" id="characterBack">返回列表</button></div>`;
@@ -128,8 +114,8 @@ function drawCharacterEditor(index) {
         <label class="profile-wide details-note">具体信息 <span>ABOUT CHAR</span><textarea name="details" maxlength="100000" rows="3" placeholder="性格、背景和角色设定…">${esc(c.details||c.desc||'')}</textarea></label>
       </div>
       <div class="profile-pagination"><button type="button" id="previousCharacter" ${index===0?'disabled':''}>← 上一页</button><span>${String(index+1).padStart(2,'0')}<i>/</i>${String(characterDrafts.length).padStart(2,'0')}</span><button type="button" id="nextCharacter" ${index===characterDrafts.length-1?'disabled':''}>下一页 →</button></div>
-      <button type="submit" class="profile-confirm">确认使用此角色 <span aria-hidden="true">↗</span></button>
-      <p class="character-feedback" role="status">${esc(characterImportNote||'确认后保存资料并切换角色')}</p>
+      <div class="profile-save-actions"><button type="button" class="profile-confirm profile-save-only" id="saveCharacterOnly">保存资料</button><button type="submit" class="profile-confirm">${c.builtinRole==='iris-assistant'?'开启悬浮助手':'确认使用此角色'} <span aria-hidden="true">↗</span></button></div>
+      <p class="character-feedback" role="status">${esc(characterImportNote||(c.builtinRole==='iris-assistant'?'开启伊里斯悬浮助手，保留当前聊天':'确认后保存资料并切换角色'))}</p>
     </form>`;
   bindCharacterClose();refreshCharacterPortrait();
   document.getElementById('characterBack').onclick=drawCharacterList;
@@ -138,12 +124,29 @@ function drawCharacterEditor(index) {
   const form=document.getElementById('characterForm');
   bindProfileDetailsAutoGrow(form.querySelector('[name="details"]'));
   form.oninput=event=>{if(['name','nickname','gender','birthday','details'].includes(event.target.name)){c[event.target.name]=event.target.value;if(['name','nickname'].includes(event.target.name))refreshCharacterPortrait()}};
+  document.getElementById('saveCharacterOnly').onclick=()=>{
+    if(characterPending){characterNotice('文件或头像处理中，请稍候');return}
+    if(!c.name.trim()){characterNotice('请先填写角色名字');form.elements.name.focus();return}
+    c.name=c.name.trim();c.initial=c.initial||c.name.slice(0,1);c.birthday=CharacterImport.normalizeDate(c.birthday);
+    chars[index]=c;state.characters=chars;save();render();characterNotice('资料已保存');
+  };
   form.onsubmit=event=>{
-    event.preventDefault();if(characterPending){characterNotice('文件处理中，请稍候');return}
+    event.preventDefault();if(!event.irisApproved&&activeFeaturePage==='experiences'&&window.IrisExperiences?.requestLeave?.(()=>form.onsubmit({preventDefault(){},irisApproved:true}))===false)return;if(characterPending){characterNotice('文件处理中，请稍候');return}
     const unnamed=characterDrafts.findIndex(role=>!role.name.trim());
     if(unnamed>=0){drawCharacterEditor(unnamed);characterNotice('请先填写角色名字');characterDialog.querySelector('[name=name]').focus();return}
     for(const role of characterDrafts){role.name=role.name.trim();role.initial=role.initial||role.name.slice(0,1);role.birthday=CharacterImport.normalizeDate(role.birthday)}
-    const activeMode=Boolean(state.offline);chars.splice(0,chars.length,...characterDrafts);state.characters=chars;state.char=index;chars[index].offlineMode=activeMode;state.offline=activeMode;if(chars[index]?.builtinRole==='iris-assistant'){state.irisWelcomeChoice='needed';state.irisGuideOrbHidden=false;state.irisGuideReminderDismissed=false}const boundUser=chars[index]?.chatSettings?.userIndex;if(Number.isInteger(boundUser)&&state.users[boundUser])state.user=boundUser;save();render();syncIrisGuideUI();characterDialog.close();
+    const activeMode=Boolean(state.offline),enablingAssistant=characterDrafts[index]?.builtinRole==='iris-assistant';
+    if(enablingAssistant){for(let i=0;i<characterDrafts.length;i++){if(chars[i])Object.assign(chars[i],characterDrafts[i]);else chars.push(characterDrafts[i])}}
+    else chars.splice(0,chars.length,...characterDrafts);
+    state.characters=chars;
+    if(enablingAssistant){
+      state.irisWelcomeChoice='needed';state.irisGuideOrbHidden=false;state.irisGuideReminderDismissed=true;
+      irisGuidePanelOpen=false;irisGuideOpen=false;irisGuidePractice=false;
+    }else{
+      state.char=index;chars[index].offlineMode=activeMode;state.offline=activeMode;
+      const boundUser=chars[index]?.chatSettings?.userIndex;if(Number.isInteger(boundUser)&&state.users[boundUser])state.user=boundUser;
+    }
+    save();render();characterDialog.close();syncIrisGuideUI();
   };
   document.getElementById('characterPortrait').onclick=()=>document.getElementById('characterPortraitFile').click();
   document.getElementById('removeCharacterPortrait').onclick=()=>{c.avatar='';refreshCharacterPortrait()};

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="145" viewBox="0 0 1240 145">
+ <defs><linearGradient id="bar" x2="1" y2="1"><stop stop-color="#181818"/><stop offset="1" stop-color="#080808"/></linearGradient><radialGradient id="disc"><stop stop-color="#292929"/><stop offset="1" stop-color="#202020"/></radialGradient></defs>
+ <path fill="#000" d="M0 0h1240v1860H0z"/>
+ <path fill="url(#bar)" d="M0 0h1240v145H0zM0 1544h1240v316H0z"/>
+ <g fill="url(#disc)"><circle cx="215" cy="94" r="44"/><circle cx="364" cy="94" r="44"/><circle cx="620" cy="94" r="41"/><circle cx="1029" cy="94" r="43"/></g>
+ <path fill="#fff" d="m223 68-25 31h16l-4 24 23-34h-15z"/>
+ <g fill="none" stroke="#eee" stroke-width="3"><circle cx="364" cy="94" r="29" stroke-dasharray="2 2"/><circle cx="364" cy="94" r="20"/><circle cx="364" cy="94" r="10"/><path d="m335 65 57 58" stroke-width="5"/><path d="m604 101 16-16 16 16" stroke-width="4"/><rect x="820" y="61" width="136" height="67" rx="33"/><circle cx="1029" cy="94" r="31" stroke-dasharray="2 2"/><circle cx="1029" cy="94" r="21" stroke-width="4"/><circle cx="1029" cy="94" r="10" fill="#fff" stroke="none"/></g>
+ <text x="888" y="105" fill="#fff" font-size="30" text-anchor="middle" font-family="Arial,sans-serif">RAW</text>
+</svg>

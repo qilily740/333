@@ -3,7 +3,7 @@ const app=fs.readFileSync('scripts/app.js','utf8'),miniContext={window:{addEvent
 const settings={miniTheaterEnabled:true,miniTheaterPrompt:'',prompt:'正文模板',customPromptEnabled:true,customPrompt:'其他额外要求',draftCotEnabled:false,wordCount:600},requests=[];
 const ctx={IrisMiniTheater:mini,chars:[{name:'角色'}],state:{char:0,user:0,users:[{name:'测试用户'}],messages:{}},currentRoleOfflineData:()=>({settings}),currentRoleChatSettings:()=>({userIndex:0}),offlineStyleForSettings:()=>({name:'原文风',prompt:'原文风要求'}),worldBookPromptValues:()=>({}),offlineStageContext:()=>({memories:[]}),key:()=> 'thread',messages:()=>[],offlineParagraphPacingInstructions:()=> '原推进速度',resolvePromptVariables:x=>x,nativeApiFetch:async(url,options)=>{requests.push(JSON.parse(options.body));return {ok:true}},readChatCompletion:async()=>({})};
 ctx.window={};ctx.marketStoryContext=()=>'';
-const promptStart=app.indexOf('function offlineStoryInstructions('),promptEnd=app.indexOf('let activeEmojiPickerGroup=',promptStart);
+const promptStart=app.indexOf('function narrativeUserAgencyInstruction('),promptEnd=app.indexOf('let activeEmojiPickerGroup=',promptStart);
 assert(promptStart>=0&&promptEnd>promptStart,'the actual offline prompt builder must be present');
 vm.createContext(ctx);vm.runInContext(app.slice(promptStart,promptEnd),ctx);vm.runInContext(app.slice(app.indexOf('async function requestConfiguredChatCompletion('),app.indexOf('async function sendOnlineMessage(')),ctx);
 (async()=>{
