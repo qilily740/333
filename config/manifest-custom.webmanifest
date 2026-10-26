@@ -2,7 +2,7 @@
   "id": "/",
   "name": "Iris",
   "short_name": "Iris",
-  "description": "Iris — a quiet space for stories and conversation.",
+  "description": "Iris 小手机：角色聊天、线下故事与经历管理",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
