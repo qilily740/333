@@ -1,7 +1,7 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
-let JSDOM;try{({JSDOM}=require('jsdom'))}catch{}
+let JSDOM;try{({JSDOM}=require('./helpers/jsdom.cjs'))}catch{}
 const uiTest=(name,fn)=>test(name,{skip:!JSDOM},fn);
 const flush=async()=>{for(let i=0;i<5;i++)await new Promise(resolve=>setImmediate(resolve))};
 function fixture(){

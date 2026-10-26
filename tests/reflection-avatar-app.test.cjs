@@ -1,5 +1,5 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-let JSDOM,VirtualConsole;try{({JSDOM,VirtualConsole}=require('jsdom'))}catch{}
+let JSDOM,VirtualConsole;try{({JSDOM,VirtualConsole}=require('./helpers/jsdom.cjs'))}catch{}
 const root=path.join(__dirname,'..');
 const flush=async()=>{for(let i=0;i<6;i++)await new Promise(resolve=>setImmediate(resolve))};
 function boot(saved,fetcher){

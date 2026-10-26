@@ -1,5 +1,5 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
-let JSDOM;try{({JSDOM}=require('jsdom'))}catch{}
+let JSDOM;try{({JSDOM}=require('./helpers/jsdom.cjs'))}catch{}
 test('returning from the account ledger restores the shorter bank card height',{skip:!JSDOM},()=>{
  const dom=new JSDOM('<section id="sheet"></section>',{runScripts:'dangerously'}),w=dom.window,timers=[];
  try{

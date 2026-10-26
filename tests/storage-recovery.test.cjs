@@ -1,5 +1,5 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
-let JSDOM;try{({JSDOM}=require('jsdom'))}catch{}
+let JSDOM;try{({JSDOM}=require('./helpers/jsdom.cjs'))}catch{}
 const flush=async()=>{for(let i=0;i<8;i++)await new Promise(r=>setImmediate(r))};
 function fixture({primary,fallback,readFailure=false,writeFailure=false,localFailure=false}={}){
  const dom=new JSDOM('<div id="irisBootScreen"></div>',{url:'http://localhost/',runScripts:'outside-only'}),w=dom.window,records=new Map(primary?[['main',structuredClone(primary)]]:[]),scripts=[];let failRead=readFailure,failWrite=writeFailure;

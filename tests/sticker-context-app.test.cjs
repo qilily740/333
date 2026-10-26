@@ -1,5 +1,5 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-let JSDOM,VirtualConsole;try{({JSDOM,VirtualConsole}=require('jsdom'))}catch{}
+let JSDOM,VirtualConsole;try{({JSDOM,VirtualConsole}=require('./helpers/jsdom.cjs'))}catch{}
 const root=path.join(__dirname,'..');
 const flush=async()=>{for(let i=0;i<6;i++)await new Promise(resolve=>setImmediate(resolve))};
 function boot(saved,fetcher){
@@ -15,7 +15,7 @@ function boot(saved,fetcher){
  return{dom,w:dom.window,errors,snapshots};
 }
 
-test('existing leaked sticker captions are hidden without changing stored messages or their indices',{skip:!JSDOM},()=>{
+test('existing leaked sticker captions are hidden without changing stored messages or their indices',{skip:!JSDOM},async()=>{
  const thread=[{mine:true,text:'给我'},{mine:false,text:'给'},{mine:false,text:'【角色实际发送的表情包】名称：鄙夷。'},{mine:false,text:'这是图片表情消息，不是聊天台词。'},{mine:false,type:'sticker',sticker:'鄙夷',stickerUrl:'https://example.com/sticker.jpg'}];
  const f=boot({char:0,user:0,users:[{name:'测试用户'}],characters:[{name:'甲',chatSettings:{userIndex:0}}],messages:{'0-0-chat':thread},emojis:{groups:[{id:'g1',name:'常用',items:[{id:'e1',text:'鄙夷',url:'https://example.com/sticker.jpg'}]}]},settings:{}});
  try{
@@ -25,5 +25,5 @@ test('existing leaked sticker captions are hidden without changing stored messag
   assert.ok(conversation.querySelector('[data-message-index="4"] .avatar:not(.is-group-hidden)'));
   assert.equal(f.w.eval('messages().length'),5);assert.equal(f.w.eval('messages()[2].text'),thread[2].text);
   assert.equal(f.w.eval('messagePromptContent(messages()[2])'),'');assert.equal(f.w.eval('messagePromptContent(messages()[3])'),'');assert.equal(f.w.eval('messagePromptContent(messages()[4])'),'[表情包：鄙夷]');assert.deepEqual(f.errors,[]);
- }finally{f.w.close()}
+ }finally{await flush();f.w.close()}
 });
