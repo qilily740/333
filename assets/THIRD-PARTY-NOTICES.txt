@@ -1,0 +1,15 @@
+Third-party source and license notices
+
+Administrative-region names: GeoNames admin1CodesASCII, downloaded 2026-10-12 (CC BY 4.0). https://download.geonames.org/export/dump/readme.txt
+Chinese region labels: Unicode CLDR subdivisions/zh.xml; English names: Unicode CLDR subdivisions/en.xml (Unicode License). https://github.com/unicode-org/cldr/tree/main/common/subdivisions
+Each region's time zone is selected from GeoNames cities500 by the largest summed populated-place population in that region. Regions without mapped places fall back to the app's country time zone. CLDR Chinese labels are included where available; English remains as a reference and fallback.
+
+- `vendor/fflate/fflate.min.js`: fflate 0.8.2 UMD build, MIT. Source: https://github.com/101arrowz/fflate. License is retained in `vendor/fflate/LICENSE`.
+
+- `vendor/pdfjs/pdf.mjs` and `vendor/pdfjs/pdf.worker.mjs`: PDF.js 4.10.38, `pdfjs-dist` legacy builds, Apache-2.0. Source: https://github.com/mozilla/pdf.js. License is retained in `vendor/pdfjs/LICENSE`.
+
+- `vendor/pdfjs/cmaps/` and `vendor/pdfjs/standard_fonts/`: matching PDF.js package resources, including their supplied license files. These support local extraction of CJK and standard-font PDFs.
+
+`vendor/leaflet/leaflet.js` and `vendor/leaflet/leaflet.css` are the official 1.9.4 distribution from https://unpkg.com/leaflet@1.9.4/dist/ . The BSD 2-Clause license is included at `vendor/leaflet/LICENSE`. Loaded only when the shared-travel map opens; custom SVG icons avoid loading external marker assets.
+
+`scripts/travel-currency.js` embeds territory legal-tender histories and currency decimal precision derived from CLDR supplemental currencyData: https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/currencyData.json . Territory order is preserved for the default local currency; dates filter historic currencies. The Unicode license is retained in `vendor/unicode-cldr/LICENSE`. Runtime currency lookup is local and does not request a CDN.
