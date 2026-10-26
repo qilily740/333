@@ -170,8 +170,8 @@ function drawProfile() {
         <label class="profile-wide details-note">具体信息 <span>ABOUT YOU</span><span class="note-decoration" aria-hidden="true">${icon('music')}</span><textarea name="details" maxlength="2000" rows="3" placeholder="性格、喜好，或想被记住的小事…">${esc(user.details)}</textarea></label>
       </div>
       <div class="profile-pagination"><button type="button" id="previousProfile" ${profilePage === 0 ? 'disabled' : ''}><span aria-hidden="true">←</span> 上一页</button><span aria-live="polite">${number}<i>/</i>${String(profileDrafts.length).padStart(2, '0')}</span><button type="button" id="nextProfile" ${profilePage === profileDrafts.length - 1 ? 'disabled' : ''}>下一页 <span aria-hidden="true">→</span></button></div>
-      <button type="submit" class="profile-confirm">确认使用此身份 <span aria-hidden="true">↗</span></button>
-      <p class="profile-footnote" id="profileFeedback" role="status">确认后保存资料并切换用户</p>
+      <div class="profile-save-actions"><button type="button" class="profile-confirm profile-save-only" id="saveProfileOnly">保存资料</button><button type="submit" class="profile-confirm">确认使用此身份 <span aria-hidden="true">↗</span></button></div>
+      <p class="profile-footnote" id="profileFeedback" role="status">保存资料后无需切换用户</p>
     </form>`;
   profileDialog.querySelector('.profile-roster')?.remove();
   updateProfilePreview();
@@ -187,6 +187,12 @@ function drawProfile() {
     if (event.target.name === 'name' || event.target.name === 'nickname') updateProfilePreview();
   });
   form.addEventListener('change', event => {if(event.target.name==='gender')user.gender=event.target.value});
+  document.getElementById('saveProfileOnly').onclick=()=>{
+    if(pendingPortraits){profileNotice('头像处理中，请稍候');return}
+    if(!user.name.trim()){profileNotice('请先填写名字');form.elements.name.focus();return}
+    state.users[profilePage]={...user,name:user.name.trim(),nickname:user.nickname.trim()};
+    save();render();profileNotice('资料已保存');
+  };
   form.onsubmit = event => {
     event.preventDefault();
     if (pendingPortraits) { profileNotice('头像处理中，请稍候'); return; }
