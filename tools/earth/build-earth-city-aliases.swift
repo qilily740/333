@@ -1,5 +1,5 @@
 // Add Simplified Chinese aliases using the system Foundation/ICU transform.
-// Usage: swift -module-cache-path /tmp/iris-earth-swift-cache scripts/build-earth-city-aliases.swift assets/earth-cities.json
+// Usage: swift -module-cache-path /tmp/iris-earth-swift-cache tools/earth/build-earth-city-aliases.swift assets/earth-cities.json
 import Foundation
 let path = CommandLine.arguments[1]
 let data = try Data(contentsOf: URL(fileURLWithPath:path))

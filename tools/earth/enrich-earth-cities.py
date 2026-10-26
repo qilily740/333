@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Append GeoNames population and feature code without changing names or coordinates.
-Usage: python3 scripts/enrich-earth-cities.py assets/earth-cities.json cities15000.zip
+Usage: python3 tools/earth/enrich-earth-cities.py assets/earth-cities.json cities15000.zip
 """
 import json
 import sys
