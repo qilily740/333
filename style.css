@@ -3739,6 +3739,9 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .chat-image-input-preference .chat-image-input-scope{margin:0;padding:0 0 12px;color:#999;font-size:9px;line-height:1.7}
 .chat-image-input-preference input:focus-visible+i{outline:2px solid #888;outline-offset:4px}
 .chat-image-input-preference input:disabled+i{opacity:.45}
+.chat-avatar-setting{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0 2px;border-top:1px solid #eee}
+.chat-avatar-setting>span{flex:1;min-width:0}.chat-avatar-setting strong{display:block;font-size:12px;font-weight:500;color:#555}.chat-avatar-setting small{display:block;margin-top:5px;font-size:9px;line-height:1.7;color:#999}
+.chat-avatar-setting select{flex:none;max-width:46%;padding:8px 2px;border:0;border-bottom:1px solid #ddd;border-radius:0;background:transparent;font:inherit;font-size:11px;color:#666}
 
 /* Real photos have no bubble; timestamps never take width away from the image. */
 .message-type-image:not(.message-image-description)>.message-content{flex:0 0 auto;width:min(62vw,240px);max-width:calc(100% - 42px)}
@@ -3810,6 +3813,7 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .release-version-content ul{display:grid;gap:13px;margin:0;padding:0;list-style:none}
 .release-version-content li{position:relative;padding-left:11px;font-size:11px;line-height:1.9;overflow-wrap:anywhere;color:#777}
 .release-version-content li::before{position:absolute;left:0;top:10px;width:3px;height:3px;border-radius:50%;background:#c5c5c5;content:""}
+.release-author-note{margin-top:19px;padding-top:15px;border-top:1px solid #eee}.release-author-note h3{margin:0 0 9px;color:#555;font-size:11px;font-weight:500;letter-spacing:1px}.release-author-note p{margin:8px 0 0;color:#777;font-size:11px;line-height:1.95;overflow-wrap:anywhere}.release-author-note strong{color:#b13e38;font-weight:600}
 .release-notice-card>footer{margin:0 -27px;padding:17px 27px 20px;border-top:1px solid #ededed;background:#fdfdfd}
 .release-notice-card>footer small{font-size:8px;line-height:1.7;color:#aaa;letter-spacing:.2px}
 .release-notice-card>footer button{display:flex;align-items:center;justify-content:space-between;gap:22px;flex:none;min-width:103px;padding:11px 15px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#666;font-size:10px;box-shadow:0 2px 3px #00000002;transition:border-color .18s,background .18s}

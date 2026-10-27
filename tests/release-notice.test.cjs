@@ -3,8 +3,24 @@ function fixture(stored='[]'){const storage=new Map([['iris-dismissed-release-no
 test('release shows version, date and notes; acknowledgement persists across starts',()=>{const f=fixture();f.c.showReleaseNotice();assert.equal(f.shown(),1);assert.match(f.dialog.innerHTML,/5.7.7/);assert.match(f.dialog.innerHTML,/2026.10.21/);assert.match(f.dialog.innerHTML,/测试更新/);f.buttons[1].onclick();assert.deepEqual(JSON.parse(f.storage.get('iris-dismissed-release-notices')),['5.7.7']);const next=fixture(f.storage.get('iris-dismissed-release-notices'));next.c.showReleaseNotice();assert.equal(next.shown(),0)});
 test('new release still appears; Escape acknowledges without a duplicate dialog',()=>{const f=fixture('["5.7.6"]');f.c.showReleaseNotice();f.c.showReleaseNotice();assert.equal(f.shown(),1);let prevented=false;f.events.cancel({preventDefault(){prevented=true}});assert.equal(prevented,true);assert.deepEqual(JSON.parse(f.storage.get('iris-dismissed-release-notices')),['5.7.6','5.7.7'])});
 test('opening screen and author notice complete before the update appears',()=>{const f=fixture();f.nodes.set('irisBootScreen',{});const author={open:true,addEventListener:(n,fn)=>author[n]=fn};f.nodes.set('authorNoticeDialog',author);f.c.scheduleReleaseNotice();assert.equal(f.shown(),0);f.events['iris:boot-ready']();assert.equal(f.shown(),0);author.open=false;author.close();assert.equal(f.shown(),1)});
-test('bad acknowledgement storage does not break startup and bundled metadata agrees',()=>{const f=fixture('bad json');f.c.showReleaseNotice();assert.equal(f.shown(),1);for(const path of ['../version.json','../config/version.json']){const release=require(path);assert.equal(release.version,'5.9.0');assert.equal(release.date,'2026-10-26');assert.ok(release.changes.length)}});
+test('bad acknowledgement storage does not break startup and bundled metadata agrees',()=>{const f=fixture('bad json');f.c.showReleaseNotice();assert.equal(f.shown(),1);for(const path of ['../version.json','../config/version.json']){const release=require(path);assert.equal(release.version,'5.9.1');assert.equal(release.date,'2026-10-27');assert.ok(release.changes.length)}});
 
 test('contact-author entry is emphasized without rendering arbitrary update text as HTML',()=>{const f=fixture();f.c.esc=value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');f.c.APP_RELEASE_HISTORY[0].changes=['新增「联系作者」。入口：教程悬浮圆形按键 → 联系作者。','<img src=x onerror=bad()>'];f.c.showReleaseNotice();assert.match(f.dialog.innerHTML,/<strong class="release-entry-link">入口：教程悬浮圆形按键 → 联系作者<\/strong>/);assert.match(f.dialog.innerHTML,/&lt;img/);assert.doesNotMatch(f.dialog.innerHTML,/<img src=x/)});
 
 test('updated notes show once even when the same public version was already dismissed',()=>{const f=fixture('["5.7.7"]');f.c.APP_RELEASE_NOTES.noticeId='5.7.7-menu-language';f.c.showReleaseNotice();assert.equal(f.shown(),1);f.buttons[1].onclick();assert.deepEqual(JSON.parse(f.storage.get('iris-dismissed-release-notices')),['5.7.7','5.7.7-menu-language']);const next=fixture(f.storage.get('iris-dismissed-release-notices'));next.c.APP_RELEASE_NOTES.noticeId='5.7.7-menu-language';next.c.showReleaseNotice();assert.equal(next.shown(),0)});
+
+test('author words appear once below the latest changes and emphasize the selected phrases',()=>{
+ const f=fixture();f.c.APP_RELEASE_NOTES.authorWords=require('../version.json').authorWords;f.c.showReleaseNotice();
+ const html=f.dialog.innerHTML;
+ assert.ok(html.indexOf('class="release-author-note"')>html.indexOf('测试更新'));
+ assert.ok(html.indexOf('class="release-author-note"')<html.indexOf('旧版本更新'));
+ assert.equal((html.match(/class="release-author-note"/g)||[]).length,1);
+ assert.match(html,/<h3>作者的话<\/h3>/);
+ for(const phrase of ['偶尔会看','iris会继续更新的','目前没有做生图功能的想法','完结之后会把仓库地址内置在iris里'])assert.ok(html.includes(`<strong>${phrase}</strong>`));
+});
+
+test('author words remain text when a segment contains HTML',()=>{
+ const f=fixture();f.c.esc=value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+ f.c.APP_RELEASE_NOTES.authorWords=[[{text:'<img src=x onerror=bad()>',emphasis:true}]];f.c.showReleaseNotice();
+ assert.match(f.dialog.innerHTML,/<strong>&lt;img/);assert.doesNotMatch(f.dialog.innerHTML,/<img src=x/);
+});

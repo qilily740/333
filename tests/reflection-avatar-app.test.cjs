@@ -16,6 +16,34 @@ function boot(saved,fetcher){
 }
 
 const avatarFixture=()=>boot({char:0,user:0,users:[{name:'测试用户'}],characters:[{name:'甲',chatSettings:{userIndex:0}},{name:'乙',chatSettings:{userIndex:0}}],messages:{'0-0-chat':[{mine:true,text:'你好'},{mine:false,text:'你好呀'}]},settings:{},reflectionPanel:'original'});
+test('online avatar display supports every, first and last message for both speakers including reflection avatars',{skip:!JSDOM},async()=>{
+ const f=avatarFixture();try{
+  f.w.eval("state.messages[key()]=[{mine:true,text:'一'},{mine:true,text:'二'},{mine:true,text:'三'},{mine:false,text:'四'},{mine:false,text:'五',reflection:{thought:'已有心声'}},{mine:false,text:'六'}];render()");
+  const visible=()=>Array.from(f.w.document.querySelectorAll('#conversation .message[data-message-index]>.avatar:not(.is-group-hidden)'),node=>Number(node.parentElement.dataset.messageIndex));
+  assert.deepEqual(visible(),[2,5]);
+  for(const [mode,expected] of [['all',[0,1,2,3,4,5]],['first',[0,3]],['last',[2,5]]]){
+   f.w.eval(`chars[0].chatSettings.more.avatarDisplay='${mode}';render()`);
+   assert.deepEqual(visible(),expected);
+   for(const node of f.w.document.querySelectorAll('#conversation .message:not(.mine)>.avatar:not(.is-group-hidden)'))assert.ok(node.matches('button[data-role-reflection]'));
+  }
+  f.w.eval("chars[0].chatSettings.more.avatarDisplay='all'");
+  const video=f.w.document.createElement('div');video.innerHTML=f.w.renderConversation(f.w.eval('state.users[0]'),f.w.eval('chars[0]'),f.w.eval('messages()'),true);
+  assert.equal(video.querySelectorAll('.avatar:not(.is-group-hidden)').length,2);
+  assert.deepEqual(f.errors,[]);
+ }finally{await flush();f.w.close()}
+});
+test('More avatar setting works without image input and persists only for the selected role',{skip:!JSDOM},async()=>{
+ const f=avatarFixture();let reopened;try{
+  f.w.openModeSettings();f.w.document.querySelector('[data-online-tab="more"]').click();
+  const field=f.w.document.querySelector('[data-more-value="avatarDisplay"]');assert.ok(field.closest('.chat-image-input-preference'));assert.equal(field.disabled,false);assert.equal(field.value,'last');
+  assert.deepEqual(Array.from(field.options,option=>option.textContent),['每条消息有','第一条消息有','最后一条消息有']);
+  field.value='first';field.dispatchEvent(new f.w.Event('change',{bubbles:true}));await flush();
+  assert.equal(f.w.eval('chars[0].chatSettings.more.avatarDisplay'),'first');assert.notEqual(f.w.eval('chars[1].chatSettings.more?.avatarDisplay'),'first');
+  const snapshot=f.snapshots.at(-1);assert.equal(snapshot.characters[0].chatSettings.more.avatarDisplay,'first');
+  reopened=boot(snapshot);reopened.w.openModeSettings();reopened.w.document.querySelector('[data-online-tab="more"]').click();assert.equal(reopened.w.document.querySelector('[data-more-value="avatarDisplay"]').value,'first');
+  assert.deepEqual(f.errors,[]);assert.deepEqual(reopened.errors,[]);
+ }finally{await flush();f.w.close();reopened?.w.close()}
+});
 test('an avatar without generated reflection opens a loading panel and joins the existing generation',{skip:!JSDOM},async()=>{
  const f=avatarFixture();try{
   f.w.eval("window.baseCalls=0;generateOnlineReflection=()=>{baseCalls++;return new Promise(resolve=>window.finishBase=()=>resolve({status:'开心',thought:'想继续聊'}))}");
