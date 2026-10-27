@@ -35,15 +35,32 @@ test('online avatar display supports every, first and last message for both spea
   assert.deepEqual(f.errors,[]);
  }finally{await flush();f.w.close()}
 });
-test('More avatar setting works without image input and persists only for the selected role',{skip:!JSDOM},async()=>{
+test('online timestamps support hidden, every and last independently of avatar placement',{skip:!JSDOM},async()=>{
+ const f=avatarFixture();try{
+  f.w.eval("state.messages[key()]=[{mine:true,text:'一',createdAt:1700000000000},{mine:true,text:'二',createdAt:1700000001000},{mine:false,text:'三',createdAt:1700000002000},{mine:false,text:'四',createdAt:1700000003000}];chars[0].chatSettings.more.avatarDisplay='all';render()");
+  const stamped=()=>Array.from(f.w.document.querySelectorAll('#conversation .message-time'),node=>Number(node.closest('.message').dataset.messageIndex));
+  assert.deepEqual(stamped(),[1,3]);
+  for(const [mode,expected] of [['hidden',[]],['all',[0,1,2,3]],['last',[1,3]]]){
+   f.w.eval(`chars[0].chatSettings.more.timestampDisplay='${mode}';render()`);assert.deepEqual(stamped(),expected);
+   assert.equal(f.w.document.querySelectorAll('#conversation .message>.avatar:not(.is-group-hidden)').length,4);
+  }
+  f.w.eval("chars[0].chatSettings.more.timestampDisplay='all';messages().push({mine:true,text:'没有记录时间的旧消息'});render()");assert.deepEqual(stamped(),[0,1,2,3]);
+  assert.deepEqual(f.errors,[]);
+ }finally{await flush();f.w.close()}
+});
+test('More avatar and timestamp settings work without image input and persist only for the selected role',{skip:!JSDOM},async()=>{
  const f=avatarFixture();let reopened;try{
   f.w.openModeSettings();f.w.document.querySelector('[data-online-tab="more"]').click();
   const field=f.w.document.querySelector('[data-more-value="avatarDisplay"]');assert.ok(field.closest('.chat-image-input-preference'));assert.equal(field.disabled,false);assert.equal(field.value,'last');
+  const time=f.w.document.querySelector('[data-more-value="timestampDisplay"]');assert.equal(time.value,'last');assert.equal(time.closest('label').previousElementSibling,field.closest('label'));assert.deepEqual(Array.from(time.options,option=>option.textContent),['全部隐藏','全部都有','最后一个有']);
   assert.deepEqual(Array.from(field.options,option=>option.textContent),['每条消息有','第一条消息有','最后一条消息有']);
   field.value='first';field.dispatchEvent(new f.w.Event('change',{bubbles:true}));await flush();
+  time.value='hidden';time.dispatchEvent(new f.w.Event('change',{bubbles:true}));await flush();
   assert.equal(f.w.eval('chars[0].chatSettings.more.avatarDisplay'),'first');assert.notEqual(f.w.eval('chars[1].chatSettings.more?.avatarDisplay'),'first');
+  assert.equal(f.w.eval('chars[0].chatSettings.more.timestampDisplay'),'hidden');assert.notEqual(f.w.eval('chars[1].chatSettings.more?.timestampDisplay'),'hidden');
   const snapshot=f.snapshots.at(-1);assert.equal(snapshot.characters[0].chatSettings.more.avatarDisplay,'first');
   reopened=boot(snapshot);reopened.w.openModeSettings();reopened.w.document.querySelector('[data-online-tab="more"]').click();assert.equal(reopened.w.document.querySelector('[data-more-value="avatarDisplay"]').value,'first');
+  assert.equal(reopened.w.document.querySelector('[data-more-value="timestampDisplay"]').value,'hidden');
   assert.deepEqual(f.errors,[]);assert.deepEqual(reopened.errors,[]);
  }finally{await flush();f.w.close();reopened?.w.close()}
 });
