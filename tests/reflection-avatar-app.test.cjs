@@ -18,12 +18,15 @@ function boot(saved,fetcher){
 const avatarFixture=()=>boot({char:0,user:0,users:[{name:'测试用户'}],characters:[{name:'甲',chatSettings:{userIndex:0}},{name:'乙',chatSettings:{userIndex:0}}],messages:{'0-0-chat':[{mine:true,text:'你好'},{mine:false,text:'你好呀'}]},settings:{},reflectionPanel:'original'});
 test('online avatar display supports every, first and last message for both speakers including reflection avatars',{skip:!JSDOM},async()=>{
  const f=avatarFixture();try{
+  const style=f.w.document.createElement('style');style.textContent=fs.readFileSync(path.join(root,'style.css'),'utf8').match(/\.message\.has-every-message-avatar[^{]*\{[^}]*\}/g).join('\n');f.w.document.head.append(style);
   f.w.eval("state.messages[key()]=[{mine:true,text:'一'},{mine:true,text:'二'},{mine:true,text:'三'},{mine:false,text:'四'},{mine:false,text:'五',reflection:{thought:'已有心声'}},{mine:false,text:'六'}];render()");
   const visible=()=>Array.from(f.w.document.querySelectorAll('#conversation .message[data-message-index]>.avatar:not(.is-group-hidden)'),node=>Number(node.parentElement.dataset.messageIndex));
   assert.deepEqual(visible(),[2,5]);
   for(const [mode,expected] of [['all',[0,1,2,3,4,5]],['first',[0,3]],['last',[2,5]]]){
    f.w.eval(`chars[0].chatSettings.more.avatarDisplay='${mode}';render()`);
    assert.deepEqual(visible(),expected);
+   assert.equal(f.w.document.querySelectorAll('#conversation .has-every-message-avatar').length,mode==='all'?6:0);
+   if(mode==='all')for(const avatar of f.w.document.querySelectorAll('#conversation .message>.avatar'))assert.equal(f.w.getComputedStyle(avatar).alignSelf,'flex-start');
    for(const node of f.w.document.querySelectorAll('#conversation .message:not(.mine)>.avatar:not(.is-group-hidden)'))assert.ok(node.matches('button[data-role-reflection]'));
   }
   f.w.eval("chars[0].chatSettings.more.avatarDisplay='all'");
