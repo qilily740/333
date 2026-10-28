@@ -5156,3 +5156,18 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 
 /* 每条消息显示头像时，与该条消息顶部对齐。 */
 .message.has-every-message-avatar{align-items:flex-start}.message.has-every-message-avatar>.avatar{align-self:flex-start}
+
+/* More 设置按用途分组，选项标题统一使用常规字重。 */
+.is-online-settings .more-settings-group{border:0;border-bottom:1px solid #e7e7e7}
+.is-online-settings .more-settings-group>summary{display:grid;grid-template-columns:1fr auto;column-gap:12px;row-gap:4px;padding:16px 0;list-style:none;cursor:pointer}
+.is-online-settings .more-settings-group>summary::-webkit-details-marker{display:none}
+.is-online-settings .more-settings-group>summary>span{grid-column:1;grid-row:1;color:#555;font-size:12px;font-weight:400;letter-spacing:.5px}
+.is-online-settings .more-settings-group>summary>small{grid-column:1;grid-row:2;color:#aaa;font-size:9px;line-height:1.6;font-weight:400}
+.is-online-settings .more-settings-group>summary>i{grid-column:2;grid-row:1/3;align-self:center;color:#999;font-size:17px;font-style:normal;font-weight:400}
+.is-online-settings .more-settings-group>summary>i::before{content:'+'}.is-online-settings .more-settings-group[open]>summary>i::before{content:'−'}
+.is-online-settings .more-settings-group>summary:focus-visible{outline:1px solid #999;outline-offset:2px}
+.is-online-settings .more-settings-group-body{padding:0 0 5px 10px}
+.is-online-settings .more-settings-group-body>.more-preference-card:first-child{border-top:0}
+.is-online-settings .more-settings-group-body>.more-preference-card:last-child{border-bottom:0}
+.is-online-settings .more-page strong{font-weight:400}
+.is-online-settings .more-page .settings-switch-row strong,.is-online-settings .more-page .more-card-heading strong,.is-online-settings .more-page .chat-avatar-setting strong{font-size:11px!important;font-weight:400}

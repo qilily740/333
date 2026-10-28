@@ -16,6 +16,22 @@ function boot(saved,fetcher){
 }
 
 const avatarFixture=()=>boot({char:0,user:0,users:[{name:'测试用户'}],characters:[{name:'甲',chatSettings:{userIndex:0}},{name:'乙',chatSettings:{userIndex:0}}],messages:{'0-0-chat':[{mine:true,text:'你好'},{mine:false,text:'你好呀'}]},settings:{},reflectionPanel:'original'});
+test('More groups settings by purpose, keeps expanded sections and uses consistent option weights',{skip:!JSDOM},async()=>{
+ const f=avatarFixture();try{
+  f.w.openModeSettings();f.w.document.querySelector('[data-online-tab="more"]').click();
+  const doc=f.w.document,groupOf=selector=>doc.querySelector(selector).closest('[data-more-group]').dataset.moreGroup;
+  assert.deepEqual(Array.from(doc.querySelectorAll('[data-more-group]>summary>span'),node=>node.textContent),['消息与显示','角色互动','时间与日历']);
+  for(const selector of ['[data-chat-image-input]','[data-more-value="avatarDisplay"]','[data-more-value="timestampDisplay"]','.emoji-preference','[data-more-toggle="bilingual"]'])assert.equal(groupOf(selector),'messages');
+  for(const selector of ['[data-more-toggle="incomingVideoEnabled"]','[data-life-enabled]'])assert.equal(groupOf(selector),'interaction');
+  for(const selector of ['[data-more-toggle="timezoneEnabled"]','[data-more-toggle="timeAwarenessEnabled"]','[data-more-toggle="holidayAwarenessEnabled"]'])assert.equal(groupOf(selector),'time');
+  assert.equal(doc.querySelector('[data-more-group="messages"]').open,true);assert.equal(doc.querySelector('[data-more-group="time"]').open,false);
+  const before=f.w.eval('JSON.stringify(chars[0].chatSettings.more)'),interaction=doc.querySelector('[data-more-group="interaction"]');interaction.open=true;interaction.dispatchEvent(new f.w.Event('toggle'));
+  doc.querySelector('.emoji-preference .subtle-action').click();await flush();assert.equal(doc.querySelector('[data-more-group="interaction"]').open,true);assert.equal(f.w.eval('JSON.stringify(chars[0].chatSettings.more)'),before);
+  const style=doc.createElement('style');style.textContent=fs.readFileSync(path.join(root,'style.css'),'utf8').match(/\.is-online-settings \.more-page[^{}]*\{[^{}]*\}/g).join('\n');doc.head.append(style);
+  for(const label of doc.querySelectorAll('.more-page strong'))assert.equal(f.w.getComputedStyle(label).fontWeight,'400');
+  assert.deepEqual(f.errors,[]);
+ }finally{await flush();f.w.close()}
+});
 test('online avatar display supports every, first and last message for both speakers including reflection avatars',{skip:!JSDOM},async()=>{
  const f=avatarFixture();try{
   const style=f.w.document.createElement('style');style.textContent=fs.readFileSync(path.join(root,'style.css'),'utf8').match(/\.message\.has-every-message-avatar[^{]*\{[^}]*\}/g).join('\n');f.w.document.head.append(style);
