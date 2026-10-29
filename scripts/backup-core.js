@@ -33,7 +33,7 @@
  const crc32=bytes=>{let value=0xffffffff;for(const byte of bytes)value=crcTable[(value^byte)&255]^(value>>>8);return(value^0xffffffff)>>>0};
  const zip=async(text,filename='iris-backup.json')=>{
   const source=new TextEncoder().encode(text),name=new TextEncoder().encode(filename);let method=0,body=source;
-  try{if(typeof CompressionStream==='function'){const compressed=new Uint8Array(await new Response(new Blob([source]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer());if(compressed.length<source.length){body=compressed;method=8}}}catch{}
+  if(typeof CompressionStream==='function')for(const format of ['deflate-raw','gzip']){try{let compressed=new Uint8Array(await new Response(new Blob([source]).stream().pipeThrough(new CompressionStream(format))).arrayBuffer());if(format==='gzip'){if(compressed.length<18||compressed[0]!==31||compressed[1]!==139||compressed[2]!==8||compressed[3]!==0)continue;compressed=compressed.subarray(10,compressed.length-8)}if(compressed.length<source.length){body=compressed;method=8}break}catch{}}
   if(source.length>0xffffffff||body.length>0xffffffff)throw Error('备份文件超过 ZIP 格式支持的大小。');
   const crc=crc32(source),stamp=new Date(),time=(stamp.getHours()<<11)|(stamp.getMinutes()<<5)|(stamp.getSeconds()>>1),date=((stamp.getFullYear()-1980)<<9)|((stamp.getMonth()+1)<<5)|stamp.getDate(),flags=0x0800;
   const local=new Uint8Array(30+name.length+body.length),lv=new DataView(local.buffer);lv.setUint32(0,0x04034b50,true);lv.setUint16(4,20,true);lv.setUint16(6,flags,true);lv.setUint16(8,method,true);lv.setUint16(10,time,true);lv.setUint16(12,date,true);lv.setUint32(14,crc,true);lv.setUint32(18,body.length,true);lv.setUint32(22,source.length,true);lv.setUint16(26,name.length,true);lv.setUint16(28,0,true);local.set(name,30);local.set(body,30+name.length);
@@ -47,14 +47,11 @@
   if(end<0)throw Error('ZIP 文件目录无效或文件不完整。');const entries=view.getUint16(end+10,true),directory=view.getUint32(end+16,true);let cursor=directory,chosen=null;
   for(let index=0;index<entries;index++){if(cursor+46>bytes.length||view.getUint32(cursor,true)!==0x02014b50)throw Error('ZIP 文件目录损坏。');const method=view.getUint16(cursor+10,true),crc=view.getUint32(cursor+16,true),compressedSize=view.getUint32(cursor+20,true),size=view.getUint32(cursor+24,true),nameLength=view.getUint16(cursor+28,true),extraLength=view.getUint16(cursor+30,true),commentLength=view.getUint16(cursor+32,true),localOffset=view.getUint32(cursor+42,true),name=new TextDecoder().decode(bytes.subarray(cursor+46,cursor+46+nameLength));if(!name.endsWith('/')){if(!chosen||name==='iris-backup.json'||name.endsWith('.json'))chosen={method,crc,compressedSize,size,localOffset,name};if(name==='iris-backup.json')break}cursor+=46+nameLength+extraLength+commentLength}
   if(!chosen)throw Error('ZIP 压缩包中没有找到 JSON 备份文件。');if(chosen.size>0x7fffffff)throw Error('ZIP 中的备份文件过大，无法在此设备上安全读取。');const offset=chosen.localOffset;if(view.getUint32(offset,true)!==0x04034b50)throw Error('ZIP 备份文件头损坏。');const start=offset+30+view.getUint16(offset+26,true)+view.getUint16(offset+28,true),compressed=bytes.subarray(start,start+chosen.compressedSize);let result;
-  if(chosen.method===0)result=compressed.slice();else if(chosen.method===8&&typeof DecompressionStream==='function')result=new Uint8Array(await new Response(new Blob([compressed]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());else throw Error('此 ZIP 使用了当前浏览器不支持的压缩方式。');
+  if(chosen.method===0)result=compressed.slice();else if(chosen.method===8&&typeof DecompressionStream==='function'){let stream,input=new Blob([compressed]);try{stream=new DecompressionStream('deflate-raw')}catch{stream=new DecompressionStream('gzip');const header=new Uint8Array([31,139,8,0,0,0,0,0,0,255]),trailer=new Uint8Array(8),tv=new DataView(trailer.buffer);tv.setUint32(0,chosen.crc,true);tv.setUint32(4,chosen.size,true);input=new Blob([header,compressed,trailer])}result=new Uint8Array(await new Response((input instanceof Blob?input:new Blob([input])).stream().pipeThrough(stream)).arrayBuffer());}else throw Error('此 ZIP 使用了当前浏览器不支持的压缩方式。');
   if(result.length!==chosen.size||crc32(result)!==chosen.crc)throw Error('ZIP 内容校验失败，压缩包可能已损坏。');return result;
  };
  const make=async(data,scope='all',categories=[])=>({format:FORMAT,version:VERSION,scope,categories:scope==='custom'?[...categories]:[],createdAt:new Date().toISOString(),manifest:{scope,categories:scope==='custom'?[...categories]:[],counts:counts(data)},integrity:{algorithm:'SHA-256',checksum:await digest({scope,categories:scope==='custom'?[...categories]:[],data})},data});
- const validate=async backup=>{
-  if(!backup||typeof backup!=='object'||backup.format!==FORMAT)throw Error('这不是 Iris 备份文件。请检查是否选错文件。');
-  if(![2,3,VERSION].includes(backup.version))throw Error(`此备份格式版本为 ${String(backup.version)}，当前应用仅支持版本 2 至 ${VERSION}。请使用兼容版本的 Iris 恢复。`);
-  const data=backup.data;
+ const validateData=data=>{
   if(!data||typeof data!=='object'||Array.isArray(data)||!Array.isArray(data.users)||!Array.isArray(data.characters)||!data.messages||typeof data.messages!=='object'||Array.isArray(data.messages))throw Error('备份数据结构不完整，文件可能已损坏。');
   let unsafeKey=false;const inspectKeys=value=>{if(!value||typeof value!=='object')return;if(Object.prototype.hasOwnProperty.call(value,'__proto__'))unsafeKey=true;for(const child of Object.values(value))inspectKeys(child)};inspectKeys(data);if(unsafeKey)throw Error('备份包含不安全的数据字段，已停止恢复。');
   const ownerIds=new Set();for(const character of data.characters){
@@ -65,6 +62,13 @@
    if(character?.earthTravel!==undefined){const d=character.earthTravel;if(!d||!character.experienceCharacterId||d.ownerId!==character.experienceCharacterId||!Array.isArray(d.routes)||!Array.isArray(d.questions))throw Error('地球地图归属或结构无效');const ids=new Set();for(const r of d.routes){if(!r||typeof r.id!=='string'||ids.has(r.id)||!['pending','confirmed','ignored'].includes(r.review)||!['设定明确','合理推演','待用户确认'].includes(r.status)||typeof r.from!=='string'||typeof r.to!=='string'||!Number.isFinite(r.confidence)||r.confidence<0||r.confidence>1)throw Error('旅行航线无效');ids.add(r.id)}}
    if(character?.lifeTimeline!==undefined){const timeline=character.lifeTimeline;if(!timeline||typeof timeline!=='object'||!Array.isArray(timeline.entries)||!character.experienceCharacterId||timeline.ownerId!==character.experienceCharacterId)throw Error('备份中的人生经历归属或结构无效。');const ids=new Set();for(const entry of timeline.entries){if(!entry||typeof entry!=='object'||typeof entry.id!=='string'||!entry.id||ids.has(entry.id)||typeof entry.title!=='string'||!['confirmed','pending'].includes(entry.status))throw Error('备份中的人生经历条目无效或重复。');ids.add(entry.id)}}
   }
+  return counts(data);
+ };
+ const validate=async backup=>{
+  if(!backup||typeof backup!=='object'||backup.format!==FORMAT)throw Error('这不是 Iris 备份文件。请检查是否选错文件。');
+  if(![2,3,VERSION].includes(backup.version))throw Error(`此备份格式版本为 ${String(backup.version)}，当前应用仅支持版本 2 至 ${VERSION}。请使用兼容版本的 Iris 恢复。`);
+  const data=backup.data;
+  validateData(data);
   if(!backup.integrity||backup.integrity.algorithm!=='SHA-256'||typeof backup.integrity.checksum!=='string')throw Error('备份缺少完整性校验信息，无法安全恢复。');
   const scope=backup.scope||backup.manifest?.scope||'all',categories=scope==='custom'?(backup.categories||backup.manifest?.categories):[];
   if(backup.version===2&&scope==='custom')throw Error('此备份分类版本不受支持。');
@@ -227,5 +231,5 @@
   return incoming;
  };
  const merge=(current,incoming,key='')=>mergeValue(current,key===''&&(Array.isArray(incoming?.characters)||Array.isArray(incoming?.users))?alignIncoming(current,incoming):incoming,key);
- return{FORMAT,VERSION,CATEGORIES,canonical,counts,digest,make,validate,merge,select,selectCategories,replaceScope,replaceCategories,replaceCategorySet,zip,unzip};
+ return{FORMAT,VERSION,CATEGORIES,canonical,counts,digest,make,validate,validateData,merge,select,selectCategories,replaceScope,replaceCategories,replaceCategorySet,zip,unzip};
 });

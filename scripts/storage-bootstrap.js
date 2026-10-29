@@ -1,9 +1,9 @@
 (() => {
-  const query = (window.IRIS_RELEASE ? `?iris-release=${encodeURIComponent(window.IRIS_RELEASE)}` : '?v=5.9.2-r4') + '&ui=travel-daily-records-hotfix';
+  const query = (window.IRIS_RELEASE ? `?iris-release=${encodeURIComponent(window.IRIS_RELEASE)}` : '?v=5.9.2-r5') + '&ui=github-backup';
   const legacyKey = 'iris-v1';
   const databaseName = 'iris-local-data';
   const storeName = 'app-state';
-  const scripts = ['scripts/layout-diagnostics.js', 'scripts/mini-theater.js', 'scripts/role-invitations.js', 'scripts/forum-core.js', 'scripts/market-core.js', 'scripts/perfumery-core.js', 'scripts/reading-core.js', 'scripts/reading-search.js', 'scripts/reading-content.js', 'scripts/timeline-core.js', 'scripts/growth-core.js', 'scripts/growth.js', 'scripts/earth-core.js', 'scripts/earth.js', 'scripts/travel-journal.js', 'scripts/travel-place-search.js', 'scripts/travel-map.js', 'scripts/travel-currency.js', 'scripts/travel-billing.js', 'scripts/travel-booking.js', 'scripts/people-core.js', 'scripts/people.js', 'scripts/if-world.js', 'scripts/experiences.js', 'scripts/backup-core.js', 'scripts/guide-content.js', 'scripts/life-memory.js', 'scripts/vendor/qrcode.js', 'scripts/vendor/qrcode-utf8.js', 'scripts/music-core.js', 'scripts/music-cloud.js', 'scripts/music.js', 'scripts/app.js', 'scripts/forum.js', 'scripts/market.js', 'scripts/perfumery.js', 'scripts/reading-import.js', 'scripts/reading.js', 'scripts/profiles.js', 'scripts/importers.js', 'scripts/characters.js'];
+  const scripts = ['scripts/layout-diagnostics.js', 'scripts/mini-theater.js', 'scripts/role-invitations.js', 'scripts/forum-core.js', 'scripts/market-core.js', 'scripts/perfumery-core.js', 'scripts/reading-core.js', 'scripts/reading-search.js', 'scripts/reading-content.js', 'scripts/timeline-core.js', 'scripts/growth-core.js', 'scripts/growth.js', 'scripts/earth-core.js', 'scripts/earth.js', 'scripts/travel-journal.js', 'scripts/travel-place-search.js', 'scripts/travel-map.js', 'scripts/travel-currency.js', 'scripts/travel-billing.js', 'scripts/travel-booking.js', 'scripts/people-core.js', 'scripts/people.js', 'scripts/if-world.js', 'scripts/experiences.js', 'scripts/backup-core.js', 'scripts/github-archive.js', 'scripts/github-sync-core.js', 'scripts/github-sync.js', 'scripts/guide-content.js', 'scripts/life-memory.js', 'scripts/vendor/qrcode.js', 'scripts/vendor/qrcode-utf8.js', 'scripts/music-core.js', 'scripts/music-cloud.js', 'scripts/music.js', 'scripts/app.js', 'scripts/forum.js', 'scripts/market.js', 'scripts/perfumery.js', 'scripts/reading-import.js', 'scripts/reading.js', 'scripts/profiles.js', 'scripts/importers.js', 'scripts/characters.js'];
 
   // Fetch the application bundle while IndexedDB is opening so storage latency
   // does not delay the start of every script request.
@@ -45,24 +45,32 @@
     request.onerror = () => reject(request.error || new Error('IndexedDB request failed'));
   });
 
-  const writeState = (database, state) => new Promise((resolve, reject) => {
+  const writeState = (database, state, key = 'main') => new Promise((resolve, reject) => {
     const transaction = database.transaction(storeName, 'readwrite');
-    transaction.objectStore(storeName).put(state, 'main');
+    transaction.objectStore(storeName).put(state, key);
     transaction.oncomplete = resolve;
     transaction.onerror = () => reject(transaction.error || new Error('IndexedDB save failed'));
     transaction.onabort = () => reject(transaction.error || new Error('IndexedDB save was aborted'));
   });
 
+  const cloneSnapshot = value => typeof window.structuredClone === 'function' ? window.structuredClone(value) : JSON.parse(JSON.stringify(value));
   let saveTail = Promise.resolve();
-  const storageApi = (mode, write) => ({
+  const storageApi = (mode, write, recovery) => ({
     mode,
     save(state) {
-      const snapshot = JSON.parse(JSON.stringify(state));
+      const snapshot = cloneSnapshot(state);
       const task = saveTail.catch(() => {}).then(() => write(snapshot));
       saveTail = task;
       return task;
     },
-    flush: () => saveTail
+    flush: () => saveTail,
+    saveRecovery(state) {
+      const snapshot = {createdAt:new Date().toISOString(),data:cloneSnapshot(state)};
+      const task = saveTail.catch(() => {}).then(() => recovery.write(snapshot));
+      saveTail = task;
+      return task;
+    },
+    readRecovery: () => saveTail.catch(() => {}).then(() => recovery.read())
   });
   const chooseRecovery = (primary, fallback) => new Promise(resolve => {
     const panel = document.getElementById('irisBootScreen') || document.body;
@@ -102,7 +110,10 @@
       }
       // Only remove the legacy copy after a successful read/migration/recovery write.
       if (!fallbackError) try { localStorage.removeItem(legacyKey); } catch {}
-      window.IrisStorage = storageApi('indexeddb', value => writeState(database, value));
+      window.IrisStorage = storageApi('indexeddb', value => writeState(database, value), {
+        write: value => writeState(database, value, 'github-before-restore'),
+        read: () => requestValue(database.transaction(storeName, 'readonly').objectStore(storeName).get('github-before-restore'))
+      });
       try { navigator.storage?.persist?.()?.catch?.(() => {}); } catch {}
       return saved;
     } catch (error) {
@@ -112,6 +123,9 @@
       if (!fallback) throw new Error('本地数据库暂时无法读取，原数据未被覆盖。请关闭其他 Iris 页面后重试。');
       window.IrisStorage = storageApi('localstorage-fallback', value => {
         localStorage.setItem(legacyKey, JSON.stringify(value));
+      }, {
+        write: value => localStorage.setItem('iris-github-before-restore', JSON.stringify(value)),
+        read: () => JSON.parse(localStorage.getItem('iris-github-before-restore') || 'null')
       });
       return fallback;
     }

@@ -16,3 +16,11 @@ test('failed recovery archive writes preserve both sources and prevent applicati
 test('fallback saves and database saves expose a flush barrier and immutable queued snapshots',{skip:!JSDOM},async()=>{for(const mode of ['fallback','database']){const f=fixture({primary:{v:1},fallback:mode==='fallback'?{v:1}:undefined,readFailure:mode==='fallback'});try{await flush();const state={v:2},first=f.w.IrisStorage.save(state);state.v=3;const second=f.w.IrisStorage.save(state);state.v=4;await f.w.IrisStorage.flush();await Promise.all([first,second]);assert.equal(mode==='fallback'?JSON.parse(f.w.localStorage.getItem('iris-v1')).v:f.records.get('main').v,3)}finally{f.close()}}});
 
 test('an unavailable legacy store never prevents opening a readable primary database',{skip:!JSDOM},async()=>{const f=fixture({primary:{v:'safe-primary'},localFailure:true});try{await flush();assert.equal(f.w.IRIS_BOOT_STATE.v,'safe-primary');assert.equal(f.w.IrisStorage.mode,'indexeddb');assert.ok(f.scripts.length>0)}finally{f.close()}});
+
+test('GitHub recovery copies are durable and independent of the live application state',{skip:!JSDOM},async()=>{
+ const f=fixture({primary:{v:'original'}});try{
+  await flush();const value={v:'before-restore'};await f.w.IrisStorage.saveRecovery(value);value.v='mutated';await f.w.IrisStorage.save({v:'after-restore'});
+  assert.equal((await f.w.IrisStorage.readRecovery()).data.v,'before-restore');assert.equal(f.records.get('main').v,'after-restore');
+  f.writeFailure(true);await assert.rejects(f.w.IrisStorage.saveRecovery({v:'failed'}),/write failed/);assert.equal(f.records.get('github-before-restore').data.v,'before-restore');assert.equal(f.records.get('main').v,'after-restore');
+ }finally{f.close()}
+});

@@ -5171,7 +5171,68 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .is-online-settings .more-settings-group-body>.more-preference-card:last-child{border-bottom:0}
 .is-online-settings .more-page strong{font-weight:400}
 .is-online-settings .more-page .settings-switch-row strong,.is-online-settings .more-page .more-card-heading strong,.is-online-settings .more-page .chat-avatar-setting strong{font-size:11px!important;font-weight:400}
-
+.storage-connection-switch{flex:none;margin:0 0 10px;padding:0 0 7px;border-bottom:1px solid #eee}
+.github-sync-page{width:100%;max-width:640px;margin:0 auto;padding:0 0 10px;color:#666;font-weight:400}
+.github-sync-form{display:grid;gap:12px}
+.github-sync-credentials{display:grid}
+.github-sync-credentials>label{display:grid;grid-template-columns:62px minmax(0,1fr);align-items:center;gap:12px;min-height:43px;border-bottom:1px solid #eee;color:#888;font-size:10px;font-weight:400}
+.github-sync-credentials>label>span{display:contents}
+.github-sync-credentials input{grid-column:2;grid-row:1}
+.github-sync-credentials>label:has(.github-token-link){grid-template-columns:62px minmax(0,1fr) auto}
+.github-token-link{grid-column:3;grid-row:1;color:#999;font-size:9px;font-weight:400;text-decoration:none;border-bottom:1px solid #ddd;white-space:nowrap;padding:2px 0}
+.github-token-link:hover{color:#555;border-color:#999}
+.github-sync-page input:not([type=checkbox]),.github-sync-page select{box-sizing:border-box;width:100%;min-width:0;min-height:34px;margin:0;padding:7px 0;border:0;border-radius:0;background:transparent;color:#555;font:inherit;font-size:11px;outline:none;box-shadow:none}
+.github-sync-page input::placeholder{color:#bbb;font-size:10px}
+.github-sync-credentials>label:focus-within{border-color:#aaa}
+.github-sync-preferences{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 22px}
+.github-sync-preferences>label{display:grid;gap:2px;min-width:0;padding:3px 0 5px;border-bottom:1px solid #eee;color:#888;font-size:10px;font-weight:400}
+.github-sync-preferences>label:last-child{grid-column:1/-1;grid-template-columns:62px minmax(0,1fr);align-items:center;gap:12px;padding:3px 0}
+.github-sync-preferences select{font-size:10px;cursor:pointer}
+.github-sync-page select:focus-visible,.github-sync-page input:focus-visible{outline:1px solid #bbb;outline-offset:2px}
+.github-password-hint{margin:-4px 0 0;color:#999;font-size:9px;line-height:1.7}
+.github-sync-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:1px 0 0}
+.github-sync-actions button{display:flex;align-items:center;justify-content:space-between;gap:3px;min-width:0;min-height:37px;padding:7px 0;border:0;border-top:1px solid #ddd;border-bottom:1px solid #ddd;border-radius:0;background:transparent;color:#777;font:inherit;font-size:10px;text-align:left;white-space:nowrap;cursor:pointer}
+.github-sync-actions button::after{content:'↗';color:#aaa;font-size:13px;font-style:normal}
+.github-sync-actions [data-github-action=upload]{color:#444;border-color:#aaa}
+.github-sync-actions button:hover{color:#333;border-color:#888}
+.github-sync-actions button:disabled{opacity:.45;cursor:wait}
+.github-sync-page button:focus-visible,.github-advanced>summary:focus-visible{outline:1px solid #bbb;outline-offset:3px}
+.github-advanced{border-bottom:1px solid #eee;color:#888}
+.github-advanced>summary{display:flex;align-items:center;justify-content:space-between;min-height:29px;padding:0;list-style:none;font-size:10px;font-weight:400;cursor:pointer}
+.github-advanced>summary::-webkit-details-marker{display:none}
+.github-advanced>summary i{font-style:normal;color:#aaa;font-size:13px}
+.github-advanced>summary i::before{content:'＋'}.github-advanced[open]>summary i::before{content:'−'}
+.github-advanced>div{display:grid;gap:10px;padding:7px 0 13px}
+.github-advanced>div>label:not(.github-sync-check){display:grid;grid-template-columns:90px minmax(0,1fr);align-items:center;gap:12px;border-bottom:1px solid #eee;font-size:10px}
+.github-sync-check{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#777;font-size:10px;line-height:1.7;cursor:pointer}
+.github-sync-check>span{order:-1}
+.github-sync-check input{appearance:none;-webkit-appearance:none;flex:none;position:relative;width:13px;height:13px;margin:0;border:1px solid #ccc;border-radius:50%;background:#fff;cursor:pointer}
+.github-sync-check input:checked{border-color:#666;background:#666;box-shadow:inset 0 0 0 3px #fff}
+.github-sync-hint{margin:0;color:#999;font-size:9px;line-height:1.8;overflow-wrap:anywhere}
+.github-sync-recovery{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0;padding:7px 0;border:0;border-bottom:1px solid #eee;border-radius:0;background:transparent;color:#888;font:inherit;font-size:9px;text-align:left;cursor:pointer}
+.github-sync-recovery::after{content:'↗';color:#aaa;font-size:12px}
+.github-sync-transfer{margin-top:10px;padding:0;border:0}
+.github-sync-status,.github-sync-restore>#storageFeedback{margin:0;color:#888;font-size:10px;font-weight:400;line-height:1.8;overflow-wrap:anywhere}
+.github-sync-status.is-error{color:#b04d43}
+.github-sync-details{margin:4px 0 0;white-space:pre-line;color:#aaa;font-size:9px;line-height:1.8;overflow-wrap:anywhere}
+.github-sync-reconfigure{display:none;margin:9px 0;padding:5px 0;border:0;border-bottom:1px solid #ccc;border-radius:0;background:transparent;color:#888;font:inherit;font-size:10px}
+.github-sync-page.has-restore-preview .github-sync-form{display:none}.github-sync-page.has-restore-preview .github-sync-reconfigure{display:inline-block}
+.github-sync-restore>#storageFeedback:empty{display:none}
+.github-sync-compact .github-sync-restore .backup-preview{margin-top:10px;padding:0;border:0}.github-sync-compact .github-sync-restore .backup-preview h3{font-size:12px;font-weight:400}.github-sync-compact .github-sync-restore .backup-preview>details>summary{font-size:10px;color:#888;cursor:pointer}.github-sync-compact .github-sync-restore .backup-preview ul{max-height:140px;overflow:auto}
+.github-sync-compact .backup-mode-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.github-sync-compact .backup-mode-options small{display:none}.github-sync-compact .backup-mode-options label{padding:8px 3px}.github-sync-compact .backup-primary-action{margin-top:8px}
+@media(max-width:360px){.github-sync-actions{gap:10px}.github-sync-preferences{column-gap:14px}.github-sync-credentials>label,.github-sync-preferences>label:last-child{grid-template-columns:54px minmax(0,1fr);gap:8px}.github-sync-credentials>label:has(.github-token-link){grid-template-columns:54px minmax(0,1fr) auto}}
+@media(pointer:coarse){.github-sync-page input:not([type=checkbox]){font-size:16px}}
+.github-encryption-option{padding:2px 0 4px}.github-encryption-option>span{display:grid;gap:3px;color:#777}.github-encryption-option small{color:#999;font-size:9px;font-weight:400;line-height:1.6}
+.github-password-dialog{box-sizing:border-box;width:min(360px,calc(100vw - 40px));max-height:calc(100dvh - 48px);overflow:auto;margin:auto;padding:24px;border:1px solid #e5e5e5;border-radius:2px;background:#fff;color:#666;font:inherit;box-shadow:0 12px 45px #0001}
+.github-password-dialog::backdrop{background:#0004}
+.github-password-dialog form{display:grid;gap:15px}.github-password-dialog header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:12px;border-bottom:1px solid #eee}
+.github-password-dialog h3{margin:0;color:#555;font-size:14px;font-weight:400}.github-password-dialog header button{padding:0 2px;border:0;border-radius:0;background:transparent;color:#999;font:inherit;font-size:20px;cursor:pointer}
+.github-password-dialog p{margin:0;font-size:11px;line-height:1.9;color:#888}.github-password-dialog label{display:grid;gap:6px;color:#777;font-size:10px}
+.github-password-dialog input{box-sizing:border-box;width:100%;min-width:0;min-height:36px;padding:8px 0;border:0;border-bottom:1px solid #ddd;border-radius:0;background:transparent;color:#444;font:inherit;font-size:14px;outline:none}.github-password-dialog input:focus{border-color:#888}
+.github-password-dialog .github-password-note{font-size:9px;color:#999}.github-password-dialog .github-password-error{color:#b04d43;font-size:10px}.github-password-error:empty{display:none}
+.github-password-dialog footer{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-top:3px}.github-password-dialog footer button{min-height:36px;padding:7px 0;border:0;border-block:1px solid #ddd;border-radius:0;background:transparent;color:#777;font:inherit;font-size:11px;cursor:pointer}.github-password-dialog footer button[type=submit]{color:#444;border-color:#aaa}.github-password-dialog button:focus-visible{outline:1px solid #aaa;outline-offset:3px}
+@media(pointer:coarse){.github-password-dialog input{font-size:16px}}
+.github-encryption-control{display:flex;align-items:center;gap:14px}.github-encryption-control>.github-encryption-option{flex:1;min-width:0}.github-password-edit{flex:none;padding:4px 0;border:0;border-bottom:1px solid #ddd;border-radius:0;background:transparent;color:#888;font:inherit;font-size:9px;cursor:pointer}.github-password-edit[hidden]{display:none}
 .travel-record-sources{margin-top:15px;color:#999;font-size:9px;line-height:1.8}.travel-record-sources summary{cursor:pointer}.travel-record-sources a{display:block;margin-top:5px;color:#888;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
 /* Expand only the reading face; trip details keep their original compact height. */
 .sheet.is-centered-panel:has(.shared-ticket-info:not([hidden]) .shared-ticket-back:not([hidden])){display:flex;flex-direction:column;box-sizing:border-box;height:min(900px,calc(var(--app-viewport-height,100dvh) - 28px));max-height:calc(var(--app-viewport-height,100dvh) - 28px);padding:18px 20px;overflow:hidden}
@@ -5185,3 +5246,6 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .shared-ticket-view [data-shared-organize]{flex:none;margin-top:7px}
 .earth-ticket-dialog[open]:has(.earth-ticket-info.is-reading-memory .shared-daily-pages){height:min(900px,calc(var(--app-viewport-height,100dvh) - 28px));max-height:calc(var(--app-viewport-height,100dvh) - 28px)}
 @media(max-height:600px){.shared-ticket-view:has(.shared-ticket-back:not([hidden])) button.shared-travel-ticket{width:min(100%,268px);max-height:none}.sheet.is-centered-panel:has(.shared-ticket-info:not([hidden]) .shared-ticket-back:not([hidden])){padding:12px 16px}.sheet.is-centered-panel:has(.shared-ticket-info:not([hidden]) .shared-ticket-back:not([hidden]))>.sheet-head{margin-bottom:5px}}
+.github-token-guide{display:block;padding:0 0 9px;border-bottom:1px solid #eee;color:#888;font-size:9px;line-height:1.7}.github-token-guide summary{cursor:pointer;color:#666;font-size:10px;font-weight:400}.github-token-guide[open]>div{display:grid;gap:3px;padding-top:5px}.github-token-guide span{display:block;overflow-wrap:anywhere}
+
+.github-backup-location{color:#888;font-size:10px;text-underline-offset:3px}.github-backup-location[hidden]{display:none}
