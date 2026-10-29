@@ -1,6 +1,6 @@
 {
   "version": "5.9.2",
-  "release": "5.9.2-r3",
+  "release": "5.9.2-r4",
   "date": "2026-10-29",
   "notes": "修复旅行自动结束、每日记录生成与机票面板显示问题。",
   "changes": [
@@ -10,52 +10,19 @@
   "authorWords": [
     [
       {
-        "text": "作者已淡坑。",
+        "text": "作者已淡坑",
         "emphasis": true
+      },
+      {
+        "text": "，小红书账号已于10月27日早上进入销号流程。"
       }
     ],
     [
       {
-        "text": "小红书账号已于"
+        "text": "目前正在测试 Discord 私人社区的 bot，后续会请朋友在小红书发帖公布邀请码，也会在 Iris 小手机内放置"
       },
       {
-        "text": "10月27日早上进入销号流程",
-        "emphasis": true
-      },
-      {
-        "text": "。"
-      }
-    ],
-    [
-      {
-        "text": "目前正在测试 "
-      },
-      {
-        "text": "Discord 私人社区的 bot",
-        "emphasis": true
-      },
-      {
-        "text": "。"
-      }
-    ],
-    [
-      {
-        "text": "后续会请朋友在小红书发帖"
-      },
-      {
-        "text": "公布邀请码",
-        "emphasis": true
-      },
-      {
-        "text": "。"
-      }
-    ],
-    [
-      {
-        "text": "也会在 "
-      },
-      {
-        "text": "Iris 小手机内放置邀请链接",
+        "text": "邀请链接",
         "emphasis": true
       },
       {
