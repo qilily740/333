@@ -16,7 +16,8 @@ test('author words appear once below the latest changes and emphasize the select
  assert.ok(html.indexOf('class="release-author-note"')<html.indexOf('旧版本更新'));
  assert.equal((html.match(/class="release-author-note"/g)||[]).length,1);
  assert.match(html,/<h3>作者的话<\/h3>/);
- for(const phrase of ['偶尔会看','iris会继续更新的','目前没有做生图功能的想法','完结之后会把仓库地址内置在iris里'])assert.ok(html.includes(`<strong>${phrase}</strong>`));
+ assert.equal(f.c.APP_RELEASE_NOTES.authorWords.length,5);
+ for(const phrase of ['作者已淡坑。','10月27日早上进入销号流程','Discord 私人社区的 bot','公布邀请码','Iris 小手机内放置邀请链接'])assert.ok(html.includes(`<strong>${phrase}</strong>`));
 });
 
 test('author words remain text when a segment contains HTML',()=>{
