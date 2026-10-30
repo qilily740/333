@@ -83,6 +83,7 @@ async function generateMemories(rt,source,replaceApproved=false){
  if(root.IrisTravelBilling?.pending(source).length){jobs.set(source,{pending:false,message:'还有旅途消费待结算，请先处理旅行账单，再生成每日记录。'});refresh(source);return{saved:false}}
  if(journal.memories.length&&!replaceApproved&&!rt.confirm('重新生成会替换这趟旅行的每日记录，继续？'))return;
  const expected=snapshot(rt,source),fingerprint=JSON.stringify(evidence),job={pending:true,message:'正在联网参考每天的地点，生成整趟旅行的每日记录…'};jobs.set(source,job);refresh(source);
+ const task=root.IrisTasks?.start({id:'travel-records-'+rt.threadKey+'-'+rt.id,title:'旅行记录 · '+(trip.destination||'双人旅行'),detail:job.message,retry:()=>generateMemories(rt,source,true)});
  try{
   const places=rt.confirmedPlaces?.()||[],days=Array.from({length:trip.days},(_,i)=>({day:i+1,date:dateForDay(trip,i+1),places:places.filter(place=>place.day===i+1).map(place=>({name:place.name,city:place.city,address:place.address,period:place.period,url:place.url}))}));
   const prompt=`【双人每日旅行记录】
@@ -101,7 +102,7 @@ async function generateMemories(rt,source,replaceApproved=false){
 旅行日期：${JSON.stringify(days)}
 已结算消费：${JSON.stringify(root.IrisTravelBilling?.summary(source).filter(q=>q.status==='paid')||[])}
 实际互动：${JSON.stringify(evidence.map(e=>({id:e.id,speaker:e.speaker,text:e.text,day:e.day,label:e.label})))}`;
-  const result=await (rt.requestRecords||rt.request)(prompt,{trip,places,onProgress:message=>{job.message=message;refresh(source)}}),raw=parse(result?.data||result),sources=Array.isArray(result?.sources)?result.sources:[];
+  const result=await (rt.requestRecords||rt.request)(prompt,{trip,places,onProgress:message=>{job.message=message;task?.update(message);refresh(source)}}),raw=parse(result?.data||result),sources=Array.isArray(result?.sources)?result.sources:[];
   if(!Array.isArray(raw.memories)||raw.memories.length!==trip.days)throw Error('每日记录数量不完整，需要一次返回全部 '+trip.days+' 天；原记录已保留，请重试。');
   const idDays=new Map(evidence.map(entry=>[entry.id,entry.day])),byDay=new Map();
   for(const record of raw.memories){const day=record?.day,sourceIds=Array.isArray(record?.sourceIds)?[...new Set(record.sourceIds)]:[];
@@ -110,8 +111,8 @@ async function generateMemories(rt,source,replaceApproved=false){
   }
   if(JSON.stringify(dailyEvidence(rt,source))!==fingerprint)throw Error('旅途中新增了互动，请重新生成每日记录');
   const memories=days.map(day=>byDay.get(day.day));await commit(rt,source,{...journal,revision:journal.revision+1,memories,dailyMemoryVersion:2,memoryEvidence:evidence,memoryInputFingerprint:fingerprint,memoryThrough:journal.entries.at(-1)?.id||null},expected);
-  job.message='每日旅行记录已保存（联网参考 · 旅行推演）。';return{saved:true};
- }catch(error){job.message=error.message||'每日记录生成失败，请重试'}finally{job.pending=false;refresh(source)}
+  job.message='每日旅行记录已保存（联网参考 · 旅行推演）。';task?.done(job.message);return{saved:true};
+ }catch(error){task?.fail(error);job.message=error.message||'每日记录生成失败，请重试'}finally{job.pending=false;refresh(source)}
 }
 function render(v){const {rt,source}=v,trip=rt.getTrip();if(!trip)return;const journal=read(source),job=jobs.get(source),busy=job?.pending===true,last=[...journal.entries].reverse().find(e=>e.speaker==='character'),target=stage(last?.index||0,trip.days),canPlay=trip.status==='travelling',esc=rt.esc,pending=root.IrisTravelBilling?.pending(source)||[],location=root.IrisTravelBilling?.countriesFor(rt.finance,source,target.day),selectedCountry=v.countryDay===target.day?v.countryCode:last?.countryCode||location?.countryCode||'';
  const body=v.face==='memories'?`<div class="shared-travel-records" data-journal-daily></div><button type="button" data-journal-memories ${busy||trip.status!=='complete'&&!dailyEvidence(rt,source).length?'disabled':''}>${journal.memories.length?'重新整理每日记录':'整理每日旅行记录'}</button>`:`<div class="shared-travel-scenes" data-journal-scenes>${journal.entries.map(e=>`<article class="shared-scene ${e.speaker==='user'?'is-user':''}"><small>${esc(e.speaker==='user'?rt.user.name:rt.role.name)} · 第${e.day}天 ${esc(e.label)}</small>${e.title?`<h3>${esc(e.title)}</h3>`:''}<p>${esc(e.text)}</p></article>`).join('')||'<p class="shared-travel-empty">从这里开始两个人的旅途。</p>'}</div>${canPlay?`<form data-journal-form><textarea name="action" maxlength="3000" rows="2" placeholder="说句话，或写下你想做的事…" ${busy||pending.length?'disabled':''}>${esc(v.draft||'')}</textarea><div><button type="submit" ${busy||pending.length?'disabled':''}>${last?'继续互动':'开始这一幕'}</button>${last&&!target.last?`<button type="button" data-journal-next ${busy||pending.length?'disabled':''}>下一幕</button>`:''}</div></form>`:''}`;

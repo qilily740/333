@@ -102,12 +102,13 @@
  async function analyze(token){
   if(!current(token)||token.busy||analysisJobs.get(token.role)?.status==='pending')return;const C=root.IrisTimeline,options=runtime,role=token.role;let prompt;try{prompt=C.analysisPrompt(role,token.editingId);if(typeof options.analyze!=='function')throw Error('请先在设置 → API 配置中为经历连接 API。')}catch(error){feedback(token,error.message,true);return}
   const source=C.analysisSource(role),previousTimeline=JSON.stringify(C.read(role)),job={status:'pending',message:'正在整理人生经历，离开页面后仍会继续。'};analysisJobs.set(role,job);refreshAnalysis(token);
+  const task=root.IrisTasks?.start({id:'timeline-'+token.ownerId,title:(role.name||'角色')+' · 整理人生经历',detail:job.message,retry:()=>{if(!view||view.role!==role||!current(view))throw Error('请返回原角色的人生经历页面，再点击重试。');return analyze(view)}});
   try{const result=await options.analyze(prompt,role,{background:true});if(!options.state.characters.includes(role)||role.experienceCharacterId!==token.ownerId)throw Error('原角色已删除或替换，未写入结果');if(C.analysisSource(role)!==source)throw Error('角色资料已改变，请重新梳理。');const drafts=C.parseDrafts(result,role);
    if(JSON.stringify(C.read(role))!==previousTimeline)throw Error('生成期间时间线已改变，未覆盖你的修改，请重新生成。');
    await C.commit(options.state,role,data=>C.rerollDrafts(data,drafts),options.persist,{background:true});
    if(view?.role===role&&current(view)){closeEditor(view);view.filter='all'}
-   job.message=drafts.length?`已重新生成 ${drafts.length} 条经历草稿，原时间线已全部替换。`:'整理完成，未提取到有依据的经历，时间线已重新置空。';job.status='done';
-  }catch(error){job.status='error';job.message=error.message||'本次梳理失败，请重试。'}finally{token.analyzing=false;if(view?.role===role&&current(view))refreshAnalysis(view)}
+   job.message=drafts.length?`已重新生成 ${drafts.length} 条经历草稿，原时间线已全部替换。`:'整理完成，未提取到有依据的经历，时间线已重新置空。';job.status='done';task?.done(job.message);
+  }catch(error){task?.fail(error);job.status='error';job.message=error.message||'本次梳理失败，请重试。'}finally{token.analyzing=false;if(view?.role===role&&current(view))refreshAnalysis(view)}
  }
 
  function closeEditor(token){token.host.querySelector('[data-timeline-editor]').innerHTML='';token.editingId=null}
