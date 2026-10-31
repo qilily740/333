@@ -4,14 +4,14 @@
 const API=window.IRIS_MUSIC_API||'https://music-api.suri.us.ci';
 // Negotiate with the backend before adding non-legacy request headers.
 const STATS_ALLOWED=window.IRIS_MUSIC_STATISTICS!==false;
-let coverProxySupported=false;
+let coverProxySupported=false,guestMusicSupported=false;
 let statisticsProbe=null,statisticsSupported=false,statisticsCheckedAt=0,statisticsCooldownUntil=0;
 async function statisticsReady(){
  if(Date.now()<statisticsCooldownUntil)return false;
  if(statisticsCheckedAt&&Date.now()-statisticsCheckedAt<60000)return statisticsSupported;
  if(!statisticsProbe)statisticsProbe=(async()=>{let timer;try{
   const value=await Promise.race([(async()=>{const response=await fetch(API+'/stats/capabilities',{cache:'no-store',signal:AbortSignal.timeout(1200)});return response.ok?await response.json():null})(),new Promise(resolve=>timer=setTimeout(()=>resolve(null),500))]);
-  coverProxySupported=value?.protocol===1&&value?.cover_proxy===true;statisticsSupported=STATS_ALLOWED&&value?.protocol===1&&value?.enabled===true;
+  guestMusicSupported=value?.protocol===1&&value?.guest_meting===true;coverProxySupported=value?.protocol===1&&value?.cover_proxy===true;statisticsSupported=STATS_ALLOWED&&value?.protocol===1&&value?.enabled===true;
  }catch{statisticsSupported=false}finally{clearTimeout(timer);statisticsCheckedAt=Date.now();statisticsProbe=null}return statisticsSupported})();
  return statisticsProbe;
 }
@@ -53,10 +53,10 @@ const pollQr=id=>request('/auth/qr/poll?id='+encodeURIComponent(id));
 const me=token=>request('/auth/me',{token});
 const playlists=token=>request('/user/playlists',{token});
 const playlist=(id,token)=>request('/playlist?id='+encodeURIComponent(id),{token});
-const search=query=>request('/search?q='+encodeURIComponent(String(query||'').trim()));
+const search=(query,token='')=>request('/search?q='+encodeURIComponent(String(query||'').trim()),{token});
 const resolve=(title,artist='',token='')=>request('/resolve?title='+encodeURIComponent(String(title||''))+'&artist='+encodeURIComponent(String(artist||'')),{token});
 const song=(id,token='',{metadataOnly=false}={})=>request('/song?id='+encodeURIComponent(id)+(metadataOnly?'&metadata=1':''),{token});
 async function logout(userId,token){try{if(token)await request('/auth/logout',{token,method:'POST'})}finally{await storage('delete',userId)}}
-function coverUrl(value){const source=String(value||'');if(/^(data:image\/|blob:)/i.test(source))return source;try{const url=new URL(source);if(url.protocol==='http:')url.protocol='https:';if(!['http:','https:'].includes(url.protocol))return '';return coverProxySupported&&/^p[1-9]\.music\.126\.net$/i.test(url.hostname)?API+'/cover?url='+encodeURIComponent(url.href):url.href}catch{return source}}
-window.IrisMusicCloud={API,coverUrl,anonymousDevice,trackUse,getToken,saveToken,request,startQr,pollQr,me,playlists,playlist,search,resolve,song,logout};
+function coverUrl(value){const source=String(value||'');if(/^(data:image\/|blob:)/i.test(source))return source;try{const url=new URL(source);if(url.protocol==='http:')url.protocol='https:';if(!['http:','https:'].includes(url.protocol))return '';return coverProxySupported&&(/^p[1-9]\.music\.126\.net$/i.test(url.hostname)||(['api.qijieya.cn','api.i-meto.com','api.injahow.cn','api.amarea.cn','api.moeyao.cn'].includes(url.hostname)&&url.searchParams.get('server')==='netease'&&url.searchParams.get('type')==='pic'))?API+'/cover?url='+encodeURIComponent(url.href):url.href}catch{return source}}
+window.IrisMusicCloud={API,guestMusicEnabled:()=>guestMusicSupported,coverUrl,anonymousDevice,trackUse,getToken,saveToken,request,startQr,pollQr,me,playlists,playlist,search,resolve,song,logout};
 })();

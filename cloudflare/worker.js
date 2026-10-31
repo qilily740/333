@@ -14,21 +14,97 @@ function json(value, status = 200, origin = '') {
   return new Response(JSON.stringify(value), { status, headers });
 }
 
+const GUEST_MUSIC_SERVICES = Object.freeze([
+  'https://api.qijieya.cn/meting/', 'https://api.i-meto.com/meting/api',
+  'https://api.injahow.cn/meting/', 'https://api.amarea.cn/meting/', 'https://api.moeyao.cn/meting/',
+]);
+function guestAddress(base, type, id) { const url = new URL(base); url.search = new URLSearchParams({ server: 'netease', type, id: String(id) }); return url.href; }
+function guestImageAddress(raw) {
+  try { const url = new URL(raw); return !url.username && !url.password && !url.port && GUEST_MUSIC_SERVICES.some(base => { const service = new URL(base); return url.origin === service.origin && url.pathname === service.pathname; }) && url.searchParams.get('server') === 'netease' && url.searchParams.get('type') === 'pic' && /^\d{1,25}$/.test(url.searchParams.get('id') || '') ? url : null; } catch { return null; }
+}
+function guestSongRecord(row, base) {
+  if (!row || typeof row !== 'object') return null;
+  let id = String(row.id || '');
+  try { const source = new URL(row.url); if (!id && (!source.searchParams.get('server') || source.searchParams.get('server') === 'netease')) id = source.searchParams.get('id') || ''; } catch {}
+  if (!/^\d{1,18}$/.test(id) || !String(row.name || row.title || '').trim()) return null;
+  let cover = String(row.pic || row.cover || ''); try { if (!/^https?:$/.test(new URL(cover).protocol)) cover = ''; } catch { cover = ''; }
+  return { id, name: String(row.name || row.title).slice(0, 300), artist: (Array.isArray(row.artist || row.author) ? row.artist || row.author : [row.artist || row.author || '']).map(item => typeof item === 'string' ? item : item?.name || '').join(' / ').slice(0, 300), album: String(row.album || '').slice(0, 300), duration: Math.max(0, Number(row.duration) || 0), cover, musicAccessMode: 'guest', provider: base };
+}
+async function guestMusicRead(type, id) {
+  let receivedEmpty = false;
+  for (const base of GUEST_MUSIC_SERVICES) {
+    try {
+      const songs = await musicUpstream('/meting/' + type, async () => {
+        const response = await fetch(guestAddress(base, type, id), { headers: { accept: 'application/json' }, redirect: 'manual', signal: AbortSignal.timeout(4000) });
+        if (!response.ok) throw new Error('游客音乐服务暂时不可用');
+        const body = await response.json(); if (!Array.isArray(body)) throw new Error('游客音乐服务返回格式不支持');
+        return { data: { code: 200 }, songs: body.map(row => guestSongRecord(row, base)).filter(Boolean) };
+      });
+      if (songs.songs.length) return songs.songs;
+      receivedEmpty = true;
+    } catch { /* An unavailable public service must not hide the next independent service. */ }
+  }
+  if (receivedEmpty) return [];
+  throw musicError('游客音乐服务暂时无法连接，请稍后重试或登录网易云。', null, 502);
+}
+async function guestMusicSong(id, metadataOnly, origin) {
+  const records = await guestMusicRead('song', id), song = records.find(item => item.id === id);
+  if (!song) throw musicError('没有找到这首歌', null, 404);
+  const bases = [song.provider, ...GUEST_MUSIC_SERVICES.filter(base => base !== song.provider)];
+  const result = { ...song, lyrics: '', lyricSource: '' }; delete result.provider;
+  if (metadataOnly) return result;
+  try {
+    const lyric = await musicUpstream('/meting/lyric', async () => {
+      const response = await fetch(guestAddress(song.provider, 'lrc', id), { headers: { accept: 'text/plain' }, redirect: 'manual', signal: AbortSignal.timeout(3000) });
+      if (!response.ok) throw new Error('歌词暂时不可用'); const text = (await response.text()).slice(0, 120000);
+      return { data: { code: 200 }, text: /^\s*[{<]/.test(text) ? '' : text };
+    });
+    result.lyrics = lyric.text; result.lyricSource = lyric.text ? '公开音乐服务' : '';
+  } catch {}
+  result.playbackSources = bases.map(base => new URL('/guest/playback?' + new URLSearchParams({ id, provider: String(GUEST_MUSIC_SERVICES.indexOf(base)) }), origin).href);
+  return { ...result, playUrl: result.playbackSources[0], playUrlExpiresAt: Date.now() + 600000, playbackStatus: 'available', playbackMessage: '' };
+}
+
+function guestAudioLocation(raw) {
+  try { const url = new URL(raw); if (!['http:','https:'].includes(url.protocol) || url.username || url.password || url.port || !/(^|\.)music\.(126\.net|163\.com)$/i.test(url.hostname)) return null; url.protocol='https:'; return url.href; } catch { return null; }
+}
+async function guestPlayback(request,url) {
+  const id=numeric(url.searchParams.get('id'),'歌曲 ID'), index=Number(url.searchParams.get('provider'));
+  if (!url.searchParams.has('provider')||!Number.isInteger(index)||index<0||index>=GUEST_MUSIC_SERVICES.length) return json({error:'无效的游客音源'},400);
+  return (await musicUpstream('/meting/url',async()=>{
+    const range=request.headers.get('range'),headers={accept:'audio/*,application/json'};if(range&&/^bytes=\d+-\d*$/.test(range))headers.range=range;
+    const response=await fetch(guestAddress(GUEST_MUSIC_SERVICES[index],'url',id),{headers,redirect:'manual',signal:AbortSignal.timeout(7000)});
+    if([301,302,303,307,308].includes(response.status)){const location=guestAudioLocation(response.headers.get('location'));if(!location)throw musicError('游客音源返回了不支持的播放地址',null,502);return{data:{code:200},response:new Response(null,{status:302,headers:{location,'cache-control':'no-store','access-control-allow-origin':'*'}})}}
+    if(!response.ok)throw musicError('这个游客音源暂时不可用',null,502);
+    const type=(response.headers.get('content-type')||'').split(';')[0].trim().toLowerCase();
+    if(type.startsWith('audio/')||type==='application/octet-stream'){const out=new Headers({'content-type':type,'cache-control':'no-store','access-control-allow-origin':'*','x-content-type-options':'nosniff'});for(const key of ['content-length','content-range','accept-ranges'])if(response.headers.has(key))out.set(key,response.headers.get(key));return{data:{code:200},response:new Response(response.body,{status:response.status,headers:out})}}
+    let body;try{body=await response.json()}catch{throw musicError('这个游客音源未返回音频',null,502)}const location=guestAudioLocation(body?.url||body?.data?.url);if(!location)throw musicError('这个游客音源暂未提供播放地址',null,502);return{data:{code:200},response:new Response(null,{status:302,headers:{location,'cache-control':'no-store','access-control-allow-origin':'*'}})};
+  })).response;
+}
 async function musicCover(requestUrl) {
-  let url;
-  try { url = new URL(requestUrl.searchParams.get('url') || ''); } catch { return json({ error: '无效的封面地址' }, 400); }
-  if (!['http:', 'https:'].includes(url.protocol) || !/^p[1-9]\.music\.126\.net$/i.test(url.hostname) || url.username || url.password || url.port || !/^\/[a-z0-9_=-]{8,100}\/\d{5,25}\.(jpg|jpeg|png|webp)$/i.test(url.pathname)) return json({ error: '仅支持网易云歌曲封面' }, 400);
-  url.protocol = 'https:'; url.search = '?param=300y300'; url.hash = '';
-  const result = await musicUpstream('/cover', async () => {
-    const response = await fetch(url.href, { redirect: 'manual', headers: { referer: NETEASE + '/', 'user-agent': 'Mozilla/5.0', accept: 'image/jpeg,image/png,image/webp' }, signal: AbortSignal.timeout(9000), cf: { cacheTtl: 86400, cacheEverything: true } });
+  function source(raw) {
+    let url; try { url = new URL(raw); } catch { return null; }
+    const meting = guestImageAddress(raw); if (meting) { meting.search = new URLSearchParams({ server: 'netease', type: 'pic', id: meting.searchParams.get('id') }); return meting; }
+    if (!['http:', 'https:'].includes(url.protocol) || !/^p[1-9]\.music\.126\.net$/i.test(url.hostname) || url.username || url.password || url.port || !/^\/[a-z0-9_=-]{8,100}\/\d{5,25}\.(jpg|jpeg|png|webp)$/i.test(url.pathname)) return null;
+    url.protocol = 'https:'; url.search = '?param=300y300'; url.hash = ''; return url;
+  }
+  let url = source(requestUrl.searchParams.get('url') || '');
+  if (!url) return json({ error: '仅支持已配置音乐服务的歌曲封面' }, 400);
+  for (let redirects = 0; redirects < 4; redirects++) {
+    const result = await musicUpstream('/cover', async () => {
+      const response = await fetch(url.href, { redirect: 'manual', headers: { referer: NETEASE + '/', 'user-agent': 'Mozilla/5.0', accept: 'image/jpeg,image/png,image/webp' }, signal: AbortSignal.timeout(9000), cf: { cacheTtl: 86400, cacheEverything: true } });
+      return { data: { code: response.status >= 200 && response.status < 400 ? 200 : 502 }, response };
+    });
+    const response = result.response;
+    if ([301,302,303,307,308].includes(response.status)) { const next = source(new URL(response.headers.get('location') || '', url).href); if (!next) throw musicError('封面跳转地址不支持', null, 502); url = next; continue; }
     const type = (response.headers.get('content-type') || '').split(';')[0].trim().toLowerCase().replace(/^image\/(jpg|pjpeg)$/, 'image/jpeg');
-    if (!response.ok || !['image/jpeg', 'image/png', 'image/webp'].includes(type)) throw musicError('封面暂时无法读取（上游 '+response.status+' / '+(type||'无图片类型')+'）', null, 502);
+    if (!response.ok || !['image/jpeg','image/png','image/webp'].includes(type)) throw musicError('封面暂时无法读取', null, 502);
     const reader = response.body.getReader(), chunks = []; let length = 0;
-    while (true) { const { done, value } = await reader.read(); if (done) break; length += value.byteLength; if (length > 2 * 1024 * 1024) { await reader.cancel(); throw musicError('封面图片过大', null, 502); } chunks.push(value); }
-    const bytes = new Uint8Array(length); let offset = 0; for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
-    return { data: { code: 200 }, response: new Response(bytes, { headers: { 'content-type': type, 'cache-control': 'public, max-age=86400', 'access-control-allow-origin': '*', 'x-content-type-options': 'nosniff' } }) };
-  });
-  return result.response;
+    while (true) { const { done, value } = await reader.read(); if (done) break; length += value.byteLength; if (length > 2*1024*1024) { await reader.cancel(); throw musicError('封面图片过大', null, 502); } chunks.push(value); }
+    const bytes = new Uint8Array(length); let offset = 0; for (const chunk of chunks) { bytes.set(chunk,offset); offset += chunk.length; }
+    return new Response(bytes,{headers:{'content-type':type,'cache-control':'public, max-age=86400','access-control-allow-origin':'*','x-content-type-options':'nosniff'}});
+  }
+  throw musicError('封面跳转次数过多',null,502);
 }
 
 function cookieHeader(response) {
@@ -372,6 +448,7 @@ async function route(request, env, url) {
   }
   if (request.method === 'GET' && path === '/feedback/quota') return readFeedbackQuota(request, env, origin);
   if (request.method === 'POST' && path === '/feedback') return sendAuthorFeedback(request, env, origin);
+  if (request.method === 'GET' && path === '/guest/playback') return guestPlayback(request,url);
   if (request.method === 'GET' && path === '/cover') return musicCover(url);
   if (request.method === 'GET' && path === '/health') return json({ ok: true, service: 'iris-music' }, 200, origin);
 
@@ -471,7 +548,15 @@ async function route(request, env, url) {
     const artist = (url.searchParams.get('artist') || '').trim().slice(0, 100);
     if (!title) return json({ error: '请提供歌曲名称' }, 400, origin);
     const query = [title, artist].filter(Boolean).join(' ');
-    const { data } = await qrUpstream('/api/cloudsearch/pc', { s: query, type: 1, limit: 30, offset: 0, total: true }, qrClient());
+    const resolveSession = await loadSession(request, env);
+    if (bearer(request) && !resolveSession) return json({ error: '网易云登录已失效，请重新扫码登录' },401,origin);
+    if (!resolveSession) {
+      const candidates = await guestMusicRead('search',query), clean = value => String(value||'').normalize('NFKC').toLowerCase().replace(/[\s\p{P}\p{S}]/gu,'');
+      const match = candidates.find(song => clean(song.name)===clean(title) && (!artist || song.artist.split(' / ').some(name=>clean(name)===clean(artist))));
+      if (!match) return json({error:'没有找到歌名与歌手都能核对的版本'},404,origin);
+      return json({song:await guestMusicSong(match.id,false,url.origin)},200,origin);
+    }
+    const { data } = await qrUpstream('/api/cloudsearch/pc', { s: query, type: 1, limit: 30, offset: 0, total: true }, sessionClient(resolveSession));
     const songs = data?.result?.songs || data?.data?.result?.songs || [];
     const key = value => String(value || '').normalize('NFKC').toLowerCase().replace(/[\s\p{P}\p{S}]/gu, '');
     const exactTitle = songs.filter(song => key(song.name) === key(title));
@@ -483,7 +568,10 @@ async function route(request, env, url) {
   if (request.method === 'GET' && path === '/search') {
     const keyword = (url.searchParams.get('q') || '').trim().slice(0, 100);
     if (!keyword) return json({ error: '请提供搜索关键词' }, 400, origin);
-    const { data } = await qrUpstream('/api/cloudsearch/pc', { s: keyword, type: 1, limit: 20, offset: 0, total: true }, qrClient());
+    const searchSession = await loadSession(request,env);
+    if (bearer(request) && !searchSession) return json({error:'网易云登录已失效，请重新扫码登录'},401,origin);
+    if (!searchSession) return json({songs:(await guestMusicRead('search',keyword)).map(({provider,...song})=>song)},200,origin);
+    const { data } = await qrUpstream('/api/cloudsearch/pc', { s: keyword, type: 1, limit: 20, offset: 0, total: true }, sessionClient(searchSession));
     const songs = data?.result?.songs || data?.data?.result?.songs || [];
     return json({ songs: songs.map(song => ({ id: String(song.id), name: String(song.name || ''), artist: (song.artists || song.ar || []).map(item => item.name).join(' / '), album: String(song.album?.name || song.al?.name || ''), cover: String(song.album?.picUrl || song.al?.picUrl || ''), duration: Math.round((Number(song.duration || song.dt) || 0) / 1000) })) }, 200, origin);
   }
@@ -491,6 +579,8 @@ async function route(request, env, url) {
   if (request.method === 'GET' && path === '/song') {
     const id = numeric(url.searchParams.get('id'), '歌曲 ID');
     const session = await loadSession(request, env);
+    if (bearer(request) && !session) return json({error:'网易云登录已失效，请重新扫码登录'},401,origin);
+    if (!session) return json({song:await guestMusicSong(id,url.searchParams.get('metadata')==='1',url.origin)},200,origin);
     const [detail, lyric] = await Promise.all([
       upstream('/api/song/detail/?id=' + id + '&ids=%5B' + id + '%5D'),
       upstream('/api/song/lyric?id=' + id + '&lv=-1&kv=-1&tv=-1').catch(() => ({ data: {} })),
@@ -499,7 +589,7 @@ async function route(request, env, url) {
     if (!song) return json({ error: '没有找到这首歌' }, 404, origin);
     const lyrics = lyric.data?.lrc?.lyric || lyric.data?.klyric?.lyric || '';
     const playback = url.searchParams.get('metadata') === '1' ? {} : await songPlayback(id, session);
-    return json({ song: { id: String(song.id), name: String(song.name || ''), artist: (song.ar || song.artists || []).map(item => item.name).join(' / '), album: String(song.al?.name || song.album?.name || ''), cover: String(song.al?.picUrl || song.album?.picUrl || ''), duration: Math.round((Number(song.dt || song.duration) || 0) / 1000), lyrics, lyricSource: lyrics ? '网易云音乐' : '', ...playback } }, 200, origin);
+    return json({ song: { musicAccessMode: 'session', id: String(song.id), name: String(song.name || ''), artist: (song.ar || song.artists || []).map(item => item.name).join(' / '), album: String(song.al?.name || song.album?.name || ''), cover: String(song.al?.picUrl || song.album?.picUrl || ''), duration: Math.round((Number(song.dt || song.duration) || 0) / 1000), lyrics, lyricSource: lyrics ? '网易云音乐' : '', ...playback } }, 200, origin);
   }
 
   return json({ error: '接口不存在' }, 404, origin);

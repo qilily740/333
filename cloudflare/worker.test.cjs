@@ -49,3 +49,21 @@ test('cover relay serves only bounded NetEase raster artwork without credentials
  for(const url of ['http://127.0.0.1/abc.jpg','https://p3.music.126.net.attacker.test/abcdef12345/123456789.jpg','https://p3.music.126.net/../../admin','https://user:password@p3.music.126.net/abcdef12345/123456789.jpg']){response=await f.context.worker.fetch(new Request('https://music.test/cover?url='+encodeURIComponent(url)),f.env);assert.equal(response.status,400)}assert.equal(f.calls.length,1);
  const redirect=fixture(()=>new Response(null,{status:302,headers:{location:'http://127.0.0.1/private'}}));response=await redirect.context.worker.fetch(new Request('https://music.test/cover?url='+encodeURIComponent(source)),redirect.env);assert.equal(response.status,502);assert.equal(redirect.calls.length,1);
 });
+test('guest search and metadata fail over public services without forwarding credentials',async()=>{
+ const f=fixture(call=>{assert.equal(call.options.headers.authorization,undefined);assert.equal(call.options.headers.cookie,undefined);const url=new URL(call.url);assert.equal(url.searchParams.get('server'),'netease');if(url.hostname==='api.qijieya.cn')return new Response('unavailable',{status:503});if(url.searchParams.get('type')==='lrc')return new Response('[00:01]公开歌词');return[{name:'晴天',artist:'周杰伦',url:'https://api.i-meto.com/meting/api?server=netease&type=url&id=186016',pic:'https://api.i-meto.com/meting/api?server=netease&type=pic&id=109951165566379710'}]});
+ let r=await f.request('/search?q='+encodeURIComponent('晴天'));assert.equal(r.status,200);assert.equal(r.data.songs[0].id,'186016');assert.equal(r.data.songs[0].musicAccessMode,'guest');assert.equal(f.calls.length,2);
+ r=await f.request('/song?id=186016&metadata=1');assert.equal(r.data.song.playUrl,undefined);assert.ok(r.data.song.cover);r=await f.request('/song?id=186016');assert.equal(r.data.song.playbackSources.length,5);assert.match(r.data.song.playUrl,/guest\/playback\?id=186016&provider=1/);assert.equal(r.data.song.lyrics,'[00:01]公开歌词');assert.ok(f.calls.every(call=>new URL(call.url).hostname!=='music.163.com'));
+});
+test('logged-in music search keeps the authenticated NetEase route and expired sessions never become guest requests',async()=>{
+ const f=fixture(call=>{assert.equal(new URL(call.url).hostname,'interfacepc.music.163.com');assert.match(call.options.headers.cookie,/MUSIC_U=secret/);return{code:200,result:{songs:[song(1)]}}});const token=await f.session();const r=await f.request('/search?q=test',token);assert.equal(r.status,200);assert.equal(f.calls.length,1);
+ for(const endpoint of ['/search?q=test','/song?id=1','/resolve?title=test'])assert.equal((await f.request(endpoint,'expired-session')).status,401);assert.equal(f.calls.length,1);
+});
+test('Meting picture relay follows only a validated public CDN redirect',async()=>{
+ const f=fixture(call=>new URL(call.url).hostname==='api.qijieya.cn'?new Response(null,{status:302,headers:{location:'https://p3.music.126.net/abcdef12345/123456789.jpg'}}):new Response(new Uint8Array([255,216,255]),{headers:{'content-type':'image/jpg'}}));
+ const url='https://api.qijieya.cn/meting/?server=netease&type=pic&id=123456789';const r=await f.context.worker.fetch(new Request('https://music.test/cover?url='+encodeURIComponent(url)),f.env);assert.equal(r.status,200);assert.equal(f.calls.length,2);
+});
+test('guest playback address requests are mediated without credentials and unsafe redirect targets are rejected',async()=>{
+ const f=fixture(call=>{assert.equal(call.options.headers.authorization,undefined);assert.equal(call.options.headers.cookie,undefined);assert.equal(new URL(call.url).searchParams.get('type'),'url');return new Response(null,{status:302,headers:{location:'http://m801.music.126.net/audio/song.mp3'}})});
+ const r=await f.context.worker.fetch(new Request('https://music.test/guest/playback?id=186016&provider=0'),f.env);assert.equal(r.status,302);assert.equal(r.headers.get('location'),'https://m801.music.126.net/audio/song.mp3');
+ const unsafe=fixture(()=>new Response(null,{status:302,headers:{location:'http://127.0.0.1/private'}}));assert.equal((await unsafe.request('/guest/playback?id=186016&provider=0')).status,502);assert.equal((await unsafe.request('/guest/playback?id=186016&provider=99')).status,400);
+});

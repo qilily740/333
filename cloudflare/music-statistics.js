@@ -24,13 +24,13 @@ function device(request, env) {
 export function musicCategory(request, url = new URL(request.url)) {
   if (request.method !== 'GET' && !(request.method === 'POST' && url.pathname === '/auth/logout')) return null;
   if (url.pathname === '/song') return url.searchParams.get('metadata') === '1' ? 'song_info' : 'song_playback';
-  return ({ '/cover': 'cover', '/search': 'search', '/resolve': 'resolve', '/playlist': 'playlist', '/user/playlists': 'playlists', '/auth/qr/start': 'qr_start', '/auth/qr/poll': 'qr_poll', '/auth/me': 'account', '/auth/logout': 'logout' })[url.pathname] || null;
+  return ({ '/guest/playback': 'playback_url', '/cover': 'cover', '/search': 'search', '/resolve': 'resolve', '/playlist': 'playlist', '/user/playlists': 'playlists', '/auth/qr/start': 'qr_start', '/auth/qr/poll': 'qr_poll', '/auth/me': 'account', '/auth/logout': 'logout' })[url.pathname] || null;
 }
 function externalCategory(path) {
   if (path === '/cover') return 'cover';
   if (/cloudsearch|search/.test(path)) return 'search';
-  if (/player\/url|song\/url/.test(path)) return 'playback_url';
-  if (/song\/detail|song\/lyric/.test(path)) return 'song_info';
+  if (/player\/url|song\/url|meting\/url/.test(path)) return 'playback_url';
+  if (/song\/detail|song\/lyric|meting\/(song|lyric)/.test(path)) return 'song_info';
   if (/playlist\/detail/.test(path)) return 'playlist';
   if (/user\/playlist/.test(path)) return 'playlists';
   if (/unikey\/client|qrcode\/client|qr.*check/.test(path)) return 'qr_poll';
@@ -77,7 +77,7 @@ function authorized(request, env) {
   return timingSafeEqual(createHash('sha256').update(candidate).digest(), createHash('sha256').update(expected).digest());
 }
 export async function statisticsRoute(request, env, ctx, url) {
-  if (url.pathname === '/stats/capabilities' && request.method === 'GET') return Response.json({ protocol: 1, enabled: !!enabled(env), cover_proxy: true }, { headers: { 'cache-control': 'no-store', 'access-control-allow-origin': '*', 'x-content-type-options': 'nosniff' } });
+  if (url.pathname === '/stats/capabilities' && request.method === 'GET') return Response.json({ protocol: 1, enabled: !!enabled(env), cover_proxy: true, guest_meting: true }, { headers: { 'cache-control': 'no-store', 'access-control-allow-origin': '*', 'x-content-type-options': 'nosniff' } });
   if (url.pathname === '/stats/activity') {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'POST,OPTIONS', 'access-control-allow-headers': 'x-iris-music-device,x-iris-music-event,x-iris-music-action', 'access-control-max-age': '86400' } });
     if (request.method !== 'POST') return answer({ error: '方法不支持' }, 405);
