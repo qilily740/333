@@ -164,3 +164,8 @@ test('experience controls have distinct task help and identify the Experiences A
  for(const [attr,title,text] of cases){const entry=info(control(attr));assert.equal(entry.title,title);assert.ok(entry.description.includes(text));assert.doesNotMatch(entry.description,/以页面反馈为准|查看当前配置项目/)}
  assert.match(info(control('data-earth-generate')).api,/经历接口/);assert.match(info(control('data-earth-generate')).description,/不额外调用/);assert.notEqual(info(control('data-growth-save')).key,info(control('data-growth-api')).key);
 });
+test('new help distinguishes visibility, scope and mounts and offers bounded nonduplicate references',()=>{
+ const avatars=info(new Element('select',{'data-more-value':'avatarDisplay'})),timestamps=info(new Element('select',{'data-more-value':'timestampDisplay'}));assert.match(avatars.description,/第一条/);assert.match(timestamps.description,/隐藏全部/);assert.notEqual(avatars.description,timestamps.description);
+ const scoped=info(control('data-global-worldbook-scope'));assert.match(scoped.description,/IF/);assert.match(scoped.description,/挂载/);
+ const refs=context.window.IrisGuideContent.search('角色全局世界书怎么挂载？');assert.ok(refs.length);assert.ok(refs.length<=8);assert.equal(new Set(refs.map(item=>item.title)).size,refs.length);assert.ok(refs.some(item=>/挂载/.test(item.title)));
+});

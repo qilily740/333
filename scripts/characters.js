@@ -114,7 +114,7 @@ function drawCharacterEditor(index) {
         <label class="profile-wide details-note">具体信息 <span>ABOUT CHAR</span><textarea name="details" maxlength="100000" rows="3" placeholder="性格、背景和角色设定…">${esc(c.details||c.desc||'')}</textarea></label>
       </div>
       <div class="profile-pagination"><button type="button" id="previousCharacter" ${index===0?'disabled':''}>← 上一页</button><span>${String(index+1).padStart(2,'0')}<i>/</i>${String(characterDrafts.length).padStart(2,'0')}</span><button type="button" id="nextCharacter" ${index===characterDrafts.length-1?'disabled':''}>下一页 →</button></div>
-      <div class="profile-save-actions"><button type="button" class="profile-confirm profile-save-only" id="saveCharacterOnly">保存资料</button><button type="submit" class="profile-confirm">${c.builtinRole==='iris-assistant'?'开启悬浮助手':'确认使用此角色'} <span aria-hidden="true">↗</span></button></div>
+      <div class="profile-save-actions"><button type="button" class="profile-confirm profile-save-only" id="saveCharacterOnly">保存资料</button>${c.builtinRole==='iris-assistant'?'<button type="button" class="profile-confirm" id="openAssistantChat">开启聊天</button>':''}<button type="submit" class="profile-confirm">${c.builtinRole==='iris-assistant'?'开启悬浮助手':'确认使用此角色'} <span aria-hidden="true">↗</span></button></div>
       <p class="character-feedback" role="status">${esc(characterImportNote||(c.builtinRole==='iris-assistant'?'开启伊里斯悬浮助手，保留当前聊天':'确认后保存资料并切换角色'))}</p>
     </form>`;
   bindCharacterClose();refreshCharacterPortrait();
@@ -130,6 +130,7 @@ function drawCharacterEditor(index) {
     c.name=c.name.trim();c.initial=c.initial||c.name.slice(0,1);c.birthday=CharacterImport.normalizeDate(c.birthday);
     chars[index]=c;state.characters=chars;save();render();characterNotice('资料已保存');
   };
+  document.getElementById('openAssistantChat')?.addEventListener('click',()=>{if(characterPending){characterNotice('文件或头像处理中，请稍候');return}document.getElementById('saveCharacterOnly').click();characterDialog.close();openAssistantChat()});
   form.onsubmit=event=>{
     event.preventDefault();if(!event.irisApproved&&activeFeaturePage==='experiences'&&window.IrisExperiences?.requestLeave?.(()=>form.onsubmit({preventDefault(){},irisApproved:true}))===false)return;if(characterPending){characterNotice('文件处理中，请稍候');return}
     const unnamed=characterDrafts.findIndex(role=>!role.name.trim());

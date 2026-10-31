@@ -150,7 +150,7 @@ input[name="custom"]|填写自定义打码内容|填写替换姓名后显示的�
 [data-global-worldbook-select]|选择世界书|切换当前正在查看和编辑的书本。切换后核对书名，避免把条目添加到其他世界书。|进入
 [data-global-worldbook-edit-book]|修改世界书名称|打开当前书本的重命名表单。填写新名称后保存，条目正文仍需要在各条目编辑中单独修改。|进入
 [data-global-worldbook-delete-book]|删除世界书|删除当前书本及其条目。先确认书名并备份需要的内容，删除后的恢复取决于你是否持有备份。
-[data-global-worldbook-scope]|世界书读取范围|设置当前世界书用于线上、线下或两者。选定后，相关模式的聊天会按世界书启用与匹配规则读取内容。
+[data-global-worldbook-scope]|世界书读取范围|分别允许当前书用于线上、线下或 IF 世界，可同时勾选。角色还需要挂载这本书，书本和条目也必须启用；仅勾选读取范围不会向未挂载的角色提供内容。
 [data-global-worldbook-book-enabled]|整本世界书开关|启用或停用当前书本。停用后保留书本和条目，后续读取不再使用这本书，直到重新启用。
 [data-global-worldbook-enabled]|世界书条目开关|单独启用或停用此条目，适合暂时隐藏某段设定而不删除正文。
 [data-global-book-cancel],[data-global-book-rename-cancel],[data-global-worldbook-cancel],[data-role-worldbook-name-cancel],[data-role-worldbook-entry-cancel]|取消世界书编辑|收起当前新建或编辑表单，不提交本次尚未保存的内容。需要保留时先完成保存。|进入
@@ -772,6 +772,31 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
  entries.unshift(...entries.splice(extraFieldsStart).reverse());
  function chinese(raw){return String(raw||'').replace(/[A-Za-z][A-Za-z0-9_-]*/g,word=>textLabels[word.toLowerCase()]||'').replace(/\s+/g,' ').trim()}
  function pageName(element){if(element.closest('.growth-panel'))return'成长档案';if(element.closest('.earth-panel'))return'地球地图';if(element.closest('.people-panel'))return'人物与成就';if(element.closest('.experiences-page'))return'经历';if(element.closest('.if-world,.if-opening-picker'))return'IF 世界';const parent=element.closest('.iris-market,.iris-reading,.iris-perfumery,[class*="forum-"],#characterDialog,#profileDialog,#settingsScreen,#sheet,#featureScreen');if(!parent)return'当前页面';if(parent.id==='characterDialog')return'角色资料';if(parent.id==='profileDialog')return'用户资料';if(parent.id==='settingsScreen')return'当前设置';if(parent.matches('[class*="forum-"]'))return'论坛';return'当前功能'}
+ // Specific controls take priority over generic editor families.
+ const focusedHelp=[
+ ['#saveCharacterOnly','保存角色资料','保存这张资料卡中的名字、头像和详细设定，当前聊天仍保持原来的角色。适合只修改资料、暂时不切换聊天对象。'],
+ ['#saveProfileOnly','保存用户资料','保存当前用户面具的资料，暂不切换正在使用的身份；要使用这张面具，请点旁边的确认按钮。'],
+ ['#openAssistantChat','与伊里斯聊天','切换到伊里斯的普通聊天界面。可以闲聊、询问用法或找功能；讲解与闲聊使用线上聊天 API，能直接匹配的入口查询在本地回答。'],
+ ['[data-role-worldbook-tab="local"]','角色局部世界书','查看和编辑只属于当前角色的书籍与条目；这里的启用开关不代替全局世界书的开关。'],
+ ['[data-role-worldbook-tab="global"]','角色全局挂载','勾选允许当前角色读取的全局世界书。未勾选的书不会提供给这个角色；书本停用或未开放线上范围时，勾选也不会使其在线上生效。'],
+ ['[data-global-worldbook-mount-mode="all"]','挂载全部角色','允许全部普通角色读取这本书，之后添加的普通角色也包括在内。内置伊里斯不参与挂载。'],
+ ['[data-global-worldbook-mount-mode="selected"]','指定挂载角色','只允许勾选的角色读取这本书；一个角色都不选时，本书不会向任何角色提供内容。'],
+ ['[data-global-worldbook-role]','选择挂载角色','勾选头像将这本书挂载到该角色，取消勾选即移除。黑底白心表示已选中；名字相同的角色仍分别管理。'],
+ ['[data-role-global-worldbook]','为当前角色挂载这本书','只更改当前角色与这本全局书的关联，不替其他角色勾选，也不自动启用已停用的书本。'],
+ ['[data-more-value="avatarDisplay"]','聊天头像显示','按连续同一发送者的消息分组：每条都显示、只显示第一条，或只显示最后一条。用户与角色都适用；每条显示时头像位于消息上方。'],
+ ['[data-more-value="timestampDisplay"]','聊天时间戳显示','可以隐藏全部时间、每条都显示，或只显示连续同一发送者最后一条消息的时间。此项独立于头像显示。'],
+ ['[data-chat-image-input]','模型图片输入','开启后允许这套线上 API 接收图片，需要接口和模型支持读图。同用这套 API 的角色共享这个开关，头像显示不受它控制。'],
+ ['[data-storage-connection="local"]','本地备份','把选定资料导出成文件，或选择已有备份进行恢复。文件需要自行保存在设备或其他可靠位置。'],
+ ['[data-storage-connection="github"]','GitHub 同步','进入仓库备份页，配置仓库和 Token，再上传或恢复数据。切换到此页不会自动开始上传。'],
+ ['[data-api-connection="chat"]','聊天 API 配置','管理接口地址、密钥与模型，并把配置分配给需要生成内容的功能。不同功能可以使用不同接口。'],
+ ['[data-api-connection="vector"]','向量 API 配置','设置记忆检索所用的向量接口和模型。它负责把文本转成可检索的向量，不直接生成角色聊天回复。']
+ ];
+ entries.unshift(...focusedHelp.map(([selector,title,description])=>({selectors:[selector],title,description,navigation:false})));
+ function search(query,limit=8){
+  const text=String(query||'').toLowerCase().replace(/世界树/g,'世界书').replace(/路口/g,'入口'),terms=new Set(text.match(/[a-z0-9]{2,}|[\u4e00-\u9fff]{2}/g)||[]);
+  for(const chunk of text.match(/[\u4e00-\u9fff]+/g)||[])for(let i=0;i<chunk.length-1;i++)terms.add(chunk.slice(i,i+2));
+  const seen=new Set();return entries.map((entry,index)=>{let score=0;for(const term of terms){if(entry.title.toLowerCase().includes(term))score+=5;else if(entry.description.toLowerCase().includes(term))score++}return{entry,score,index}}).filter(item=>item.score>=3).sort((a,b)=>b.score-a.score||a.index-b.index).filter(({entry})=>{if(seen.has(entry.title))return false;seen.add(entry.title);return true}).slice(0,Math.min(10,Math.max(0,Number(limit)||0))).map(({entry})=>({title:entry.title,description:entry.description}));
+ }
  function behaviorFor(element,result){
   const form=element.form||element.closest('form');
   if(form?.matches('[data-if-settings]'))return '修改后点击“保存设置”，下一次生成生效；这里只设置当前 IF 分支。';
@@ -795,7 +820,7 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
   if(element.matches('[data-user-phone-random]'))return '本地生成号码并立即保存到当前面具。';
   if(element.closest('[data-music-edit-form],[data-music-link-form]'))return '填写或选择后，在当前表单点击保存或添加；关闭面板不保存草稿。';
   if(element.matches('[data-music-seek],[data-music-mode],[data-music-volume]'))return '调整后自动保存播放设置，不需要额外保存。';
-  if(result.navigation)return '点击后进入、展开或切换；这次页面切换本身不需要保存。';
+  if(result.navigation)return '';
   if(element.matches('button')&&element.type!=='submit')return '';
   if(form?.matches('#apiForm,#characterForm,#profileForm,[data-user-phone-form],[data-memory-entry-form],[data-experience-form],[data-global-worldbook-form],[data-global-worldbook-book-form],[data-global-worldbook-rename-form],[data-role-worldbook-name-form],[data-role-worldbook-entry-form],[data-offline-prompt-form],[data-offline-style-form],[data-r-form="metadata"],[data-r-form="preferences"],.market-address-form,[data-form="profile"],[data-form="edit-world"]'))return element.matches('button')?'点击此表单的确认或保存按键后提交。':'这份表单需要使用对应的确认或保存按键提交。';
   if(form?.matches('#composer,.sms-composer,#voiceForm,#transferForm,#locationForm,#imageDescriptionForm,[data-call-form],.forum-comment-form,.forum-reply-form,.reflection-x-composer,[data-form="post"],[data-r-form="discussion"],[data-r-form="prediction"]'))return '填写后使用表单中的发送、发布或请求按键，不需要另外保存。';
@@ -872,5 +897,5 @@ style|故事文风选择|选择后续线下生成使用的文风，完整内容�
   if(element.disabled)result.description+=' 此按键当前不可用，请先完成页面要求的前置步骤，或等待正在进行的操作结束。';
   return result;
  }
- window.IrisGuideContent={get,chinese};
+ window.IrisGuideContent={get,chinese,search};
 })();
