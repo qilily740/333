@@ -3428,7 +3428,7 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .music-library-account span{display:grid;gap:7px;min-width:0}
 .music-library-account strong{overflow:hidden;color:#444;font-size:13px;font-weight:400;text-overflow:ellipsis;white-space:nowrap}
 .music-library-account small{color:#aaa;font-size:10px;letter-spacing:.3px}
-.music-library-account>button{flex:none;min-height:34px;padding:8px 12px;border:1px solid #e3e3e3;border-radius:4px;background:#fff;color:#777;font-size:10px}
+.music-library-account>button,.music-library-connect>button{flex:none;min-height:34px;padding:8px 12px;border:1px solid #e3e3e3;border-radius:4px;background:#fff;color:#777;font-size:10px}
 .music-library-sections{display:flex;align-items:center;gap:25px;border-bottom:1px solid #eee}
 .music-library-sections>button{display:flex;align-items:center;gap:7px;min-height:46px;padding:12px 0;border-bottom:1px solid transparent;color:#999;font-size:12px}
 .music-library-sections>button[aria-pressed=true]{border-bottom-color:#444;color:#444}
@@ -5284,3 +5284,6 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .assistant-start-message{margin-bottom:8px}.assistant-start-message .bubble{padding:12px 15px}.assistant-start-card>p{margin:0 0 9px}.assistant-welcome-choices{flex-wrap:wrap;gap:4px 16px!important}.assistant-question-card{width:225px;max-width:100%}.assistant-question-card .assistant-suggestions{margin:0}.assistant-question-card summary{list-style:none;font-size:.85em;letter-spacing:.04em;margin-bottom:7px}.assistant-question-card summary::-webkit-details-marker{display:none}.assistant-start-route{gap:16px;margin-top:0;padding:5px 0;line-height:1.6}.assistant-start-route>span:first-child{flex:1;min-width:0}.assistant-start-route>.assistant-route-options{flex:none;white-space:nowrap;font-size:.9em}.assistant-route-options>span{color:#b7b7b7;margin:0 5px}.assistant-start-route button{padding:2px 0}.assistant-start-message+.assistant-start-message{margin-top:0}
 
 .music-search-history{margin:0 0 24px}.music-search-history>header{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.music-search-history>header small{font-size:11px;color:#777}.music-search-history>header button{font:inherit;font-size:10px;color:#999;border:0;background:transparent;padding:3px 0}.music-search-history-list{display:flex;flex-wrap:wrap;gap:7px 10px}.music-search-history-list button{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:0;border-radius:4px;background:#f3f3f3;color:#666;font:inherit;font-size:11px;padding:6px 9px;text-align:left}.music-search-history>p{font-size:11px;color:#aaa;margin:0}
+
+.music-library-account .music-library-connect{flex:none;justify-items:end;gap:6px}
+.music-library-connect>small{max-width:138px;text-align:right;font-size:10px;line-height:1.5;letter-spacing:0}
