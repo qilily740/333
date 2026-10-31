@@ -1,0 +1,6 @@
+# 仅本地测试填写；真实值放在 .dev.vars（已忽略），不要提交。
+# 至少 32 个随机字符，两项使用不同值。
+MUSIC_STATS_ADMIN_TOKEN=
+MUSIC_STATS_HASH_KEY=
+# 正式发布前核实套餐并审阅说明，再启用。
+MUSIC_STATS_ENABLED=false

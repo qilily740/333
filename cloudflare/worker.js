@@ -1,4 +1,6 @@
 import { createCipheriv, createHash } from 'node:crypto';
+import { MusicStatistics, observeMusic, statisticsRoute, musicUpstream } from './music-statistics.js';
+export { MusicStatistics };
 
 const NETEASE = 'https://music.163.com';
 const SESSION_TTL = 60 * 60 * 24 * 30;
@@ -8,8 +10,25 @@ function json(value, status = 200, origin = '') {
   const headers = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' };
   headers['access-control-allow-origin'] = '*';
   headers['access-control-allow-methods'] = 'GET,POST,DELETE,OPTIONS';
-  headers['access-control-allow-headers'] = 'authorization,content-type';
+  headers['access-control-allow-headers'] = 'authorization,content-type,x-iris-music-device';
   return new Response(JSON.stringify(value), { status, headers });
+}
+
+async function musicCover(requestUrl) {
+  let url;
+  try { url = new URL(requestUrl.searchParams.get('url') || ''); } catch { return json({ error: '无效的封面地址' }, 400); }
+  if (!['http:', 'https:'].includes(url.protocol) || !/^p[1-9]\.music\.126\.net$/i.test(url.hostname) || url.username || url.password || url.port || !/^\/[a-z0-9_=-]{8,100}\/\d{5,25}\.(jpg|jpeg|png|webp)$/i.test(url.pathname)) return json({ error: '仅支持网易云歌曲封面' }, 400);
+  url.protocol = 'https:'; url.search = '?param=300y300'; url.hash = '';
+  const result = await musicUpstream('/cover', async () => {
+    const response = await fetch(url.href, { redirect: 'manual', headers: { referer: NETEASE + '/', 'user-agent': 'Mozilla/5.0', accept: 'image/jpeg,image/png,image/webp' }, signal: AbortSignal.timeout(9000), cf: { cacheTtl: 86400, cacheEverything: true } });
+    const type = (response.headers.get('content-type') || '').split(';')[0].trim().toLowerCase().replace(/^image\/(jpg|pjpeg)$/, 'image/jpeg');
+    if (!response.ok || !['image/jpeg', 'image/png', 'image/webp'].includes(type)) throw musicError('封面暂时无法读取（上游 '+response.status+' / '+(type||'无图片类型')+'）', null, 502);
+    const reader = response.body.getReader(), chunks = []; let length = 0;
+    while (true) { const { done, value } = await reader.read(); if (done) break; length += value.byteLength; if (length > 2 * 1024 * 1024) { await reader.cancel(); throw musicError('封面图片过大', null, 502); } chunks.push(value); }
+    const bytes = new Uint8Array(length); let offset = 0; for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
+    return { data: { code: 200 }, response: new Response(bytes, { headers: { 'content-type': type, 'cache-control': 'public, max-age=86400', 'access-control-allow-origin': '*', 'x-content-type-options': 'nosniff' } }) };
+  });
+  return result.response;
 }
 
 function cookieHeader(response) {
@@ -17,7 +36,8 @@ function cookieHeader(response) {
   return values.map(value => value.split(';', 1)[0]).filter(Boolean).join('; ');
 }
 
-async function upstream(path, { cookie = '', method = 'GET', body, referer = NETEASE + '/' } = {}) {
+async function upstream(path, options = {}) { return musicUpstream(path, () => upstreamRaw(path, options)); }
+async function upstreamRaw(path, { cookie = '', method = 'GET', body, referer = NETEASE + '/' } = {}) {
   const response = await fetch(NETEASE + path, {
     method,
     headers: {
@@ -51,7 +71,8 @@ function qrClient() {
   const deviceId = crypto.randomUUID();
   return { deviceId, cookie: 'deviceId=' + deviceId + '; os=pc; appver=3.1.17.204416; channel=netease; __remember_me=true; _ntes_nuid=' + randomToken(24) };
 }
-async function qrUpstream(path, payload, client) {
+async function qrUpstream(path, payload, client) { return musicUpstream(path, () => qrUpstreamRaw(path, payload, client)); }
+async function qrUpstreamRaw(path, payload, client) {
   const cookies = Object.fromEntries(client.cookie.split(/;\s*/).map(piece => { const i = piece.indexOf('='); return [piece.slice(0, i), piece.slice(i + 1)]; }));
   const header = {
     osver: 'Microsoft-Windows-10-Professional-build-19045-64bit', deviceId: client.deviceId,
@@ -345,12 +366,13 @@ async function route(request, env, url) {
     const headers = new Headers();
     headers.set('access-control-allow-origin', '*');
     headers.set('access-control-allow-methods', 'GET,POST,DELETE,OPTIONS');
-    headers.set('access-control-allow-headers', 'authorization,content-type');
+    headers.set('access-control-allow-headers', 'authorization,content-type,x-iris-music-device');
     headers.set('access-control-max-age', '86400');
     return new Response(null, { status: 204, headers });
   }
   if (request.method === 'GET' && path === '/feedback/quota') return readFeedbackQuota(request, env, origin);
   if (request.method === 'POST' && path === '/feedback') return sendAuthorFeedback(request, env, origin);
+  if (request.method === 'GET' && path === '/cover') return musicCover(url);
   if (request.method === 'GET' && path === '/health') return json({ ok: true, service: 'iris-music' }, 200, origin);
 
   if (request.method === 'GET' && path === '/auth/qr/start') {
@@ -484,10 +506,13 @@ async function route(request, env, url) {
 }
 
 export default {
-  async fetch(request, env) {
-    const origin = request.headers.get('origin') || '';
-    const path = new URL(request.url).pathname;
-    try { return await route(request, env, new URL(request.url)); }
-    catch (error) { return json({ error: error?.message || '音乐服务暂时不可用', ...(error?.code != null ? { code: error.code } : {}) }, error?.status || 502, origin); }
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url), origin = request.headers.get('origin') || '';
+    const statistics = await statisticsRoute(request, env, ctx, url);
+    if (statistics) return statistics;
+    return observeMusic(request, env, ctx, async () => {
+      try { return await route(request, env, url); }
+      catch (error) { return json({ error: error?.message || '音乐服务暂时不可用', ...(error?.code != null ? { code: error.code } : {}) }, error?.status || 502, origin); }
+    });
   },
 };

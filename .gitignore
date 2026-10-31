@@ -12,3 +12,8 @@ node_modules/
 # 运行日志与 Cloudflare 本地状态
 *.log
 .wrangler/
+
+# Cloudflare 本地密钥（不进入仓库）
+.dev.vars
+.dev.vars.*
+!.dev.vars.example

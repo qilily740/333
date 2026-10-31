@@ -3,14 +3,16 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const {createCipheriv,createHash,createDecipheriv,webcrypto}=require('node:crypto');
-const source=fs.readFileSync(require('node:path').join(__dirname,'worker.js'),'utf8').replace(/^import[^\n]+\n/,'').replace('export default {','globalThis.worker = {');
+const source=fs.readFileSync(require('node:path').join(__dirname,'worker.js'),'utf8').replace(/^import[^\n]+\n/gm,'').replace(/^export \{ MusicStatistics \};\n/m,'').replace('export default {','globalThis.worker = {');
 function fixture(handler){
  const calls=[],store=new Map(),env={SESSION_ENCRYPTION_KEY:Buffer.alloc(32,7).toString('base64'),MUSIC_STORE:{get:async key=>store.get(key),put:async(key,value)=>store.set(key,value),delete:async key=>store.delete(key)}};
- const context=vm.createContext({createCipheriv,createHash,crypto:webcrypto,TextEncoder,TextDecoder,URLSearchParams,URL,Request,Response,Headers,AbortSignal,btoa,atob,console,fetch:async(url,options={})=>{
+ const context=vm.createContext({AsyncLocalStorage:require('node:async_hooks').AsyncLocalStorage,createHmac:require('node:crypto').createHmac,timingSafeEqual:require('node:crypto').timingSafeEqual,createHash:require('node:crypto').createHash,performance,createCipheriv,createHash,crypto:webcrypto,TextEncoder,TextDecoder,URLSearchParams,URL,Request,Response,Headers,AbortSignal,btoa,atob,console,fetch:async(url,options={})=>{
   let payload={},path=new URL(url).pathname;
   if(options.body){const params=new URLSearchParams(options.body).get('params');const decipher=createDecipheriv('aes-128-ecb',Buffer.from('e82ckenh8dichen8'),null);const plain=decipher.update(params,'hex','utf8')+decipher.final('utf8');const pieces=plain.split('-36cd479b6b5-');path=pieces[0];payload=JSON.parse(pieces[1]);}
-  const call={path,payload,url,options};calls.push(call);const data=await handler(call);return Response.json(data);
+  const call={path,payload,url,options};calls.push(call);const data=await handler(call);return data instanceof Response?data:Response.json(data);
  }});
+ vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'statistics-page.js'),'utf8').replace('export function','function'),context);
+ vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'music-statistics.js'),'utf8').replace(/^import[^\n]+\n/gm,'').replace(/export /g,''),context);
  vm.runInContext(source,context);
  return {calls,env,context,async session(){const token=await context.saveSession(env,'MUSIC_U=secret; deviceId=original-device');return token},async request(path,token){const response=await context.worker.fetch(new Request('https://music.test'+path,{headers:token?{authorization:'Bearer '+token}:{}}),env);return {status:response.status,data:await response.json()}}};
 }
@@ -41,3 +43,9 @@ test('playlist synchronization reads every page, deduplicates and keeps account 
  const r=await f.request('/user/playlists',await f.session());assert.equal(r.status,200);assert.deepEqual(offsets,[0,2]);assert.deepEqual(r.data.playlists.map(p=>p.id),['12','13','14']);assert.equal(r.data.playlists[0].owned,true);
 });
 test('failed list reads do not replace the synced library with an empty success',async()=>{const f=fixture(({path})=>path==='/api/w/nuser/account/get'?{code:200,profile:{userId:9}}:{code:301});const r=await f.request('/user/playlists',await f.session());assert.equal(r.status,401);assert.equal(r.data.playlists,undefined)});
+test('cover relay serves only bounded NetEase raster artwork without credentials or redirects',async()=>{
+ const bytes=new Uint8Array([255,216,255,1]);const f=fixture(call=>{assert.equal(new URL(call.url).hostname,'p3.music.126.net');assert.equal(call.options.redirect,'manual');assert.equal(call.options.headers.cookie,undefined);assert.equal(call.options.headers.authorization,undefined);return new Response(bytes,{headers:{'content-type':'image/jpg'}})});
+ const source='http://p3.music.126.net/abcdef12345/123456789.jpg';let response=await f.context.worker.fetch(new Request('https://music.test/cover?url='+encodeURIComponent(source)),f.env);assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),'image/jpeg');assert.equal((await response.arrayBuffer()).byteLength,4);
+ for(const url of ['http://127.0.0.1/abc.jpg','https://p3.music.126.net.attacker.test/abcdef12345/123456789.jpg','https://p3.music.126.net/../../admin','https://user:password@p3.music.126.net/abcdef12345/123456789.jpg']){response=await f.context.worker.fetch(new Request('https://music.test/cover?url='+encodeURIComponent(url)),f.env);assert.equal(response.status,400)}assert.equal(f.calls.length,1);
+ const redirect=fixture(()=>new Response(null,{status:302,headers:{location:'http://127.0.0.1/private'}}));response=await redirect.context.worker.fetch(new Request('https://music.test/cover?url='+encodeURIComponent(source)),redirect.env);assert.equal(response.status,502);assert.equal(redirect.calls.length,1);
+});
