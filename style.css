@@ -476,6 +476,7 @@
 /* A sealed white letter: all presentation is scoped to the invitation. */
 .role-invitation{--invitation-envelope-height:clamp(155px,44vw,180px);box-sizing:border-box;flex-shrink:0;width:min(100%,360px);max-width:100%;margin:12px auto 10px;border:1px solid #dedede;border-radius:4px;background:#fff;color:#505050;box-shadow:0 1px 0 #fff,0 3px 0 -1px #f4f4f4,0 4px 0 -1px #e8e8e8,0 7px 16px #00000007;font-size:12px;line-height:1.6}
 .message-type-text .role-invitation{align-self:center;width:min(360px,calc(100% + 68px));max-width:none;margin-inline:0}
+.message-type-text:has(>.avatar:not(.is-group-hidden)) .role-invitation{width:min(100%,320px);max-width:100%;--invitation-envelope-height:clamp(128px,35vw,160px)}
 .role-invitation-envelope{position:relative;display:block;box-sizing:border-box;width:100%;height:var(--invitation-envelope-height);padding:0;border-radius:inherit;overflow:hidden;perspective:900px;list-style:none;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .role-invitation-envelope::before{position:absolute;z-index:1;inset:7px;border:1px solid #ededed;border-radius:2px;box-shadow:0 1px 0 #fff,inset 0 1px 0 #fff;content:"";pointer-events:none}
 .role-invitation-envelope::-webkit-details-marker{display:none}
@@ -5351,3 +5352,20 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .release-notice-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}
 .release-notice-title-row h2{flex:none;margin:0}
 .release-backup-reminder{max-width:154px;min-width:0;color:#999;font:400 9px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;letter-spacing:0;text-align:left}
+
+
+.music-chat-page-header>[data-music-invite]{flex:none;max-width:46%;padding:7px 10px;border:1px solid #e5e5e5;border-radius:16px;background:#fff;color:#777;font-size:10px;line-height:1.5;text-align:center}
+.music-chat-page-header>[data-music-invite] svg{display:none}
+.music-chat-page-header>[data-music-invite]:disabled{opacity:.55}
+
+.music-chat-page-header{justify-content:space-between;gap:12px}
+.music-chat-page-header .music-chat-brand{min-width:0}
+
+/* Online and offline preview states share a scrolling strip, with no enclosing pill. */
+.beautify-workspace .beautify-preview-mode{min-width:0}
+.beautify-workspace .beautify-preview-mode>span{flex:none}
+.beautify-workspace .beautify-preview-segments{display:flex;flex:1;min-width:0;max-width:100%;flex-wrap:nowrap;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;padding:3px 0;border:0;border-radius:0;background:none;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.beautify-workspace .beautify-preview-segments::-webkit-scrollbar{display:none}
+.beautify-workspace .beautify-preview-segments label{flex:0 0 auto;min-width:76px}
+.beautify-workspace .beautify-preview-segments label>span{padding:7px 10px;border-bottom:1px solid transparent;border-radius:0;text-align:center}
+.beautify-workspace .beautify-preview-segments input:checked+span{border-bottom-color:#555;background:none;color:#444;box-shadow:none}

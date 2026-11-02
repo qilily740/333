@@ -1,6 +1,7 @@
 (()=>{
  'use strict';
  const Core=window.IrisForumCore;
+ let noticeTimer=null,noticeDeadline=0,visibleNoticeText='';
  let runtime=null,view={page:'feed',filter:'recommend',postId:'',actorId:'',query:'',limit:18},busy=new Set(),noticeText='',openPostMenuId='',rolePostStatuses=new Map(),interactionStatuses=new Map(),interactionRoleSelections=new Map(),commentRoleReplyOpen=new Set(),commentRoleSelections=new Map(),commentRoleBusy=new Set(),memberPicker={personaIds:new Set(),roleKeys:new Set(),rolePersonaId:'',rolePersonaMenuOpen:false};
  const $=(selector,root=document)=>root.querySelector(selector);
  const uid=()=>Core.id('forum');
@@ -119,6 +120,13 @@
   return `<article class="forum-member-card">${linkAvatar(w,item.actorId)}<div class="forum-member-details"><div class="forum-member-name-row"><strong>${esc(p.nickname||p.name||'未命名成员')}</strong>${isCharacter?statusMarkup:''}</div><small>${isCharacter?`绑定面具：${esc(source?.nickname||source?.name||'已失效')}`:'当前面具身份'}</small></div>${isCharacter?`${options}<button class="forum-member-post-link" data-forum-action="role-new-post" data-actor-id="${esc(item.actorId)}" ${canManualPost&&!posting?'':'disabled'}>代发帖子</button>`:''}<button data-forum-action="remove-member" data-actor-id="${esc(item.actorId)}">移除</button></article>`;
  };
  const editPostView=(w,post)=>`<section class="forum-subpage"><form class="forum-compose-form" data-form="edit-post" data-post-id="${esc(post.id)}"><label>内容<textarea name="content" maxlength="5000" rows="7" required>${esc(post.content)}</textarea></label>${collectionPicker(w,post.collectionId)}<label>话题<input name="topics" maxlength="160" value="${esc((post.topics||[]).join(' '))}"></label><button class="forum-primary">保存修改</button></form></section>`;
+ const syncNoticeExpiry=()=>{
+  if(noticeTimer!==null)clearTimeout(noticeTimer);noticeTimer=null;
+  if(!noticeText){visibleNoticeText='';noticeDeadline=0;return}
+  if(visibleNoticeText!==noticeText){visibleNoticeText=noticeText;noticeDeadline=Date.now()+3000}
+  const host=runtime.content,text=noticeText;
+  noticeTimer=setTimeout(()=>{noticeTimer=null;if(runtime?.content!==host||noticeText!==text)return;noticeText='';visibleNoticeText='';noticeDeadline=0;host.querySelector('.forum-flash')?.remove()},Math.max(0,noticeDeadline-Date.now()));
+ };
  const render=()=>{
   if(!runtime||runtime.isActive?.()===false)return;
   const dataStore=data(),w=world(),content=runtime.content; if(!content)return;
@@ -140,6 +148,7 @@
   else if(view.page==='edit-post'){const post=w?.posts.find(item=>item.id===view.postId&&!item.deleted);html=post&&post.authorId===personaActor()?editPostView(w,post):empty('无法编辑这条帖子','只有作者本人可以修改帖子。')}
   const featureScreen=content.closest('.feature-screen');featureScreen?.querySelectorAll(':scope > .forum-dock').forEach(node=>node.remove());
   content.innerHTML=`<main class="forum-app">${noticeText?`<p class="forum-flash" role="status">${esc(noticeText)}</p>`:''}${html}${forumDock(w)}</main>`;
+  syncNoticeExpiry();
   const dock=content.querySelector('.forum-dock');if(dock&&featureScreen){featureScreen.append(dock);dock.addEventListener('click',onClick)}
   content.onclick=onClick;content.onchange=onChange;content.onsubmit=onSubmit;content.oninput=onInput;
   if(view.page==='detail'&&view.commentId){content.querySelector(`[data-forum-comment="${CSS.escape(view.commentId)}"]`)?.scrollIntoView({block:'center'});view.commentId=''}

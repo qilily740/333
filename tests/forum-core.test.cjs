@@ -206,6 +206,7 @@ test('runs forum controller handlers against a local non-browser DOM stub', asyn
   const context = {
     window, document: { querySelector: () => null }, CSS: { escape: value => value },
     Date, Intl, Math, JSON, Set, Array, Object, String, Number, Boolean, RegExp, Promise,
+    setTimeout: () => 1, clearTimeout() {},
     FormData: class { constructor(form) { this.form = form; } get(name) { return this.form.values?.[name] ?? null; } has(name) { return Boolean(this.form.values?.[name]); } }
   };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'scripts', 'forum.js'), 'utf8'), context);
@@ -247,6 +248,7 @@ test('keeps role reply requests bound to one character and commits only validate
   const context = {
     window, document: { querySelector: () => null }, CSS: { escape: value => value },
     Date, Intl, Math, JSON, Set, Array, Object, String, Number, Boolean, RegExp, Promise,
+    setTimeout: () => 1, clearTimeout() {},
     FormData: class { constructor(form) { this.form = form; } get(name) { return this.form.values?.[name] ?? null; } has(name) { return Boolean(this.form.values?.[name]); } }
   };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'scripts', 'forum.js'), 'utf8'), context);
