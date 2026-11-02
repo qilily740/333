@@ -36,7 +36,7 @@ test('offline quick actions place masking immediately above save', () => {
     $: selector => selector === '#quickFeatures' ? menu : null,
     icon: name => `<svg data-icon="${name}"></svg>`
   });
-  const start = source.indexOf('function renderQuickFeatures(');
+  const start = source.indexOf('function quickFeaturesMarkup(');
   const end = source.indexOf('function closeFeatureMenu(', start);
   vm.runInContext(source.slice(start, end), context);
   context.renderQuickFeatures();

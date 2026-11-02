@@ -2281,7 +2281,7 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .beautify-code-panel textarea{width:100%;min-height:234px;margin:8px 0 0;padding:0 0 2px;resize:vertical;border:0;border-bottom:1px solid #eee;border-radius:0;outline:none;background:repeating-linear-gradient(to bottom,transparent 0,transparent 25px,#f0f0f0 25px,#f0f0f0 26px);color:#555;font:11px/26px ui-monospace,SFMono-Regular,Menlo,monospace;tab-size:2;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
 .beautify-code-panel textarea:focus{border-bottom-color:#bbb;box-shadow:none}
 .beautify-code-panel textarea::placeholder{color:#bbb}
-.beautify-preview-panel iframe{display:block;width:100%;height:176px;border:1px solid #eee;border-radius:10px;background:#fff}
+.beautify-preview-panel iframe{display:block;width:100%;height:640px;border:1px solid #eee;border-radius:10px;background:#fff}
 .beautify-actions{display:flex;align-items:center;justify-content:flex-end;gap:22px;margin-top:-2px}
 .beautify-actions button{min-height:26px;padding:4px 0;border:0;border-bottom:1px solid #ddd;border-radius:0;background:transparent;color:#999;font-size:9px}
 .beautify-actions button.beautify-apply{border-bottom-color:#888;background:transparent;color:#555}
@@ -2302,7 +2302,7 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 .beautify-lesson pre code{font-size:10px;line-height:1.7}
 .beautify-copy-prompt{min-height:32px;margin-top:9px;padding:0 12px;border:1px solid #e5e5e5;border-radius:18px;color:#777;font-size:9px}
 .beautify-load-example{justify-self:start}
-@media(min-width:700px){.beautify-lab{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}.beautify-code-panel textarea{height:240px}.beautify-preview-panel iframe{height:240px}}
+@media(min-width:700px){.beautify-lab{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}.beautify-code-panel textarea{height:240px}.beautify-preview-panel iframe{height:640px}}
 /* Final Forum controls and masthead sizing. */
 .forum-search-form input,.forum-search-form button{height:43px;border-radius:24px}.forum-search-form input{border:1px solid #e1e1e1;background:#f7f7f7;padding:0 16px}.forum-search-form button{flex:none;min-width:74px;padding:0 18px;border:1px solid #333;background:#333;color:#fff;font-size:11px}
 .forum-app button.forum-compose-fab{display:grid;place-items:center;border:1px solid #222;border-radius:50%;background:#222;color:#fff;font-size:34px;font-weight:400;line-height:1;box-shadow:0 4px 14px #00000018}.forum-app button.forum-compose-fab:hover{background:#111;color:#fff}
@@ -2330,7 +2330,7 @@ textarea.offline-draft-cot-content{display:block;width:100%;min-height:280px;bor
 
 /* Forum navigation stays reachable while browsing any forum page. */
 .forum-app{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
-.forum-dock{position:fixed;z-index:20;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px;width:min(420px,calc(100vw - 28px));height:58px;transform:translateX(-50%);pointer-events:none}
+.forum-dock{position:fixed;z-index:20;left:50%;bottom:calc(var(--app-viewport-bottom,0px) + var(--app-dock-bottom,max(10px,env(safe-area-inset-bottom,0px))));display:flex;align-items:center;gap:10px;width:min(420px,calc(100vw - 28px));height:58px;transform:translateX(-50%);pointer-events:none}
 .forum-dock-group{display:flex;flex:1;align-items:center;min-width:0;height:100%;padding:5px;border:1px solid #e2e2e2;border-radius:32px;background:#fafafa;box-shadow:0 2px 8px #00000008;pointer-events:auto}
 .forum-dock-group>button{position:relative;display:flex;flex:1;align-items:center;justify-content:center;gap:5px;min-width:0;height:100%;padding:0 5px;border:0;border-radius:26px;background:transparent;color:#777;font-size:9px;white-space:nowrap}
 .forum-dock-group>button svg,.forum-dock-profile svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
@@ -3720,7 +3720,7 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 @media(max-width:480px){.settings-content.is-offline-settings>.offline-records-list{padding-inline:calc(var(--app-page-gutter) + 1px)}}
 
 /* Chat previews show the full shell; only their conversation scrolls. */
-.beautify-preview-panel:has([data-beautify-preview-mode]) iframe{width:min(100%,390px);height:560px;max-height:none;margin-inline:auto}
+.beautify-preview-panel iframe{width:min(100%,390px);height:640px;max-height:none;margin-inline:auto}
 .beautify-preview-mode{display:flex;align-items:center;gap:8px;color:#777;font-size:12px}
 .beautify-preview-segments{display:inline-flex;gap:3px;padding:3px;border:1px solid #e9e9e9;border-radius:999px;background:#f4f4f4}
 .beautify-preview-segments label{position:relative;cursor:pointer}
@@ -5287,3 +5287,63 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 
 .music-library-account .music-library-connect{flex:none;justify-items:end;gap:6px}
 .music-library-connect>small{max-width:138px;text-align:right;font-size:10px;line-height:1.5;letter-spacing:0}
+
+/* Online appearance library: two compact horizontal shelves. */
+.beautify-theme-library{min-width:0;padding:5px 0 15px;border-bottom:1px solid #eee;color:#666}
+.beautify-theme-library>header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}
+.beautify-theme-library>header>div{display:grid;gap:5px}.beautify-theme-library strong{font-size:11px;font-weight:500}.beautify-theme-library header small{font-size:9px;color:#aaa}
+.beautify-theme-library button{font:inherit;font-size:10px;background:transparent;color:#777}
+.beautify-theme-library>header>button,.beautify-theme-tools>button{padding:4px 0;border:0;border-bottom:1px solid #dcdcdc;border-radius:0;white-space:nowrap}
+.beautify-theme-group{min-width:0;margin:12px 0}.beautify-theme-group>h3{font-size:10px;font-weight:400;letter-spacing:1px;color:#999;margin:0 0 7px}
+.beautify-theme-strip{display:flex;gap:12px;min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;padding:3px 0 9px;-webkit-overflow-scrolling:touch}
+.beautify-theme-strip .beautify-theme-card{flex:0 0 89px;min-width:0;display:grid;align-content:start;justify-items:center;gap:7px;border:0;border-bottom:1px solid transparent;border-radius:0;padding:0 0 7px;position:relative}
+.beautify-theme-card>span:last-of-type{display:block;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;text-align:center}
+.beautify-theme-card[aria-pressed=true]{border-bottom-color:#555;color:#333}.beautify-theme-card>small{font-size:8px;color:#999}
+.beautify-theme-sample{width:89px;height:59px;display:flex;flex-direction:column;gap:6px;padding:10px 9px;border:1px solid #e8e8e8;background:#f5f5f5;border-radius:3px}
+.beautify-theme-sample i{display:block;width:43px;height:7px;border-radius:4px;background:#fff;border:1px solid #e6e6e6}.beautify-theme-sample i:nth-child(2){align-self:flex-end;width:32px;background:#e5e5e5}.beautify-theme-sample i:nth-child(3){width:34px}
+.is-imported .beautify-theme-sample{background:#f5f2f3}.is-imported .beautify-theme-sample i:nth-child(2){background:#e6dde0}
+.beautify-theme-empty{margin:5px 0;color:#aaa;font-size:10px;line-height:1.8}.beautify-theme-save{display:flex;gap:12px;align-items:center;margin-top:13px}
+.beautify-theme-save input{flex:1;min-width:0;background:transparent;border:0;border-bottom:1px solid #e5e5e5;border-radius:0;padding:7px 0;font:inherit;font-size:10px;color:#555}.beautify-theme-save input::placeholder{color:#aaa}.beautify-theme-save button{flex:none;padding:7px 10px;border:1px solid #ddd;border-radius:3px}
+.beautify-theme-tools{display:flex;flex-wrap:wrap;gap:8px 17px;margin-top:12px}.beautify-theme-feedback{font-size:10px;color:#a77676;line-height:1.7;margin:8px 0 0}.beautify-theme-feedback:empty{display:none}
+
+/* Avatar shape is a per-role online display setting, including the live preview. */
+#conversation:not(.is-offline-story) .message>.avatar.has-square-avatar,
+#conversation:not(.is-offline-story) .message>.avatar.has-square-avatar img{border-radius:5px}
+.beautify-theme-formats{margin:9px 0 0;color:#aaa;font-size:9px;line-height:1.7}
+.is-wechat .beautify-theme-sample{background:#ededed;border-color:#e0e0e0}.is-wechat .beautify-theme-sample i{background:#fff;border:0;border-radius:2px;position:relative}.is-wechat .beautify-theme-sample i:nth-child(2){background:#95ec69}.is-wechat .beautify-theme-sample i::before{content:"";position:absolute;top:2px;left:-2px;width:3px;height:3px;background:inherit;transform:rotate(45deg)}.is-wechat .beautify-theme-sample i:nth-child(2)::before{left:auto;right:-2px}
+.is-imessage .beautify-theme-sample{background:#f5f5f7;border-color:#e4e4e8}.is-imessage .beautify-theme-sample i{background:#fff;border:0;border-radius:5px}.is-imessage .beautify-theme-sample i:nth-child(2){background:#007aff}
+
+/* Timestamps sit beside bubbles without reducing the avatar-to-avatar span. */
+#conversation:not(.is-offline-story) .message-type-text>.message-content{flex:1;min-width:0;max-width:calc(100% - 92px)}
+#conversation:not(.is-offline-story) .message-type-text:not(.mine)>.message-content{margin-right:46px}
+#conversation:not(.is-offline-story) .message-type-text.mine>.message-content{margin-left:46px}
+#conversation:not(.is-offline-story) .message-bubble-line{width:max-content;max-width:100%;align-self:flex-start}
+#conversation:not(.is-offline-story) .mine .message-bubble-line{align-self:flex-end}
+#conversation:not(.is-offline-story) .message-type-text .bubble{flex-shrink:0;max-width:100%;min-width:0;overflow-wrap:anywhere}
+#conversation:not(.is-offline-story) .message-bubble-line>.message-time{position:absolute;bottom:0;left:calc(100% + 7px);width:max-content;margin:0 0 3px;white-space:nowrap}
+#conversation:not(.is-offline-story) .message.mine .message-bubble-line>.message-time{right:calc(100% + 7px);left:auto}
+.phone:has(#conversation:not(.is-offline-story)){background-color:#fff}
+.phone:has(#conversation:not(.is-offline-story))>:where(.topbar,#conversation,.bottom){background-color:#fff}
+.beautify-forum-preview-choice{display:flex;justify-content:space-between;align-items:center;margin:7px 0 10px;font-size:10px;color:#999}.beautify-forum-preview-choice select{border:1px solid #e5e5e5;border-radius:4px;padding:5px;background:#fff;color:#666;font:inherit}
+#conversation:not(.is-offline-story) .message>.message-content{flex:1;min-width:0;width:calc(100% - 92px);max-width:calc(100% - 92px)}
+#conversation:not(.is-offline-story) .message:not(.mine)>.message-content{margin-right:46px}
+#conversation:not(.is-offline-story) .message.mine>.message-content{margin-left:46px}
+#conversation:not(.is-offline-story) .message-content :is(.voice-message-wrap,.transfer-message-card,.location-message-card,.image-description-card,.message-image,.music-chat-invite){max-width:100%;box-sizing:border-box}
+
+/* The forum dock shares the chat footer's bottom inset, without adding safe area twice. */
+:root{--app-dock-bottom:max(10px,env(safe-area-inset-bottom,0px))}
+.phone>.bottom:has(#dock:not([hidden])){padding-bottom:var(--app-dock-bottom)}
+#featureScreen>.forum-dock{bottom:calc(var(--app-viewport-bottom,0px) + var(--app-dock-bottom))}
+
+.beautify-workspace .beautify-preview-panel iframe{display:block;width:min(100%,390px);height:640px;max-height:none;margin-inline:auto}
+.beautify-preview-segments{flex-wrap:wrap;row-gap:7px}
+
+/* Keep the complete preview after the appearance controls. */
+.beautify-panel>.beautify-preview-panel{margin:20px 0 0}
+
+/* Full-width chrome; gutters belong to the contents, not the bar surfaces. */
+.phone{--app-shell-max-width:780px}
+.phone>.topbar,.phone>.bottom{width:calc(100% + 2 * var(--app-shell-gutter));max-width:none;margin-inline:calc(0px - var(--app-shell-gutter));padding-inline:var(--app-shell-gutter)}
+.settings-screen>.settings-topbar,.feature-screen>.feature-page-topbar{width:calc(100% + 2 * var(--app-page-gutter));max-width:none;margin-inline:calc(0px - var(--app-page-gutter));padding-inline:var(--app-page-gutter)}
+#featureScreen>.forum-dock{width:min(var(--app-shell-max-width,780px),100vw);max-width:none;padding-inline:var(--app-page-gutter,48px)}
+@media(min-width:850px){.phone{--app-shell-max-width:700px}}

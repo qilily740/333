@@ -108,7 +108,7 @@ test('same family, weight and style have no conflicting Unicode coverage',()=>{
 
 test('chat preview uses the real shell, production stylesheet and isolated viewport',()=>{
  const nodes={};
- const previewContext=vm.createContext({APP_VERSION:'test',chars:[{name:'角色'}],state:{char:0,user:0,users:[{name:'用户'}]},avatar:()=>'<span class="avatar"></span>',esc:value=>String(value),beautifyRoots:{online:root,offline:'.phone:has(#conversation.is-offline-story)'},scopeBeautifyCss:()=>'',beautifyBackgroundRule:()=>'',document:{querySelector(selector){return {cloneNode(){const controls={'#dock':{},'#composer':{},'#messageInput':{removeAttribute(){}}};nodes[selector]=controls;return {querySelector:key=>controls[key],querySelectorAll:()=>[],get outerHTML(){return selector.includes('topbar')?'<header class="topbar" id="real-header"></header>':`<footer class="bottom"><nav id="dock" ${controls['#dock'].hidden?'hidden':''}></nav><form id="composer" ${controls['#composer'].hidden?'hidden':''}></form></footer>`}}}}}}});
+ const previewContext=vm.createContext({renderMessageContent:message=>'<div class="bubble">'+String(message.text||message.type)+'</div>',APP_VERSION:'test',chars:[{name:'角色'}],state:{char:0,user:0,users:[{name:'用户'}]},avatar:()=>'<span class="avatar"></span>',esc:value=>String(value),beautifyRoots:{online:root,offline:'.phone:has(#conversation.is-offline-story)'},scopeBeautifyCss:()=>'',beautifyBackgroundRule:()=>'',document:{querySelector(selector){return {cloneNode(){const controls={'#dock':{},'#composer':{},'#messageInput':{removeAttribute(){}}};nodes[selector]=controls;return {querySelector:key=>controls[key],querySelectorAll:()=>[],get outerHTML(){return selector.includes('topbar')?'<header class="topbar" id="real-header"></header>':`<footer class="bottom"><nav id="dock" ${controls['#dock'].hidden?'hidden':''}></nav><form id="composer" ${controls['#composer'].hidden?'hidden':''}></form></footer>`}}}}}}});
  vm.runInContext(source.slice(source.indexOf('function beautifyChatPreviewMarkup('),source.indexOf('function beautifyTutorialMarkup(')),previewContext);
  for(const tab of ['online','offline'])for(const mode of ['dock','input']){
   const html=previewContext.beautifyPreviewDocument(tab,'',mode);
@@ -144,3 +144,5 @@ test('family cascade respects important and direct font beats the compatibility 
  const css=context.scopeBeautifyCss('body{--mainFontFamily:Other;font-family:First !important;font-family:Last}',root,'online');
  assert.ok(css.endsWith('{font-family:First}'));
 });
+
+test('wallpaper defaults keep font imports first and custom component surfaces last',()=>{const base='.phone > .topbar{background-color:transparent}',css=context.scopeBeautifyCss('@import url("https://fonts.invalid/font.css");.topbar{background:#123456}',root,'online',base);assert.ok(css.startsWith('@import'));assert.ok(css.indexOf('@import')<css.indexOf(base));assert.ok(css.indexOf(base)<css.indexOf('background:#123456'))});

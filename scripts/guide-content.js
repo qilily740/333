@@ -170,6 +170,12 @@ input[name="custom"]|填写自定义打码内容|填写替换姓名后显示的�
 [data-offline-opening-next],[data-offline-opening-previous]|线下开场版本|查看已有的其他开场版本，或在对应位置请求生成新的开场。生成需要可用的故事接口；选择版本后核对时间、地点和故事衔接。
 [data-reply-next],[data-reply-previous]|聊天回复版本|切换这一轮已保存的回复版本；在末尾请求新版本时会调用模型。旧版本会保留供比较，不会自动替你发送新的用户消息。
 [data-beautify-tab]|选择美化页面|切换要编辑样式的页面范围。先确认目标是线上、线下或其他页面，再修改背景和样式，避免应用到错误位置。|进入
+[data-online-theme]|选择页面美化|横向滑动内置美化或我的美化，点击方案立即应用到当前分类。需要保留自定义样式时，请先点击保存美化。
+[data-online-theme-import]|导入页面美化|选择 JSON、TXT、DOC、DOCX 或 CSS 文件。Word 和文本文件里需放 CSS 或美化 JSON；在本机解析，导入后点击方案才应用。
+[data-online-theme-save]|保存页面美化|填写名称并保存当前 CSS 和背景；正在使用自定义方案时会更新该方案，使用内置方案时会另存到我的美化。
+[data-online-theme-export]|导出页面美化|将当前编辑区的 CSS 和当前分类的背景导出成美化 JSON，便于分享和重新导入，不包含聊天和账号资料。
+[data-online-theme-edit]|编辑页面美化|定位到当前方案的 CSS 编辑器，修改名称或样式后点击保存美化。
+[data-online-theme-delete]|删除页面美化|删除所选自定义方案，并把当前分类的 CSS 恢复默认；背景及聊天资料保留。
 [data-beautify-apply]|应用美化|把编辑区中的样式应用到当前选定页面。应用后检查文字、按钮和对比度，显示异常时可恢复该范围的默认设置。
 [data-beautify-reset]|恢复默认美化|清除当前范围的自定义美化并恢复默认外观。想保留现有样式时先复制或导出，再执行恢复。
 [data-beautify-background-pick]|选择背景图片|从本地选择当前页面的背景图，图片处理成功后自动应用并保存，可再次选择或清除。

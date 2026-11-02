@@ -76,7 +76,7 @@ for(const ios of [true,false])test(`${ios?'iOS':'Android'} wallpaper keeps its f
 });
 
 test('online and offline wallpapers fill a separate full-shell layer instead of letterboxing the resized shell',()=>{
- const start=app.indexOf('function beautifyCanvasBackgroundRule('),end=app.indexOf('\n',app.indexOf('function beautifyBackgroundRule('));
+ const start=app.indexOf('function beautifyCanvasBackgroundRule('),end=app.indexOf('function beautifyBackgroundControlsMarkup(');
  const context=vm.createContext({state:{settings:{beautifyBackgrounds:{online:'data:image/png;base64,online',offline:'data:image/png;base64,offline'}}},beautifyBackgroundRoots:{online:'.phone.online',offline:'.phone.offline'}});
  vm.runInContext(app.slice(start,end),context);
  for(const tab of ['online','offline']){
