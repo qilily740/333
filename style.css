@@ -757,8 +757,9 @@ body{position:fixed;inset:0}
 .image-description-preview>small{align-self:flex-end;color:#999;font-size:8px;letter-spacing:.5px}
 .image-description-card p{display:flex;flex:1;align-items:center;justify-content:center;min-height:0;overflow:auto;margin:7px 0;color:#666;font-size:11px;line-height:1.7;text-align:center;white-space:pre-wrap;overflow-wrap:anywhere}
 .message-sticker{display:grid;place-items:center;min-width:58px;min-height:58px;color:#333;font-size:54px;line-height:1.1;text-shadow:0 2px 5px #0000000d}
-.voice-message-wrap{width:min(var(--voice-width,180px),82vw);max-width:100%}
-.voice-message-card{display:flex;align-items:center;gap:9px;width:100%;min-height:46px;padding:0 12px;border:1px solid #e9e9e9;border-radius:15px 15px 15px 4px;background:#fff;color:#494949;text-align:left;transition:background .18s}
+.voice-message-wrap{display:flex;flex-direction:column;align-items:flex-start;width:100%;max-width:100%}
+.mine .voice-message-wrap{align-items:flex-end}
+.voice-message-card{display:flex;align-items:center;gap:9px;width:min(var(--voice-width,180px),100%);min-height:46px;padding:0 12px;border:1px solid #e9e9e9;border-radius:15px 15px 15px 4px;background:#fff;color:#494949;text-align:left;transition:background .18s}
 .mine .voice-message-card{border-color:#eee;border-radius:15px 15px 4px 15px;background:#f0f0f0}
 .voice-message-card:hover{filter:none;background:#f8f8f8}
 .mine .voice-message-card:hover{background:#ebebeb}
@@ -770,7 +771,8 @@ body{position:fixed;inset:0}
 .voice-duration{flex:none;color:#777;font-size:10px;font-variant-numeric:tabular-nums}
 .voice-toggle-mark{width:7px;height:7px;flex:none;margin:0 2px 3px 1px;border-right:1px solid #888;border-bottom:1px solid #888;transform:rotate(45deg);transition:transform .18s}
 .voice-message-card.is-expanded .voice-toggle-mark{margin-bottom:-4px;transform:rotate(225deg)}
-.voice-transcript{max-width:100%;margin:5px 4px 0;padding:8px 11px;border-left:1px solid #cfcfcf;color:#777;font-size:11px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.voice-transcript{box-sizing:border-box;width:fit-content;max-width:100%;margin:5px 0 0;padding:10px 13px;border:1px solid #e9e9e9;border-radius:15px 15px 15px 4px;background:#fff;color:#494949;font-size:12px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.mine .voice-transcript{border-color:#eee;border-radius:15px 15px 4px 15px;background:#f0f0f0}
 .voice-transcript[hidden]{display:none}
 .voice-translation{display:block;margin-top:6px;padding-top:6px;border-top:1px solid #e7e7e7;color:#999;font-size:10px}
 .transfer-message-card,.location-message-card{width:min(68vw,274px);overflow:hidden;border:1px solid #e4e4e4;border-radius:3px;background:#fff;color:#454545;box-shadow:none}
@@ -5369,3 +5371,7 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .beautify-workspace .beautify-preview-segments label{flex:0 0 auto;min-width:76px}
 .beautify-workspace .beautify-preview-segments label>span{padding:7px 10px;border-bottom:1px solid transparent;border-radius:0;text-align:center}
 .beautify-workspace .beautify-preview-segments input:checked+span{border-bottom-color:#555;background:none;color:#444;box-shadow:none}
+
+/* Translation folding is a chat interaction shared by every appearance. */
+.bubble[data-message-translation-toggle]{cursor:pointer}
+.bubble[data-message-translation-toggle]:focus-visible{outline:1px solid #aaa;outline-offset:3px}
