@@ -25,3 +25,5 @@ test('author words remain text when a segment contains HTML',()=>{
  f.c.APP_RELEASE_NOTES.authorWords=[[{text:'<img src=x onerror=bad()>',emphasis:true}]];f.c.showReleaseNotice();
  assert.match(f.dialog.innerHTML,/<strong>&lt;img/);assert.doesNotMatch(f.dialog.innerHTML,/<img src=x/);
 });
+
+test('backup reminder sits beside the update history title',()=>{const f=fixture();f.c.showReleaseNotice();assert.match(f.dialog.innerHTML,/<div class="release-notice-title-row"><h2 id="irisReleaseTitle">更新记录<\/h2><small class="release-backup-reminder">请经常备份，作者会不定期进行小幅更新。<\/small><\/div>/)});

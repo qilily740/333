@@ -5347,3 +5347,7 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .settings-screen>.settings-topbar,.feature-screen>.feature-page-topbar{width:calc(100% + 2 * var(--app-page-gutter));max-width:none;margin-inline:calc(0px - var(--app-page-gutter));padding-inline:var(--app-page-gutter)}
 #featureScreen>.forum-dock{width:min(var(--app-shell-max-width,780px),100vw);max-width:none;padding-inline:var(--app-page-gutter,48px)}
 @media(min-width:850px){.phone{--app-shell-max-width:700px}}
+
+.release-notice-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}
+.release-notice-title-row h2{flex:none;margin:0}
+.release-backup-reminder{max-width:154px;min-width:0;color:#999;font:400 9px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;letter-spacing:0;text-align:left}
