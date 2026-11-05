@@ -2,12 +2,9 @@
   "version": "5.9.6",
   "release": "5.9.6-r1",
   "date": "2026-11-05",
-  "notes": "新增线上内置美化：仿微信、仿 iMessage、仿 Discord。优化 Discord 私聊消息样式与键盘输入体验。",
+  "notes": "新增内置美化：仿微信、仿 iMessage、仿 Discord；并优化聊天体验。",
   "changes": [
-    "新增线上内置美化：仿微信、仿 iMessage、仿 Discord。支持为单个角色指定美化方案。",
-    "优化 Discord 私聊图片排版、引用、消息时间和长按操作面板。",
-    "修复键盘弹出时底栏露出壁纸色、发送需要点击两次的问题。",
-    "调整线下邀请面板宽度，避免右侧内容被截断。"
+    "新增内置美化：仿微信、仿 iMessage、仿 Discord；并优化聊天体验。"
   ],
   "authorWords": [
     [
