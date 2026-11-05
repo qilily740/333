@@ -1,0 +1,7 @@
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.IrisOnlineAppearance=api})(typeof globalThis==='object'?globalThis:null,function(){
+ 'use strict';
+ const schemes=(state,builtins)=>[...builtins,...(state.settings?.onlineBeautifyLibrary?.items||[])];
+ function resolve(state,builtins,{role}={}){const settings=state.settings||{},library=settings.onlineBeautifyLibrary||{},bound=role?.chatSettings?.onlineAppearanceId,all=schemes(state,builtins);let css,background,name,id=typeof bound==='string'?bound:'inherit';if(id==='inherit'){const item=all.find(s=>s.id===library.active);css=String(settings.beautifyCss?.online||'');background=String(settings.beautifyBackgrounds?.online||'');name=item&&item.css===css?item.name:css?'自定义默认方案':'默认'}else{const item=all.find(s=>s.id===id);css=item?.css||'';background=Object.hasOwn(item||{},'background')?item.background:String(settings.beautifyBackgrounds?.online||'');name=item?.name||'默认';if(!item)id='default'}return{id,name,css,background,inherited:bound==null||bound==='inherit'}}
+ function assign(state,builtins,{roles=[],schemeId}){if(schemeId!=='inherit'&&!schemes(state,builtins).some(item=>item.id===schemeId))throw Error('美化方案不存在');const indices=[...new Set(roles)];if(indices.some(i=>!Number.isInteger(i)||!state.characters?.[i]))throw Error('角色已变化，请重新选择');for(const i of indices){state.characters[i].chatSettings||={};state.characters[i].chatSettings.onlineAppearanceId=schemeId}return indices.length}
+ return{schemes,resolve,assign};
+});

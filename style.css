@@ -5375,3 +5375,40 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 /* Translation folding is a chat interaction shared by every appearance. */
 .bubble[data-message-translation-toggle]{cursor:pointer}
 .bubble[data-message-translation-toggle]:focus-visible{outline:1px solid #aaa;outline-offset:3px}
+/* Compact stacked photo messages in private and group chat. */
+.message-type-image:has(.chat-image-stack) .message-content{width:auto;max-width:calc(100% - 36px)}
+.chat-image-stack{display:flex;align-items:center;justify-content:flex-end;gap:8px;width:min(238px,calc(100vw - 112px));height:174px;padding:0;background:transparent;touch-action:pan-y;user-select:none}
+.chat-image-stack-layers{position:relative;order:2;flex:0 0 146px;height:174px}
+.chat-image-stack-photo{position:absolute;top:0;left:0;width:126px;height:158px;max-width:none;max-height:none;object-fit:cover;border-radius:11px;box-shadow:0 4px 12px #0002;pointer-events:none}
+.chat-image-stack-photo.is-layer-0{z-index:3;transform:rotate(-1deg)}
+.chat-image-stack-photo.is-layer-1{z-index:2;top:7px;left:10px;opacity:.65;transform:rotate(2deg)}
+.chat-image-stack-photo.is-layer-2{z-index:1;top:14px;left:20px;opacity:.45;transform:rotate(4deg)}
+.chat-image-stack-expand{order:1;flex:none;padding:8px 10px;border-radius:999px;background:#e9e9e9;color:#666;font-size:11px;white-space:nowrap}
+.chat-image-grid{display:flex;flex-direction:column;align-items:stretch;gap:3px;width:min(280px,100%);max-width:100%;padding:0;text-align:left;background:transparent;touch-action:pan-y}
+.chat-image-grid-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;width:100%}
+.chat-image-grid-row[data-columns="1"]{grid-template-columns:minmax(0,1fr)}
+.chat-image-grid-row[data-columns="2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.chat-image-grid .chat-image-grid-cell{position:relative;display:block;aspect-ratio:1;min-width:0;width:100%;height:auto;margin:0;padding:0;overflow:hidden;border-radius:5px;background:#e9e9ec;line-height:0}
+.chat-image-grid .chat-image-grid-row[data-columns="1"] .chat-image-grid-cell{aspect-ratio:1.85}
+.chat-image-grid .chat-image-grid-cell img{display:block;width:100%;height:100%;max-width:100%;max-height:none;object-fit:cover;pointer-events:none}
+.chat-image-grid-triptych{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-rows:repeat(2,minmax(0,1fr));gap:3px;width:100%;aspect-ratio:1.55}
+.chat-image-grid .chat-image-grid-triptych .chat-image-grid-cell{aspect-ratio:auto;height:100%}
+.chat-image-grid-triptych .chat-image-grid-cell:first-child{grid-row:span 2}
+.chat-image-scroll-spacer{flex:none;width:100%;min-height:0;pointer-events:none}
+.chat-image-expanded-item{display:flex;align-items:center;gap:8px;max-width:100%}
+.chat-image-stack-collapse{flex:none;padding:7px 10px;border-radius:999px;background:#e9e9e9;color:#666;font-size:11px}
+.message-type-image:has(.chat-image-expanded-item) .message-content{width:min(62vw,240px)}
+.chat-image-expanded-item .message-image{min-width:0}
+.chat-image-batch-carousel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;touch-action:pan-x;overscroll-behavior-x:contain}
+.chat-image-batch-carousel::-webkit-scrollbar{display:none}
+.chat-image-batch-carousel figure{display:grid;place-items:center;flex:0 0 100%;min-width:0;margin:0;scroll-snap-align:center}
+.chat-image-batch-carousel img{display:block;width:auto;max-width:100%;height:auto;max-height:min(52dvh,400px);object-fit:contain}
+.chat-image-batch-carousel figcaption{padding:8px;color:#888;font-size:11px}
+.chat-image-batch-controls{display:flex;justify-content:space-between;margin-top:8px}
+.chat-image-batch-controls button{width:36px;height:36px;border-radius:50%;background:#eee;font-size:24px}
+@media(max-width:380px){.chat-image-stack{width:min(210px,calc(100vw - 100px))}.chat-image-stack-layers{flex-basis:130px}.chat-image-stack-photo{width:110px}}
+.is-discord .beautify-theme-sample{background:#fafafa;border-color:#dfe0e4}.is-discord .beautify-theme-sample i{background:#dfe0e4;border:0;border-radius:2px}.is-discord .beautify-theme-sample i:nth-child(2){align-self:flex-start;background:#555862}.is-discord .beautify-theme-sample i:nth-child(3){background:#9b9da4}
+
+/* Keep the composer surface flush with the open mobile keyboard. */
+html[data-chat-keyboard-open] .phone>.bottom{background:var(--chat-surface,#fff)!important;padding-bottom:6px!important;margin-bottom:0!important}
+html[data-chat-keyboard-open] .phone{padding-bottom:0}
