@@ -5412,3 +5412,7 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 /* Keep the composer surface flush with the open mobile keyboard. */
 html[data-chat-keyboard-open] .phone>.bottom{background:var(--chat-surface,#fff)!important;padding-bottom:6px!important;margin-bottom:0!important}
 html[data-chat-keyboard-open] .phone{padding-bottom:0}
+
+/* Feature-page selectors must sit above their originating feature screen. */
+#shade.is-feature-overlay{z-index:30}
+#sheet.is-feature-overlay{z-index:31}
