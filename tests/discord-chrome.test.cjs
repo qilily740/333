@@ -70,3 +70,10 @@ test('removing a role-bound scheme wallpaper changes that scheme immediately and
   assert.match(d.querySelector('.beautify-background-thumb').src,/selected.jpg/);d.querySelector('[data-beautify-background-clear]').click();assert.equal(w.eval('state.settings.onlineBeautifyLibrary.items[0].background'),'');assert.equal(w.eval('state.settings.onlineBeautifyLibrary.items[0].css'),'.bubble{color:purple}');assert.equal(w.eval('state.settings.onlineBeautifyLibrary.items[1].background'),'https://images.test/other.jpg');assert.equal(w.eval('state.settings.beautifyBackgrounds.online'),'https://images.test/global.jpg');assert.equal(w.eval('privateOnlineAppearance().background'),'');assert.equal(d.querySelector('#iris-beautify-online').textContent.includes('selected.jpg'),false);assert.deepEqual(f.errors,[]);
  }finally{await f.close()}
 });
+test('333 role and group selection indicators use white SVG hearts on black instead of system emoji',async()=>{
+ const f=boot(),{w,d}=f;try{
+  w.eval("state.groupChats={version:1,items:[{id:'heart-group',name:'爱心测试群',userId:'heart-user',members:[{id:'heart-user'}],settings:{}}]}");library(w);d.querySelector('[data-online-theme-apply-to]').click();
+  const verify=button=>{button.click();const mark=button.querySelector('.appearance-selection-heart');assert.ok(mark);assert.ok(mark.querySelector('svg path'));assert.equal(mark.textContent,'');assert.equal(mark.querySelector('svg').getAttribute('fill'),'currentColor');assert.equal(w.getComputedStyle(mark).backgroundColor,'rgb(34, 34, 34)');assert.equal(w.getComputedStyle(mark).color,'rgb(255, 255, 255)');assert.equal(w.getComputedStyle(mark.querySelector('svg')).width,'9px')};
+  verify(d.querySelector('[data-appearance-role="0"]'));d.querySelector('[data-appearance-tab="group"]').click();verify(d.querySelector('[data-appearance-group="heart-group"]'));assert.deepEqual(f.errors,[]);
+ }finally{await f.close()}
+});

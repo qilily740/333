@@ -5424,3 +5424,7 @@ html[data-chat-keyboard-open] .phone{padding-bottom:0}
 
 /* Fill the footer gutters and keyboard seam throughout chat focus transitions. */
 html[data-chat-keyboard-open] .phone>.bottom::after{content:"";position:absolute;top:0;bottom:-1px;left:calc(0px - var(--app-shell-gutter,25px));right:calc(0px - var(--app-shell-gutter,25px));z-index:-1;background:var(--chat-surface,#fff);pointer-events:none}
+
+/* SVG hearts remain white instead of being rendered as colored system emoji. */
+.appearance-target-picker .appearance-selection-heart svg{display:block;width:9px;height:9px;margin:2px auto;fill:currentColor;stroke:none}
+.appearance-target-picker [aria-pressed="true"] .appearance-selection-heart{background:#222;color:#fff}
