@@ -3,12 +3,22 @@ let characterDrafts = null;
 let characterPage = 0;
 let characterPending = 0;
 let characterImportNote = '';
+let characterConversationTab = 'private';
 const characterPhonePending = new Set();
 
+function openCharacterActionPicker(title,roleIndices,onSelect) {
+  characterDrafts=chars.map(c=>({...c}));
+  characterDialog.innerHTML=characterHeader(title)+`<div class="character-list" aria-label="选择角色">${roleIndices.map(index=>{const role=chars[index];return `<div class="character-row"><button type="button" class="character-row-main" data-role-action="${index}">${avatar(role)}<span class="character-row-info"><strong><span class="roster-name">${esc(role.name||'未命名角色')}</span></strong><small>${esc([role.gender,role.birthday].filter(Boolean).join(' · ')||'选择此角色')}</small></span>${state.char===index?'<span class="character-current">当前</span>':icon('arrow')}</button></div>`}).join('')}</div><p class="character-feedback" role="status">选择一个角色继续</p>`;
+  bindCharacterClose();characterDialog.querySelector('#characterBack').hidden=true;
+  characterDialog.querySelectorAll('[data-role-action]').forEach(button=>button.onclick=()=>{const index=Number(button.dataset.roleAction);characterDialog.close();onSelect?.(index)});
+  if(!characterDialog.open)characterDialog.showModal();characterDialog.focus();$('#characters').setAttribute('aria-expanded','true');
+}
 function openCharacters() {
+  if(window.IrisGroupChatCore){for(const user of state.users)window.IrisGroupChatCore.identity(user,'user');for(const role of chars)if(role.builtinRole!=='iris-assistant')window.IrisGroupChatCore.identity(role,'role')}
   characterDrafts = chars.map(c => ({...c}));
   characterPage = Math.max(0,state.char);
   characterImportNote = '';
+  characterConversationTab = 'private';
   drawCharacterList(0);
   characterDialog.showModal();
   characterDialog.focus();
@@ -54,14 +64,35 @@ function characterHeader(title) {
   return `<header class="profile-heading"><span class="profile-eyebrow">IRIS / CHAR</span><button type="button" class="profile-close" aria-label="关闭角色面板">×</button></header><div class="profile-title-row"><h2 id="characterTitle">${title}</h2><button type="button" class="character-back" id="characterBack">返回列表</button></div>`;
 }
 function bindCharacterClose() {characterDialog.querySelector('.profile-close').onclick=()=>characterDialog.close()}
+function characterConversationTabs() {
+  if(state.offline)return '';
+  return `<nav class="character-conversation-tabs" aria-label="聊天分类"><button type="button" data-conversation-tab="private" aria-pressed="${characterConversationTab==='private'}">私聊</button><button type="button" data-conversation-tab="group" aria-pressed="${characterConversationTab==='group'}">群聊</button></nav>`;
+}
+function bindCharacterConversationTabs() {
+  characterDialog.querySelectorAll('[data-conversation-tab]').forEach(button=>button.onclick=()=>{
+    if(button.dataset.conversationTab===characterConversationTab)return;
+    characterConversationTab=button.dataset.conversationTab;
+    if(characterConversationTab==='group')drawGroupChatEntry();else drawCharacterList(0);
+  });
+}
+function drawGroupChatEntry() {
+  characterConversationTab='group';
+  window.IrisGroupChat.list(groupChatRuntime(),{
+    host:characterDialog,heading:()=>characterHeader('group chats'),tabs:characterConversationTabs,
+    bind:()=>{bindCharacterClose();bindCharacterConversationTabs()},
+    onOpen:id=>{characterDialog.close();window.IrisGroupChat.open(id);openFeaturePage('group-chat')}
+  });
+}
 function drawCharacterList(scrollTop=characterDialog.querySelector('.character-list')?.scrollTop||0) {
-  characterDialog.innerHTML=characterHeader('my characters')+`
+  characterConversationTab='private';
+  characterDialog.innerHTML=characterHeader('my characters')+characterConversationTabs()+`
     <div class="character-list${characterDrafts.length?'':' is-empty'}" aria-label="角色列表">${characterDrafts.length?'':`<div class="empty-characters"><span>${icon('user')}</span><strong>还没有角色</strong><small>手动新建一个角色</small></div>`}${characterDrafts.map((c,i)=>`<div class="character-row"><button type="button" class="character-row-main" data-role="${i}">${avatar(c)}<span class="character-row-info"><strong><span class="roster-name">${esc(c.name||'未命名角色')}</span></strong><small>${esc([c.gender,c.birthday].filter(Boolean).join(' · ')||'点击查看角色资料')}</small>${c.phoneNumber?`<small class="roster-phone">${esc([c.phoneCarrier,c.phoneNumber].filter(Boolean).join(' '))}</small>`:''}</span>${state.char===i?'<span class="character-current">当前</span>':icon('arrow')}</button>${c.builtinRole==='iris-assistant'?'<span class="character-current character-builtin-label">内置助手</span>':`${c.phoneNumber?'':`<button type="button" class="character-phone-action" data-character-phone="${i}" ${characterPhonePending.has(i)?'disabled':''}>${characterPhonePending.has(i)?'开通中…':'开通号码'}</button>`}<button type="button" class="character-row-delete" data-delete-role="${i}" aria-label="删除${esc(c.name||'未命名角色')}" ${characterPhonePending.size?'disabled':''}>删除</button>`}</div>`).join('')}</div>
     <div class="character-import-actions"><button type="button" id="importCharacter">${icon('plus')}<span>导入角色</span></button><button type="button" id="newCharacter">手动新建</button></div>
     <button type="button" class="character-header-arrange" id="arrangeHeaderAvatars">编辑顶部头像排列</button>
     <input id="characterFile" type="file" accept=".txt,.docx" hidden>
     <p class="character-formats">TXT / DOCX</p><p class="character-feedback" role="status">${esc(characterImportNote||'选择角色，确认后切换')}</p>`;
   bindCharacterClose();
+  bindCharacterConversationTabs();
   document.querySelector('.character-list').scrollTop=scrollTop;
   document.getElementById('characterBack').hidden=true;
   document.getElementById('arrangeHeaderAvatars').onclick=()=>{characterDialog.close();openHeaderAvatars()};

@@ -13,7 +13,7 @@
   if(steps)ctx.home();else ctx.open(id,id==='role-user');
   const destination=route.destination||{},role=id==='role-worldbook'||id==='experiences'||destination.roleTab||Number.isInteger(destination.category);
   const generic=[];
-  if(!steps){if(role)generic.push(['.iris-assistant-role-dialog [data-assistant-role]','先点击要设置的角色。']);generic.push([destination.target||(destination.roleTab==='user'?'[data-role-user]':destination.roleTab?'#onlineSettingsPanel':destination.page||['worldbook','experiences','music','reading','forum','market','business','sms','beautify'].includes(id)?'#featurePageContent':'#settingsContent'),'这里就是对应页面。你可以直接操作，也可以结束引导后继续询问用法。','field'])}
+  if(!steps){if(role)generic.push(['.iris-assistant-role-dialog [data-assistant-role]','先点击要设置的角色。']);generic.push([destination.target||(destination.roleTab==='user'?'[data-role-user]':destination.roleTab?'#onlineSettingsPanel':destination.page||['worldbook','experiences','music','reading','forum','market','business','novels','sms','beautify'].includes(id)?'#featurePageContent':'#settingsContent'),'这里就是对应页面。你可以直接操作，也可以结束引导后继续询问用法。','field'])}
   if(id==='role-user'){generic.splice(0,generic.length,
    ['.iris-assistant-role-dialog [data-assistant-role]','先选要绑定用户的角色。'],
    ['#chatTitle','点击聊天顶部的角色名字，进入这个角色的聊天设置。'],

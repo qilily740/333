@@ -6,6 +6,7 @@
   ['beautify','美化','调整界面与聊天外观'],['experiences','经历','人生时间线、成长档案、地球旅行与 IF 世界'],['music','音乐','听歌与一起听'],['reading','阅读','共读书房'],['forum','论坛','查看论坛与帖子'],['market','商场','商品与购物'],['business','经营','香水店与经营'],['sms','短信','短信联系人与对话']
  ].map(([id,label,description])=>({id,label,description}));
  routes.push({id:'create-character',label:'创建角色',description:'创建角色资料卡'},{id:'create-user',label:'创建用户',description:'创建用户面具'});
+ routes.push({id:'novels',label:"\u5c0f\u8bf4\u4e0e\u77ed\u5267",description:"\u4e66\u57ce12\u672c\u539f\u521b\u8bd5\u8bfb\uff0c\u53ef\u7eed\u5199\u3001\u521b\u4f5c\u548c\u6539\u7f16\u77ed\u5267\uff1b\u7b80\u4ecb\u9875\u53ef\u5206\u4eab\u7ed9\u7ed1\u5b9a\u89d2\u8272\uff0c\u5206\u4eab\u540e\u7528\u4e00\u6b21\u804a\u5929API\u9605\u8bfb\u5e76\u8003\u91cf\u5546\u4e1a\u6f5c\u529b\u3001\u98ce\u9669\u3001\u8d22\u529b\u4e0e\u5173\u7cfb\uff0c\u53ef\u4ee5\u62d2\u7edd\u3001\u63d0\u95ee\u3001\u63d0\u51fa\u6295\u8d44\u6216\u8d5e\u52a9\u610f\u5411\uff0c\u4e0d\u4f1a\u81ea\u52a8\u6263\u6b3e\u3002\u5df2\u7b7e\u7ea6\u672a\u5f00\u62cd\u9879\u76ee\u53ef\u53e6\u884c\u786e\u8ba4\u51fa\u8d44\uff0c\u8fdb\u5165\u89d2\u8272\u94f6\u884c\u5361\u6d41\u6c34\u548c\u9879\u76ee\u8bb0\u5f55\u3002\u4e0a\u7ebf\u540e\u7528API\u8bc4\u4f30\u865a\u62df\u6536\u76ca\uff0c\u6295\u8d44\u53ef\u80fd\u4e8f\u635f\uff0c\u8d5e\u52a9\u4e0d\u7ea6\u5b9a\u5206\u7ea2\u3002\u64ad\u653e\u5668\u4e3a16:9\u53f0\u8bcd\u548c\u52a8\u4f5c\u5206\u955c\uff0c\u6bcf\u96c65\u5206\u949f\u8d77\uff0c\u65f6\u957f\u4ec5\u4f9b\u53c2\u8003\uff0c\u5f39\u5e55\u53ef\u5173\u95ed\uff0c\u64ad\u653e\u4e0d\u8c03\u7528API\u3002"});
  const detailRoutes=[
  ['role-mounts','角色的全局挂载',{roleTab:'world',worldTab:'global'}],
  ['role-user','角色绑定用户',{roleTab:'user'}],['role-memory','角色记忆设置',{roleTab:'memory'}],
@@ -80,6 +81,7 @@ GitHub 细粒度 Token 需正确 Resource owner、备份仓库授权及 Contents
   else if(/成长/.test(text))ids=['growth'];else if(/时间线/.test(text))ids=['timeline'];else if(/成就|人物关系/.test(text))ids=['people'];else if(/if|梦境/i.test(text))ids=['if-world'];else if(/旅行|地球/.test(text))ids=['earth'];else if(/经历/.test(text))ids=['experiences'];
   else if(/背景/.test(text))ids=['background'];else if(/歌单/.test(text))ids=['music-role','music-library'];else if(/音乐库/.test(text))ids=['music-library'];
   else if(/美化/.test(text))ids=/线下/.test(text)?['beautify-offline']:/论坛/.test(text)?['beautify-forum']:['beautify-online'];
+  else if(/\u5c0f\u8bf4|\u77ed\u5267|\u9009\u89d2|\u8bd5\u955c|\u7247\u916c/.test(text))ids=['novels'];
   else ids=routes.filter(route=>text.includes(route.label)).map(route=>route.id);
   return ids.length?{text:ids.length>1?'你想打开哪一个？':'在这里。',actions:ids}:null;
  }
