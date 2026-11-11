@@ -5,7 +5,7 @@ function fixture(){
  const extra=className=>({className,remove(){header.children=header.children.filter(node=>node!==this)}});
  header.children=[title,extra('reading-topbar-actions'),extra('perfumery-topbar-user'),extra('sms-user-switch')];
  const content={innerHTML:'经营内容',onclick(){},onsubmit(){},onwheel(){},querySelector:()=>null};
- const screen={hidden:false,querySelector:()=>null};
+ const screen={hidden:false,classList:{toggle(){},remove(){}},querySelector:()=>null};
  const nodes={'#featurePageTitle':title,'#featurePageContent':content,'#featureScreen':screen,'#featureBack':back};
  const context=vm.createContext({activeFeaturePage:'worldbook',activeSmsThread:null,$:selector=>nodes[selector]||null,document:{body:{}},window:{},renderGlobalWorldBookPanel:()=>'<worldbook>世界书</worldbook>',bindGlobalWorldBookPanel(){},renderSmsInbox:()=>'<sms>短信</sms>',bindSmsPage(){},positionSmsMessageActions(){}});
  const start=app.includes('function resetFeaturePageChrome(')?app.indexOf('function resetFeaturePageChrome('):app.indexOf('function renderFeaturePage(');
