@@ -165,4 +165,11 @@ test('imported ringtones accept common audio formats and reject unsupported or o
   assert.equal(validate({ name: 'ring.mp3', type: 'audio/mpeg', size: 4 * 1024 * 1024 + 1 }), '铃声文件需小于 4 MB');
 });
 
-test('default ringing uses a short multi-tone phrase with tapered volume rather than one continuous beep',()=>{const f=fixture(),tones=[],envelopes=[],audio={currentTime:5,destination:{},createOscillator(){const tone={frequency:{value:0},connect(){},start(time){this.startedAt=time},stop(time){this.stoppedAt=time}};tones.push(tone);return tone},createGain(){const points=[],gain={gain:{setValueAtTime(v,t){points.push([v,t])},linearRampToValueAtTime(v,t){points.push([v,t])},exponentialRampToValueAtTime(v,t){points.push([v,t])}},connect(){}};envelopes.push(points);return gain}};const end=f.context.playDefaultIncomingRingtone(audio);assert.ok(new Set(tones.map(t=>t.frequency.value)).size>1);assert.ok(tones.every(t=>t.startedAt>=5&&t.stoppedAt>t.startedAt&&t.stoppedAt-t.startedAt<.3));assert.ok(end<6.1);for(const points of envelopes){assert.ok(points[0][0]<=.001);assert.ok(points.at(-1)[0]<=.001);assert.ok(Math.max(...points.map(p=>p[0]))<.1)}});
+test('preview and actual incoming calls share the bundled ringtone and stop cleanly',()=>{
+ const f=fixture(),players=[];f.context.Audio=class{constructor(src){this.src=src;players.push(this)}play(){return Promise.resolve()}pause(){this.paused=true}};
+ f.context.previewIncomingRingtone();assert.equal(players[0].src,'assets/audio/lightly.wav');assert.notEqual(players[0].loop,true);
+ f.context.previewIncomingRingtone();assert.equal(players[0].paused,true);assert.equal(players[0].currentTime,0);
+ const call={character:{chatSettings:{more:{incomingVideoVibration:false}}}};f.context.signalIncomingVideo(call);assert.equal(call.ringtonePlayer.src,players[1].src);assert.equal(call.ringtonePlayer.loop,true);
+ f.context.stopIncomingVideoSignal(call);assert.equal(call.ringtonePlayer.paused,true);assert.equal(call.ringtonePlayer.currentTime,0);
+ f.context.previewIncomingRingtone('data:audio/mp3;base64,custom');assert.equal(players.at(-1).src,'data:audio/mp3;base64,custom');assert.equal(players[1].paused,true);
+});
