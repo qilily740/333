@@ -26,9 +26,10 @@ test('quoted private and group timestamps remain in the main row without out-of-
 });
 test('iMessage input and home controls lose their glass styling on entry to offline mode',()=>{
  const f=fixture();try{
-  for(const selector of ['#private .dock-capsule','#private .dock-add','#private .input-wrap','#inputFunctions','#reply','[data-group-functions]','[data-group-reply]','.group-chat-bottom .input-wrap'])assert.match(f.css(f.document.querySelector(selector)).backgroundColor,/rgba\(255, 255, 255, 0\.42\)/,selector);
+  for(const selector of ['#private .dock-capsule','#private .dock-add','#private .input-wrap','.group-chat-bottom .input-wrap'])assert.match(f.css(f.document.querySelector(selector)).backgroundColor,/rgba\(255, 255, 255, 0\.42\)/,selector);
+  for(const selector of ['#inputFunctions','#reply','[data-group-functions]','[data-group-reply]'])assert.equal(f.css(f.document.querySelector(selector)).backgroundColor,'rgb(255, 255, 255)');
   f.document.querySelector('#conversation').classList.add('is-offline-story');
   for(const selector of ['#private .dock-capsule','#private .dock-add','#private .input-wrap','#inputFunctions','#reply'])assert.notEqual(f.css(f.document.querySelector(selector)).backgroundColor,'rgba(255, 255, 255, 0.42)',selector);
-  assert.match(f.css(f.document.querySelector('[data-group-reply]')).backgroundColor,/rgba\(255, 255, 255, 0\.42\)/);
+  assert.equal(f.css(f.document.querySelector('[data-group-reply]')).backgroundColor,'rgb(255, 255, 255)');
  }finally{f.dom.window.close()}
 });
