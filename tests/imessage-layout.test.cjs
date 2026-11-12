@@ -24,12 +24,13 @@ test('quoted private and group timestamps remain in the main row without out-of-
   assert.equal(time.gridColumn,row.classList.contains('mine')?'1':'2');assert.equal(line.maxWidth,'100%');assert.equal(line.minWidth,'0');
  }}finally{f.dom.window.close()}
 });
-test('iMessage input and home controls lose their glass styling on entry to offline mode',()=>{
+test('iMessage adaptive surfaces apply only online and remain independent between private and group chats',()=>{
  const f=fixture();try{
-  for(const selector of ['#private .dock-capsule','#private .dock-add','#private .input-wrap','.group-chat-bottom .input-wrap'])assert.match(f.css(f.document.querySelector(selector)).backgroundColor,/rgba\(255, 255, 255, 0\.42\)/,selector);
-  for(const selector of ['#inputFunctions','#reply','[data-group-functions]','[data-group-reply]'])assert.equal(f.css(f.document.querySelector(selector)).backgroundColor,'rgba(255, 255, 255, 0.28)');
+  const adaptive=selector=>{const node=f.document.querySelector(selector);return Array.from(f.document.styleSheets).some(sheet=>Array.from(sheet.cssRules).some(rule=>rule.selectorText&&rule.style.getPropertyValue('background').includes('--imessage-glass')&&node.matches(rule.selectorText)))};
+  const controls=['#private .dock-capsule','#private .dock-add','#private .input-wrap','#inputFunctions','#reply','[data-group-functions]','[data-group-reply]','.group-chat-bottom .input-wrap'];
+  for(const selector of controls)assert.equal(adaptive(selector),true,selector);
   f.document.querySelector('#conversation').classList.add('is-offline-story');
-  for(const selector of ['#private .dock-capsule','#private .dock-add','#private .input-wrap','#inputFunctions','#reply'])assert.notEqual(f.css(f.document.querySelector(selector)).backgroundColor,'rgba(255, 255, 255, 0.42)',selector);
-  assert.equal(f.css(f.document.querySelector('[data-group-reply]')).backgroundColor,'rgba(255, 255, 255, 0.28)');
+  for(const selector of controls.filter(value=>!value.includes('data-group')&&!value.includes('group-chat')))assert.equal(adaptive(selector),false,selector);
+  assert.equal(adaptive('[data-group-reply]'),true);
  }finally{f.dom.window.close()}
 });
