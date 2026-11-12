@@ -167,9 +167,17 @@ test('imported ringtones accept common audio formats and reject unsupported or o
 
 test('preview and actual incoming calls share the bundled ringtone and stop cleanly',()=>{
  const f=fixture(),players=[];f.context.Audio=class{constructor(src){this.src=src;players.push(this)}play(){return Promise.resolve()}pause(){this.paused=true}};
- f.context.previewIncomingRingtone();assert.equal(players[0].src,'assets/audio/lightly.wav');assert.notEqual(players[0].loop,true);
+ f.context.previewIncomingRingtone();assert.equal(players[0].src,'assets/audio/lightly.m4a?v=2');assert.notEqual(players[0].loop,true);
  f.context.previewIncomingRingtone();assert.equal(players[0].paused,true);assert.equal(players[0].currentTime,0);
  const call={character:{chatSettings:{more:{incomingVideoVibration:false}}}};f.context.signalIncomingVideo(call);assert.equal(call.ringtonePlayer.src,players[1].src);assert.equal(call.ringtonePlayer.loop,true);
  f.context.stopIncomingVideoSignal(call);assert.equal(call.ringtonePlayer.paused,true);assert.equal(call.ringtonePlayer.currentTime,0);
  f.context.previewIncomingRingtone('data:audio/mp3;base64,custom');assert.equal(players.at(-1).src,'data:audio/mp3;base64,custom');assert.equal(players[1].paused,true);
+});
+
+test('bundled default audio is self-contained AAC and is ready before the app loads',()=>{
+ const context=vm.createContext({window:{}});vm.runInContext(fs.readFileSync(require.resolve('../scripts/incoming-ringtone.js'),'utf8'),context);
+ const source=context.window.IrisIncomingRingtone.source;assert.ok(source.startsWith('data:audio/mp4;base64,'));
+ const data=Buffer.from(source.split(',')[1],'base64');assert.equal(data.subarray(4,8).toString(),'ftyp');assert.ok(data.length<600000);assert.deepEqual(data,fs.readFileSync(require.resolve('../assets/audio/lightly.m4a')));
+ const f=fixture();f.context.window.IrisIncomingRingtone=context.window.IrisIncomingRingtone;assert.equal(f.context.incomingRingtoneSource(),source);assert.equal(f.context.incomingRingtoneSource('data:audio/wav;base64,custom'),'data:audio/wav;base64,custom');
+ const bootstrap=fs.readFileSync(require.resolve('../scripts/storage-bootstrap.js'),'utf8');assert.ok(bootstrap.indexOf("'scripts/incoming-ringtone.js'")<bootstrap.indexOf("'scripts/app.js'"));
 });
