@@ -75,7 +75,7 @@ test('real structured chat replies preserve normal messages and visible heartvoi
   assert.equal(f.dialogs.length, 1);
 });
 
-test('rejecting records the decision without opening a call and prevents repeated offers after history deletion', () => {
+test('rejecting retains the decision after history deletion without imposing a timed cooldown', () => {
   const f = fixture(), message = f.propose();
   f.context.syncIncomingVideoCalls();
   f.dialogs[0].controls['[data-incoming-decline]'].onclick();
@@ -84,8 +84,8 @@ test('rejecting records the decision without opening a call and prevents repeate
   assert.equal(f.context.activeIncomingVideo, null);
   assert.equal(f.timers.size, 0);
   f.thread.length = 0;
-  f.propose();
-  assert.equal(f.thread.length, 0, 'clearing chat must not bypass the refusal cooldown');
+  assert.equal(f.role.chatSettings.incomingVideoHistory.at(-1).callStatus,'declined');
+  assert.equal(f.context.incomingVideoPolicy(f.role.chatSettings.more,f.role.chatSettings.incomingVideoHistory).allowed,true);
 });
 
 test('accepting hands the frozen role, user and same record to the video screen', () => {
@@ -143,16 +143,15 @@ test('disabled, blocked, offline, wrong-role and unconfigured requests cannot tr
   }
 });
 
-test('frequency limits and refusal cooldown are checked at their real boundaries', () => {
-  const f = fixture(), policy = f.context.incomingVideoPolicy;
-  for (const [frequency, delay] of [['occasional', 3600000], ['normal', 900000], ['frequent', 300000]]) {
-    const thread = [{ type: 'call-summary', createdAt: f.now - delay + 1 }];
-    assert.equal(policy({ incomingVideoFrequency: frequency }, thread, f.now).allowed, false);
-    assert.equal(policy({ incomingVideoFrequency: frequency }, thread, f.now + 1).allowed, true);
-  }
-  const refused = [{ type: 'call-summary', callStatus: 'declined', createdAt: 1, resolvedAt: f.now - 1800000 + 1 }];
-  assert.equal(policy({ incomingVideoFrequency: 'frequent' }, refused, f.now).allowed, false);
-  assert.equal(policy({ incomingVideoFrequency: 'frequent' }, refused, f.now + 1).allowed, true);
+test('all frequency preferences are contextual with no fixed interval, including after refusal',()=>{
+ const f=fixture(),policy=f.context.incomingVideoPolicy;
+ for(const frequency of ['occasional','normal','frequent'])for(const callStatus of ['declined','missed','ended']){
+  const more={incomingVideoFrequency:frequency},thread=[{type:'call-summary',callStatus,createdAt:f.now,resolvedAt:f.now}];
+  assert.equal(policy(more,thread).allowed,true);assert.equal(policy(more,thread).frequency,frequency);
+ }
+ for(const callStatus of ['pending','accepted'])assert.equal(policy({},[{type:'call-summary',callStatus}]).allowed,false);
+ assert.equal(policy({incomingVideoEnabled:false},[]).allowed,false);
+ const instruction=f.context.incomingVideoInstruction(f.role,0,[]);assert.match(instruction,/没有固定等待间隔/);assert.match(instruction,/不连续重拨/);
 });
 
 test('imported ringtones accept common audio formats and reject unsupported or oversized files', () => {
