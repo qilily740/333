@@ -205,3 +205,14 @@ test('an interrupted binary backup survives reopening the page and continues wit
   f.w.document.querySelector('[data-storage-connection="github"]').click();let q=s=>f.w.document.querySelector(s);q('[data-github-config="token"]').value='fixture-token';q('[data-github-action="upload"]').click();await wait(()=>q('[data-github-action="upload"]').textContent==='继续上传'&&!q('[data-github-action="upload"]').disabled);assert.equal(f.w.passwordPromptTitles.length,1);assert.ok(!r.files.has('iris-sync/latest.json'));const savedLocal=Object.fromEntries(Object.keys(f.w.localStorage).map(key=>[key,f.w.localStorage.getItem(key)]));await new Promise(resolve=>setImmediate(resolve));f.w.close();r.fail('');f=boot(r,{savedLocal,autoPassword:false});f.w.document.querySelector('[data-storage-connection="github"]').click();q=s=>f.w.document.querySelector(s);await wait(()=>q('[data-github-action="upload"]').textContent==='继续上传');q('[data-github-action="upload"]').click();await wait(()=>q('[data-github-status]').textContent.includes('完整备份已上传'));assert.equal(f.w.passwordPromptTitles.length,0);assert.equal(r.releases.size,1);assert.equal(q('[data-github-location]').href,'https://github.com/owner/iris-data/releases');assert.deepEqual(f.errors,[]);
  }finally{await new Promise(resolve=>setImmediate(resolve));f.w.close()}
 });
+test('Ningguang sync opens and cancels password setup without enabling encryption or contacting the repository',{skip:!JSDOM},async()=>{
+ const r=repository(),f=boot(r,{autoPassword:false});
+ try{
+  f.w.setSettingsAppearance('apple');const d=f.w.document;d.querySelector('[data-settings-route="storage/github"]').click();
+  d.querySelector('[data-github-action="password"]').click();await wait(()=>d.querySelector('.github-password-dialog[open]'));
+  const dialog=d.querySelector('.github-password-dialog');assert.equal(dialog.querySelectorAll('input[type="password"]').length,2);assert.ok(d.querySelector('#settingsScreen.apple-settings:not([hidden])'));
+  dialog.querySelector('[data-password-value]').value='only-for-testing';dialog.querySelector('[data-password-confirm]').value='different-password';dialog.querySelector('form').dispatchEvent(new f.w.Event('submit',{cancelable:true}));assert.match(dialog.querySelector('[role="alert"]').textContent,/不一致/);
+  dialog.querySelector('[data-password-cancel]').click();await wait(()=>!d.querySelector('.github-password-dialog'));await wait(()=>d.querySelector('[data-github-status]').textContent.includes('已取消设置'));
+  assert.equal(d.querySelector('[data-github-config="encrypted"]').checked,false);assert.deepEqual(f.errors,[]);
+ }finally{await new Promise(resolve=>setImmediate(resolve));f.w.close()}
+});

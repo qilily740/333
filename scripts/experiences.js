@@ -67,6 +67,7 @@
   host.querySelectorAll('[data-timeline-filter]').forEach(button=>button.onclick=()=>{if(!current(token)||token.busy)return;token.filter=button.dataset.timelineFilter;host.querySelectorAll('[data-timeline-filter]').forEach(el=>el.setAttribute('aria-pressed',String(el===button)));drawList(token)});
   host.querySelector('[data-timeline-sort]').onchange=event=>{const mode=event.target.value;if(!C.SORTS.includes(mode))return;void write(token,data=>({...data,sortMode:mode}),'排序方式已保存。')};
   refreshAnalysis(token);
+  root.IrisSettingsAppearance?.enhanceExperiences(options.content,{appearance:options.state.settings?.settingsAppearance});
  }
  function sync(){if(!runtime||!runtime.isActive())return;const role=runtime.state.characters[runtime.state.char]||null;if(!view||view.role!==role||view.ownerId!==role?.experienceCharacterId||!runtime.content.contains(view.host)){render(runtime);if(role)feedback(view,'已切换角色，当前只显示该角色的经历。')}}
  function drawList(token){if(!current(token)&&token.role)return;const C=root.IrisTimeline,host=token.host;let data;try{data=token.role?C.read(token.role):{entries:[],sortMode:'age'}}catch(error){feedback(token,error.message,true);host.querySelector('[data-timeline-analyze]').disabled=true;return}
@@ -83,8 +84,8 @@
   }).join(''):`<div class="timeline-empty"><strong>${token.role?(data.entries.length?'没有符合筛选的经历':'尚未记录人生经历'):'请先创建一个角色'}</strong><p>${token.role?'用拾光成线从角色资料整理经历，点击条目即可修改。':'在主页角色面板创建角色后，再来管理独立时间线。'}</p></div>`;
   if(editorSlot){const anchor=[...list.querySelectorAll('[data-timeline-edit]')].find(button=>button.dataset.timelineEdit===token.editingId)?.closest('.timeline-entry');if(anchor){anchor.after(editorSlot);editorSlot.hidden=false}else editorSlot.hidden=Boolean(token.editingId)}
   list.querySelectorAll('[data-timeline-edit]').forEach(button=>button.onclick=()=>{if(current(token)&&!token.busy)editor(token,button.dataset.timelineEdit)});
-  list.querySelectorAll('[data-timeline-if]').forEach(button=>button.onclick=async()=>{if(!current(token)||token.busy)return;if(token.host.querySelector('form')&&!runtime.confirm('开启 IF 会关闭尚未保存的经历编辑，确定继续？'))return;const future=runtime.content.querySelector('.experience-future-panel');try{await root.IrisIfWorld.openFromNode(runtime,future,button.dataset.timelineIf);if(current(token))runtime.content.querySelector('#experience-tab-4')?.click()}catch(error){feedback(token,error.message||'无法创建 IF 分支。',true)}});
-  list.querySelectorAll('[data-timeline-delete]').forEach(button=>button.onclick=()=>{if(!current(token)||token.busy)return;const entry=C.read(token.role).entries.find(item=>item.id===button.dataset.timelineDelete);if(!entry)return;if(!runtime.confirm(`删除「${entry.title}」？删除后无法撤销。`))return;void write(token,data=>C.remove(data,entry.id),'经历已删除。',()=>{if(token.editingId===entry.id)closeEditor(token)})});
+  list.querySelectorAll('[data-timeline-if]').forEach(button=>button.onclick=async()=>{if(!current(token)||token.busy)return;if(token.host.querySelector('form')&&!(window.IrisSettingsAppearance?.isNingguang?.()?await window.IrisSettingsAppearance.confirm('开启 IF 会关闭尚未保存的经历编辑，确定继续？'):runtime.confirm('开启 IF 会关闭尚未保存的经历编辑，确定继续？')))return;const future=runtime.content.querySelector('.experience-future-panel');try{await root.IrisIfWorld.openFromNode(runtime,future,button.dataset.timelineIf);if(current(token))runtime.content.querySelector('#experience-tab-4')?.click()}catch(error){feedback(token,error.message||'无法创建 IF 分支。',true)}});
+  list.querySelectorAll('[data-timeline-delete]').forEach(button=>button.onclick=async ()=>{if(!current(token)||token.busy)return;const entry=C.read(token.role).entries.find(item=>item.id===button.dataset.timelineDelete);if(!entry)return;if(!(window.IrisSettingsAppearance?.isNingguang?.()?await window.IrisSettingsAppearance.confirm(`删除「${entry.title}」？删除后无法撤销。`):runtime.confirm(`删除「${entry.title}」？删除后无法撤销。`)))return;void write(token,data=>C.remove(data,entry.id),'经历已删除。',()=>{if(token.editingId===entry.id)closeEditor(token)})});
   for(const [selector,direction] of [['[data-timeline-up]',-1],['[data-timeline-down]',1]])list.querySelectorAll(selector).forEach(button=>button.onclick=()=>{const entryId=direction<0?button.dataset.timelineUp:button.dataset.timelineDown;void write(token,data=>C.move(data,entryId,direction),'经历顺序已保存。')});
  }
  async function confirmAll(token){
@@ -93,7 +94,7 @@
   if(!eligible.length){feedback(token,'没有待确认的经历。');return}
   if(token.editingId){feedback(token,'请先保存或关闭正在编辑的经历，再全部确认。');return}
   const skipped=entries.filter(entry=>entry.status==='pending'&&entry.extensions?.evidenceVerified===false).length;
-  if(!runtime.confirm(`确认当前角色「${token.role.name||'未命名角色'}」的 ${eligible.length} 条待确认经历？${skipped?`\n其中 ${skipped} 条原文尚未匹配核实，也将由你确认；来源核对标记仍会保留。`:''}`)||!current(token))return;
+  if(!(window.IrisSettingsAppearance?.isNingguang?.()?await window.IrisSettingsAppearance.confirm(`确认当前角色「${token.role.name||'未命名角色'}」的 ${eligible.length} 条待确认经历？${skipped?`\n其中 ${skipped} 条原文尚未匹配核实，也将由你确认；来源核对标记仍会保留。`:''}`):runtime.confirm(`确认当前角色「${token.role.name||'未命名角色'}」的 ${eligible.length} 条待确认经历？${skipped?`\n其中 ${skipped} 条原文尚未匹配核实，也将由你确认；来源核对标记仍会保留。`:''}`))||!current(token))return;
   const ids=new Set(eligible.map(entry=>entry.id));
   await write(token,data=>({...data,entries:data.entries.map(entry=>ids.has(entry.id)&&entry.status==='pending'?{...entry,status:'confirmed',extensions:{...entry.extensions,userReviewed:true},updatedAt:Date.now()}:entry)}),'');
   if(current(token))drawList(token);
@@ -112,7 +113,7 @@
  }
 
  function closeEditor(token){token.host.querySelector('[data-timeline-editor]').innerHTML='';token.editingId=null}
- function editor(token,entryId=null){const C=root.IrisTimeline;if(!current(token)||token.busy)return;let data;try{data=C.read(token.role)}catch(error){feedback(token,error.message,true);return}const existing=entryId?data.entries.find(entry=>entry.id===entryId):null;if(entryId&&!existing){feedback(token,'这条经历已不存在。',true);return}if(token.host.querySelector('form')&&!runtime.confirm('打开其他经历会关闭当前未保存的表单，确定继续吗？'))return;
+ async function editor(token,entryId=null){const C=root.IrisTimeline;if(!current(token)||token.busy)return;let data;try{data=C.read(token.role)}catch(error){feedback(token,error.message,true);return}const existing=entryId?data.entries.find(entry=>entry.id===entryId):null;if(entryId&&!existing){feedback(token,'这条经历已不存在。',true);return}if(token.host.querySelector('form')&&!(window.IrisSettingsAppearance?.isNingguang?.()?await window.IrisSettingsAppearance.confirm('打开其他经历会关闭当前未保存的表单，确定继续吗？'):runtime.confirm('打开其他经历会关闭当前未保存的表单，确定继续吗？')))return;
   const value=existing?{...existing,...C.ageBounds(existing)}:{type:'其他',status:'confirmed',source:'手动录入'};token.editingId=entryId;
   const textField=(name,label,placeholder='')=>`<label class="timeline-field">${label}<input name="${name}" value="${escape(value[name]??'')}" placeholder="${escape(placeholder)}"></label>`;
   const editorSlot=token.host.querySelector('[data-timeline-editor]'),anchor=[...token.host.querySelectorAll('[data-timeline-edit]')].find(button=>button.dataset.timelineEdit===entryId)?.closest('.timeline-entry');if(anchor)anchor.after(editorSlot);editorSlot.hidden=false;

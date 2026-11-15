@@ -53,9 +53,9 @@ async function generateCharacterPhone(character) {
   if(!carrier||number.replace(/\D/g,'').length<6)throw new Error('API 返回的运营商或号码不完整');
   return{carrier,number};
 }
-function deleteCharacterAt(index) {
+async function deleteCharacterAt(index) {
   const character=characterDrafts[index];
-  if(!confirm(`确定删除“${character.name.trim()||'未命名角色'}”吗？该角色的聊天记录也会删除。此操作无法撤销。`))return;
+  if(!(window.IrisSettingsAppearance?.isNingguang?.()?await window.IrisSettingsAppearance.confirm(`确定删除“${character.name.trim()||'未命名角色'}”吗？该角色的聊天记录也会删除。此操作无法撤销。`):confirm(`确定删除“${character.name.trim()||'未命名角色'}”吗？该角色的聊天记录也会删除。此操作无法撤销。`)))return;
   if(index<chars.length)removeLocalIdentity('role',index);
   characterDrafts.splice(index,1);
   drawCharacterList();

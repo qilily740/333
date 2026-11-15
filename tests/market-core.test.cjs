@@ -31,6 +31,16 @@ assert.equal(C.linePrice(knit, 'L'), 62800);
 C.addCart(state, product.id, 'default', 2, 0);
 assert.equal(C.cartTotal(state, 0), 99800);
 assert.equal(C.cartTotal(state, 1), 0);
+const selectedCart=C.persona(state,0).cart;
+selectedCart[0].selected=false;
+assert.equal(C.cartTotal(state,0),0,'unselected items must not contribute to checkout total');
+C.addCart(state,knit.id,'M',1,0);
+assert.equal(C.cartTotal(state,0),56800,'only the selected specification contributes');
+selectedCart[0].selected=true;
+assert.equal(C.cartTotal(state,0),156600,'selected items use their specification price and quantity');
+selectedCart.pop();
+assert.equal(C.cartTotal(state,0),99800);
+
 
 const persona0 = C.persona(state, 0);
 persona0.addresses.push({ id: 'addr-1', name: '甲', label: '虚拟城市 / 家中', isDefault: true });

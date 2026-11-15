@@ -255,7 +255,7 @@ function currencyForRole(character,fallback='CNY'){
   };
   const product=(state,productId)=>normalize(state).products.find(p=>p.id===productId&&p.active!==false);
   const linePrice=(p,specId)=>{const spec=p?.specs?.find(x=>x.id===specId);return Math.max(0,Number(p?.priceCents)||0)+(Number(spec?.priceDeltaCents)||0)};
-  const cartTotal=(state,userIndex=state.user)=>persona(state,userIndex).cart.reduce((sum,item)=>{const p=product(state,item.productId);return p?sum+linePrice(p,item.specId)*Math.max(1,Number(item.quantity)||1):sum},0);
+  const cartTotal=(state,userIndex=state.user)=>persona(state,userIndex).cart.filter(item=>item.selected).reduce((sum,item)=>{const p=product(state,item.productId);return p?sum+linePrice(p,item.specId)*Math.max(1,Number(item.quantity)||1):sum},0);
   const addCart=(state,pid,specId='default',quantity=1,userIndex=state.user)=>{const p=product(state,pid);if(!p)throw Error('商品已下架或不存在');if(!p.specs?.some(s=>s.id===specId))throw Error('请选择有效规格');const cart=persona(state,userIndex).cart,old=cart.find(x=>x.productId===pid&&x.specId===specId);if(old)old.quantity=Math.min(99,old.quantity+Math.max(1,Number(quantity)||1));else cart.push({id:id('cart'),productId:pid,specId,quantity:Math.min(99,Math.max(1,Number(quantity)||1)),selected:true,addedAt:Date.now()});return cart};
   const cents=(x)=>{const n=Number(x);if(!Number.isFinite(n)||n<0)throw Error('金额无效');return Math.round(n*100)};
   const transition=(order,next,at=Date.now())=>{const allowed={待支付:['已取消','已支付'],已支付:['待发货','退款中'],待发货:['运输中','退款中'],运输中:['派送中','退款中'],派送中:['已送达','退款中'],退款中:['已退款'],已取消:[],已退款:[],已送达:['退款中']};if(!allowed[order.status]?.includes(next))throw Error(`不能将订单从${order.status}变更为${next}`);order.status=next;order.updatedAt=at;return order};

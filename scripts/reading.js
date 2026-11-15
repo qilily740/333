@@ -201,7 +201,7 @@
   if(d.rStartReading!==undefined){if(!requireBound())return;navigate('reader');return}
   if(d.rBook){const selected=C.book(rt.state,ownerId(),d.rBook);if(!selected.chapters.length){bookId=d.rBook;navigate('manage');return}if(!role()){notice('请先在聊天设置中为角色绑定用户，再开始共读');return}bookId=d.rBook;const s=copy();navigate('reader');rt.content.scrollTop=s.scroll||0;return}
   if(d.rManage){bookId=d.rManage;navigate('manage');return}
-  if(d.rDelete!==undefined){const b=currentBook();if(!window.confirm(`移出《${b.title}》并删除这张面具下对应的共读记录？`))return;C.removeBook(rt.state,ownerId(),bookId);bookId='';persist();navigate('shelf');return}
+  if(d.rDelete!==undefined){const b=currentBook();if(!(window.IrisSettingsAppearance?.isNingguang?.()?await window.IrisSettingsAppearance.confirm(`移出《${b.title}》并删除这张面具下对应的共读记录？`):window.confirm(`移出《${b.title}》并删除这张面具下对应的共读记录？`)))return;C.removeBook(rt.state,ownerId(),bookId);bookId='';persist();navigate('shelf');return}
   if(view!=='reader')return;const b=currentBook(),s=copy(),p=C.currentPage(b,s);
   if(d.rMove!==undefined){if((C.normalize(rt.state).preferences[ownerId()]||{}).direction==='horizontal'){turnChapterPage(Number(d.rMove));return}const chapter=Math.max(0,Math.min(b.chapters.length-1,s.chapter+Number(d.rMove)));Object.assign(s,{chapter,page:0,scroll:0});selection=null;drawer=null;persist();render();rt.content.scrollTop=0;return}
   if(d.rRead!==undefined){C.pages(b.chapters[p.chapter]).forEach((_,i)=>{s.readPages[C.pageKey(p.chapter,i)]=Date.now()});persist();render();notice('已记下这一章的阅读进度');return}

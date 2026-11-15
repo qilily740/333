@@ -81,7 +81,7 @@ async function generateMemories(rt,source,replaceApproved=false){
  if(jobs.get(source)?.pending||!owned(rt,source))return;const trip=rt.getTrip(),journal=read(source),evidence=dailyEvidence(rt,source);
  if(!['travelling','complete'].includes(trip?.status))return;
  if(root.IrisTravelBilling?.pending(source).length){jobs.set(source,{pending:false,message:'还有旅途消费待结算，请先处理旅行账单，再生成每日记录。'});refresh(source);return{saved:false}}
- if(journal.memories.length&&!replaceApproved&&!rt.confirm('重新生成会替换这趟旅行的每日记录，继续？'))return;
+ if(journal.memories.length&&!replaceApproved&&!(window.IrisSettingsAppearance?.isNingguang?.()?await window.IrisSettingsAppearance.confirm('重新生成会替换这趟旅行的每日记录，继续？'):rt.confirm('重新生成会替换这趟旅行的每日记录，继续？')))return;
  const expected=snapshot(rt,source),fingerprint=JSON.stringify(evidence),job={pending:true,message:'正在联网参考每天的地点，生成整趟旅行的每日记录…'};jobs.set(source,job);refresh(source);
  const task=root.IrisTasks?.start({id:'travel-records-'+rt.threadKey+'-'+rt.id,title:'旅行记录 · '+(trip.destination||'双人旅行'),detail:job.message,retry:()=>generateMemories(rt,source,true)});
  try{

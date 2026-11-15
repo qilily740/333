@@ -46,13 +46,13 @@ async function perform(action,{automatic=false}={}){
    const record=await root.IrisStorage?.readRecovery?.();if(!record?.data)throw Error('还没有恢复前副本。首次从 GitHub 恢复时会自动保存一份。');
    const backup=await root.IrisBackup.make(record.data),archive=await root.IrisBackup.zip(JSON.stringify(backup)),url=URL.createObjectURL(archive),link=root.document.createElement('a');link.href=url;link.download='iris-before-github-restore.zip';root.document.body.append(link);link.click();link.remove();root.setTimeout(()=>URL.revokeObjectURL(url),1500);feedback('恢复前的本机副本已导出。');return;
   }
-  if(action==='discard'){if(!root.confirm('清除后将不能继续这次中断的上传，确定清除吗？')){feedback('已保留续传进度。');return}await stage.clear();pendingUpload=false;feedback('已清除本机续传任务，完整云端备份不受影响。');return}
+  if(action==='discard'){if(!await root.IrisSettingsAppearance.confirm('清除后将不能继续这次中断的上传，确定清除吗？',{title:'清除续传进度',accept:'清除',destructive:true})){feedback('已保留续传进度。');return}await stage.clear();pendingUpload=false;feedback('已清除本机续传任务，完整云端备份不受影响。');return}
   if(action==='connect'){await check();feedback(connection.manifest?'连接成功，可以上传本机数据或下载云端备份。':'连接成功，仓库里还没有 Iris 备份。');return}
   if(action==='upload'){
    const task=await stage.get('task');if(task){if(task.manifest.encrypted&&!automatic&&!password){const value=await askPassword('resume');if(value===null){feedback('已取消续传，上传进度已保留。');return}rememberPassword(value)}const saved=await C.resumeState(requestConfig(),stage,{onProgress:message=>feedback(message)});pendingUpload=false;uploaded(saved);return}
    if(checkedTarget!==target()||!connection){feedback('正在连接 GitHub 仓库…');await check();}
    if(automatic&&config.lastSha!==connection.sha)throw Error('云端存在尚未核对的备份，自动备份已暂停，请先测试连接并下载核对。');
-   if(!automatic&&connection.manifest&&!root.confirm('仓库已有备份。本次会将本机完整数据设为最新备份，旧快照仍保留。确定上传吗？')){feedback('已取消上传。');return}
+   if(!automatic&&connection.manifest&&!await root.IrisSettingsAppearance.confirm('仓库已有备份。本次会将本机完整数据设为最新备份，旧快照仍保留。确定上传吗？',{title:'上传最新备份',accept:'确认上传'})){feedback('已取消上传。');return}
    feedback('正在读取本机资料并检查备份…');const snapshot=await originRuntime.snapshot(),counts=root.IrisBackup.validateData(snapshot);if(counts.localBlobRefs)throw Error('资料包含临时媒体链接，请先保存对应媒体再备份。');const dataHash=automatic||config.uploadMode==='whole'?await C.fingerprint(snapshot,{chunkKB:config.chunkKB,incremental:config.uploadMode==='incremental'}):'';
    if(automatic&&config.lastDataHash===dataHash){feedback('本机数据未变化，无需重复上传。');return}
    if(config.encrypted&&!automatic&&!password){const value=await askPassword('upload');if(value===null){feedback('已取消上传。');return}rememberPassword(value)}

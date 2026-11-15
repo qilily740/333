@@ -6,7 +6,7 @@ const {createCipheriv,createHash,createDecipheriv,webcrypto}=require('node:crypt
 const source=fs.readFileSync(require('node:path').join(__dirname,'worker.js'),'utf8').replace(/^import[^\n]+\n/gm,'').replace(/^export \{ MusicStatistics \};\n/m,'').replace('export default {','globalThis.worker = {');
 function fixture(handler){
  const calls=[],store=new Map(),env={SESSION_ENCRYPTION_KEY:Buffer.alloc(32,7).toString('base64'),MUSIC_STORE:{get:async key=>store.get(key),put:async(key,value)=>store.set(key,value),delete:async key=>store.delete(key)}};
- const context=vm.createContext({AsyncLocalStorage:require('node:async_hooks').AsyncLocalStorage,createHmac:require('node:crypto').createHmac,timingSafeEqual:require('node:crypto').timingSafeEqual,createHash:require('node:crypto').createHash,performance,createCipheriv,createHash,crypto:webcrypto,TextEncoder,TextDecoder,URLSearchParams,URL,Request,Response,Headers,AbortSignal,btoa,atob,console,fetch:async(url,options={})=>{
+ const context=vm.createContext({AsyncLocalStorage:require('node:async_hooks').AsyncLocalStorage,createHmac:require('node:crypto').createHmac,timingSafeEqual:require('node:crypto').timingSafeEqual,createHash:require('node:crypto').createHash,performance,createCipheriv,createHash,crypto:webcrypto,TextEncoder,TextDecoder,URLSearchParams,URL,Request,Response,Headers,AbortSignal,AbortController,btoa,atob,console,fetch:async(url,options={})=>{
   let payload={},path=new URL(url).pathname;
   if(options.body){const params=new URLSearchParams(options.body).get('params');const decipher=createDecipheriv('aes-128-ecb',Buffer.from('e82ckenh8dichen8'),null);const plain=decipher.update(params,'hex','utf8')+decipher.final('utf8');const pieces=plain.split('-36cd479b6b5-');path=pieces[0];payload=JSON.parse(pieces[1]);}
   const call={path,payload,url,options};calls.push(call);const data=await handler(call);return data instanceof Response?data:Response.json(data);
@@ -51,8 +51,8 @@ test('cover relay serves only bounded NetEase raster artwork without credentials
 });
 test('guest search and metadata fail over public services without forwarding credentials',async()=>{
  const f=fixture(call=>{assert.equal(call.options.headers.authorization,undefined);assert.equal(call.options.headers.cookie,undefined);const url=new URL(call.url);assert.equal(url.searchParams.get('server'),'netease');if(url.hostname==='api.qijieya.cn')return new Response('unavailable',{status:503});if(url.searchParams.get('type')==='lrc')return new Response('[00:01]公开歌词');return[{name:'晴天',artist:'周杰伦',url:'https://api.i-meto.com/meting/api?server=netease&type=url&id=186016',pic:'https://api.i-meto.com/meting/api?server=netease&type=pic&id=109951165566379710'}]});
- let r=await f.request('/search?q='+encodeURIComponent('晴天'));assert.equal(r.status,200);assert.equal(r.data.songs[0].id,'186016');assert.equal(r.data.songs[0].musicAccessMode,'guest');assert.equal(f.calls.length,2);
- r=await f.request('/song?id=186016&metadata=1');assert.equal(r.data.song.playUrl,undefined);assert.ok(r.data.song.cover);r=await f.request('/song?id=186016');assert.equal(r.data.song.playbackSources.length,5);assert.match(r.data.song.playUrl,/guest\/playback\?id=186016&provider=1/);assert.equal(r.data.song.lyrics,'[00:01]公开歌词');assert.ok(f.calls.every(call=>new URL(call.url).hostname!=='music.163.com'));
+ let r=await f.request('/search?q='+encodeURIComponent('晴天'));assert.equal(r.status,200);assert.equal(r.data.songs[0].id,'186016');assert.equal(r.data.songs[0].musicAccessMode,'guest');assert.equal(f.calls.length,3);
+ r=await f.request('/song?id=186016&metadata=1');assert.equal(r.data.song.playUrl,undefined);assert.ok(r.data.song.cover);r=await f.request('/song?id=186016');assert.equal(r.data.song.playbackSources.length,16);assert.match(r.data.song.playUrl,/guest\/playback\?id=186016&provider=1/);assert.equal(r.data.song.lyrics,'[00:01]公开歌词');assert.ok(f.calls.every(call=>new URL(call.url).hostname!=='music.163.com'));
 });
 test('logged-in music search keeps the authenticated NetEase route and expired sessions never become guest requests',async()=>{
  const f=fixture(call=>{assert.equal(new URL(call.url).hostname,'interfacepc.music.163.com');assert.match(call.options.headers.cookie,/MUSIC_U=secret/);return{code:200,result:{songs:[song(1)]}}});const token=await f.session();const r=await f.request('/search?q=test',token);assert.equal(r.status,200);assert.equal(f.calls.length,1);
@@ -66,4 +66,27 @@ test('guest playback address requests are mediated without credentials and unsaf
  const f=fixture(call=>{assert.equal(call.options.headers.authorization,undefined);assert.equal(call.options.headers.cookie,undefined);assert.equal(new URL(call.url).searchParams.get('type'),'url');return new Response(null,{status:302,headers:{location:'http://m801.music.126.net/audio/song.mp3'}})});
  const r=await f.context.worker.fetch(new Request('https://music.test/guest/playback?id=186016&provider=0'),f.env);assert.equal(r.status,302);assert.equal(r.headers.get('location'),'https://m801.music.126.net/audio/song.mp3');
  const unsafe=fixture(()=>new Response(null,{status:302,headers:{location:'http://127.0.0.1/private'}}));assert.equal((await unsafe.request('/guest/playback?id=186016&provider=0')).status,502);assert.equal((await unsafe.request('/guest/playback?id=186016&provider=99')).status,400);
+});
+
+test('all sixteen supplied music providers support failover with their own parameter dialects',async()=>{
+ const expected=['api.qijieya.cn','api.i-meto.com','api.injahow.cn','api.amarea.cn','api.moeyao.cn','meting.mtr.pub','apivc-meting.sakurink.eu.org','apivc-meting.sakurink.eu.org','meting.knoci.cn','met.liiiu.cn','meting.elysium-stack.cn','meting.mikus.ink','api.mxin.moe','music.duanjinglin.com','open.motues.top','api.hk0.cc'];
+ for(let index=0;index<expected.length;index++){
+  const f=fixture(call=>{const u=new URL(call.url),target=vm.runInContext('GUEST_MUSIC_SERVICES['+index+']',f.context),base=new URL(target);if(u.origin!==base.origin||u.pathname!==base.pathname)return new Response('offline',{status:503});
+   assert.equal(call.options.headers.authorization,undefined);assert.equal(call.options.headers.cookie,undefined);assert.equal(call.options.headers['x-iris-music-device'],undefined);
+   if(index===15){assert.equal(u.searchParams.get('type'),'search');assert.equal(u.searchParams.get('s'),'测试歌曲');return{code:200,data:{songs:[{id:123,name:'测试歌曲',artists:[{name:'测试歌手'}],dt:180000}]}}}
+   assert.equal(u.searchParams.get('type'),'search');assert.equal(u.searchParams.get('server'),'netease');return[{id:123,name:'测试歌曲',artist:'测试歌手',duration:180}];
+  });
+  const r=await f.request('/search?q='+encodeURIComponent('测试歌曲'));assert.equal(r.status,200,expected[index]);assert.equal(r.data.songs[0].artist,'测试歌手');assert.equal(r.data.songs[0].duration,180);
+ }
+});
+test('Meting aliases and backup playback preserve provider indices and restricted audio redirects',async()=>{
+ const f=fixture(call=>{const u=new URL(call.url);if(u.hostname==='api.hk0.cc')return{code:200,url:'https://m801.music.126.net/example.mp3'};throw Error('unexpected source')});
+ const special=vm.runInContext("guestAddress(GUEST_MUSIC_SERVICES[4],'song','123')",f.context);assert.equal(new URL(special).searchParams.get('type'),'single');
+ assert.equal(new URL(vm.runInContext("guestAddress(GUEST_MUSIC_SERVICES[4],'pic','123')",f.context)).searchParams.get('type'),'cover');
+ const response=await f.context.worker.fetch(new Request('https://music.test/guest/playback?id=123&provider=15'),f.env);assert.equal(response.status,302);assert.equal(response.headers.get('location'),'https://m801.music.126.net/example.mp3');assert.equal(new URL(f.calls[0].url).searchParams.get('type'),'json');
+});
+
+test('lyrics can fall back independently of the successful metadata provider',async()=>{
+ const f=fixture(call=>{const u=new URL(call.url);if(u.searchParams.get('type')==='lrc')return u.hostname==='api.i-meto.com'?new Response('[00:02]来自备用来源的歌词'):new Response('offline',{status:503});return[{id:123,name:'测试歌曲',artist:'测试歌手'}]});
+ const r=await f.request('/song?id=123');assert.equal(r.status,200);assert.equal(r.data.song.lyrics,'[00:02]来自备用来源的歌词');assert.equal(r.data.song.playbackSources.length,16);assert.equal(new URL(r.data.song.playUrl).searchParams.get('provider'),'0');
 });

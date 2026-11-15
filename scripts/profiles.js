@@ -86,9 +86,9 @@ function drawProfileList() {
   });
 }
 
-function deleteProfileAt(index) {
+async function deleteProfileAt(index) {
   const user = profileDrafts[index];
-  if (!confirm(`确定删除“${user.name.trim() || '未命名用户'}”吗？此操作无法撤销。`)) return;
+  if (!(window.IrisSettingsAppearance?.isNingguang?.()?await window.IrisSettingsAppearance.confirm(`确定删除“${user.name.trim() || '未命名用户'}”吗？此操作无法撤销。`):confirm(`确定删除“${user.name.trim() || '未命名用户'}”吗？此操作无法撤销。`))) return;
   if(index<state.users.length)removeLocalIdentity('user',index);
   profileDrafts.splice(index,1);
   profilePage = state.users.length ? Math.min(profilePage, state.users.length - 1) : 0;

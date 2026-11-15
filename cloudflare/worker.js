@@ -14,13 +14,33 @@ function json(value, status = 200, origin = '') {
   return new Response(JSON.stringify(value), { status, headers });
 }
 
+// Keep existing provider indices stable for saved playback queues.
 const GUEST_MUSIC_SERVICES = Object.freeze([
   'https://api.qijieya.cn/meting/', 'https://api.i-meto.com/meting/api',
   'https://api.injahow.cn/meting/', 'https://api.amarea.cn/meting/', 'https://api.moeyao.cn/meting/',
+  'https://meting.mtr.pub/api', 'https://apivc-meting.sakurink.eu.org/registration/',
+  'https://apivc-meting.sakurink.eu.org/xleet.php', 'https://meting.knoci.cn/',
+  'https://met.liiiu.cn/meting/api', 'https://meting.elysium-stack.cn/api',
+  'https://meting.mikus.ink/api', 'https://api.mxin.moe/api/v1/meting',
+  'https://music.duanjinglin.com/api', 'https://open.motues.top/music',
+  'https://api.hk0.cc/api/wyysvip',
 ]);
-function guestAddress(base, type, id) { const url = new URL(base); url.search = new URLSearchParams({ server: 'netease', type, id: String(id) }); return url.href; }
+function guestAddress(base, type, id) {
+ const url = new URL(base);
+ if(base===GUEST_MUSIC_SERVICES[15])url.search=new URLSearchParams(type==='search'?{type:'search',s:String(id),limit:'20'}:type==='lrc'?{type:'lyric',ids:String(id)}:{type:'json',ids:String(id),level:'standard'});
+ else url.search=new URLSearchParams({server:'netease',type:base.includes('api.moeyao.cn')?({song:'single',pic:'cover'}[type]||type):type,id:String(id),...(type==='search'?{limit:'20'}:{})});
+ return url.href;
+}
+function guestRows(body,base,id){
+ if(Array.isArray(body))return body;
+ if(base!==GUEST_MUSIC_SERVICES[15])return [];
+ if(body?.code&&Number(body.code)!==200)throw Error('音乐来源暂未返回结果');
+ if(Array.isArray(body?.data?.songs))return body.data.songs;
+ const row=body?.data&&typeof body.data==='object'?body.data:body;
+ return row?.name?[{...row,id:row.id||id,artist:row.ar_name||row.artists||row.artist,album:row.al_name||row.album,pic:row.pic||row.picUrl}]:[];
+}
 function guestImageAddress(raw) {
-  try { const url = new URL(raw); return !url.username && !url.password && !url.port && GUEST_MUSIC_SERVICES.some(base => { const service = new URL(base); return url.origin === service.origin && url.pathname === service.pathname; }) && url.searchParams.get('server') === 'netease' && url.searchParams.get('type') === 'pic' && /^\d{1,25}$/.test(url.searchParams.get('id') || '') ? url : null; } catch { return null; }
+  try { const url = new URL(raw); return !url.username && !url.password && !url.port && GUEST_MUSIC_SERVICES.some(base => { const service = new URL(base); return url.origin === service.origin && url.pathname === service.pathname; }) && url.searchParams.get('server') === 'netease' && ['pic','cover'].includes(url.searchParams.get('type')) && /^\d{1,25}$/.test(url.searchParams.get('id') || '') ? url : null; } catch { return null; }
 }
 function guestSongRecord(row, base) {
   if (!row || typeof row !== 'object') return null;
@@ -28,24 +48,41 @@ function guestSongRecord(row, base) {
   try { const source = new URL(row.url); if (!id && (!source.searchParams.get('server') || source.searchParams.get('server') === 'netease')) id = source.searchParams.get('id') || ''; } catch {}
   if (!/^\d{1,18}$/.test(id) || !String(row.name || row.title || '').trim()) return null;
   let cover = String(row.pic || row.cover || ''); try { if (!/^https?:$/.test(new URL(cover).protocol)) cover = ''; } catch { cover = ''; }
-  return { id, name: String(row.name || row.title).slice(0, 300), artist: (Array.isArray(row.artist || row.author) ? row.artist || row.author : [row.artist || row.author || '']).map(item => typeof item === 'string' ? item : item?.name || '').join(' / ').slice(0, 300), album: String(row.album || '').slice(0, 300), duration: Math.max(0, Number(row.duration) || 0), cover, musicAccessMode: 'guest', provider: base };
+  return { id, name: String(row.name || row.title).slice(0, 300), artist: (Array.isArray(row.artist || row.author || row.artists || row.ar) ? row.artist || row.author || row.artists || row.ar : [row.artist || row.author || row.artists || row.ar || '']).map(item => typeof item === 'string' ? item : item?.name || '').join(' / ').slice(0, 300), album: String(row.album || '').slice(0, 300), duration: (()=>{const value=row.duration||row.dt||row.length||0;if(typeof value==='string'&&/^\d+:\d{2}$/.test(value)){const [m,s]=value.split(':').map(Number);return m*60+s}const n=Number(value)||0;return Math.max(0,n>10000?n/1000:n)})(), cover, musicAccessMode: 'guest', provider: base };
 }
 async function guestMusicRead(type, id) {
-  let receivedEmpty = false;
-  for (const base of GUEST_MUSIC_SERVICES) {
-    try {
-      const songs = await musicUpstream('/meting/' + type, async () => {
-        const response = await fetch(guestAddress(base, type, id), { headers: { accept: 'application/json' }, redirect: 'manual', signal: AbortSignal.timeout(4000) });
-        if (!response.ok) throw new Error('游客音乐服务暂时不可用');
-        const body = await response.json(); if (!Array.isArray(body)) throw new Error('游客音乐服务返回格式不支持');
-        return { data: { code: 200 }, songs: body.map(row => guestSongRecord(row, base)).filter(Boolean) };
-      });
-      if (songs.songs.length) return songs.songs;
-      receivedEmpty = true;
-    } catch { /* An unavailable public service must not hide the next independent service. */ }
-  }
-  if (receivedEmpty) return [];
-  throw musicError('游客音乐服务暂时无法连接，请稍后重试或登录网易云。', null, 502);
+ let receivedEmpty=false;
+ // Small concurrent batches keep a failed source from blocking every following source.
+ for(let offset=0;offset<GUEST_MUSIC_SERVICES.length;offset+=3){
+  const controller=new AbortController();
+  try{return await Promise.any(GUEST_MUSIC_SERVICES.slice(offset,offset+3).map(async base=>{
+   const result=await musicUpstream('/meting/'+type,async()=>{
+    const response=await fetch(guestAddress(base,type,id),{headers:{accept:'application/json'},redirect:'manual',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(4000)])});
+    if(!response.ok)throw Error('音乐来源暂时不可用');
+    const body=await response.json(),rows=guestRows(body,base,id);
+    if(!Array.isArray(body)&&base!==GUEST_MUSIC_SERVICES[15])throw Error('音乐来源格式不支持');
+    return {data:{code:200},songs:rows.map(row=>guestSongRecord(row,base)).filter(row=>row&&(type!=='song'||row.id===String(id)))};
+   });
+   if(!result.songs.length){receivedEmpty=true;throw Error('没有匹配歌曲')}
+   return result.songs;
+  }))}catch{}finally{controller.abort()}
+ }
+ if(receivedEmpty)return [];
+ throw musicError('音乐来源暂时无法连接，请稍后重试或登录网易云。',null,502);
+}
+async function guestMusicLyrics(id,bases){
+ for(let offset=0;offset<bases.length;offset+=3){
+  const controller=new AbortController();
+  try{return await Promise.any(bases.slice(offset,offset+3).map(async base=>{
+   const result=await musicUpstream('/meting/lyric',async()=>{
+    const response=await fetch(guestAddress(base,'lrc',id),{headers:{accept:'text/plain,application/json'},redirect:'manual',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(3000)])});
+    if(!response.ok)throw Error('歌词来源不可用');let text=(await response.text()).slice(0,120000);
+    if(/^\s*[{[]/.test(text)&&!/^\s*\[\d/.test(text)){try{const value=JSON.parse(text);text=String(value.lrc?.lyric||value.lyric||value.data?.lyric||value.data?.lrc?.lyric||'')}catch{text=''}}
+    if(!text.trim()||/^\s*[<{]/.test(text))throw Error('没有歌词');return{data:{code:200},text};
+   });return result.text;
+  }))}catch{}finally{controller.abort()}
+ }
+ return '';
 }
 async function guestMusicSong(id, metadataOnly, origin) {
   const records = await guestMusicRead('song', id), song = records.find(item => item.id === id);
@@ -53,14 +90,7 @@ async function guestMusicSong(id, metadataOnly, origin) {
   const bases = [song.provider, ...GUEST_MUSIC_SERVICES.filter(base => base !== song.provider)];
   const result = { ...song, lyrics: '', lyricSource: '' }; delete result.provider;
   if (metadataOnly) return result;
-  try {
-    const lyric = await musicUpstream('/meting/lyric', async () => {
-      const response = await fetch(guestAddress(song.provider, 'lrc', id), { headers: { accept: 'text/plain' }, redirect: 'manual', signal: AbortSignal.timeout(3000) });
-      if (!response.ok) throw new Error('歌词暂时不可用'); const text = (await response.text()).slice(0, 120000);
-      return { data: { code: 200 }, text: /^\s*[{<]/.test(text) ? '' : text };
-    });
-    result.lyrics = lyric.text; result.lyricSource = lyric.text ? '公开音乐服务' : '';
-  } catch {}
+  result.lyrics=await guestMusicLyrics(id,bases);result.lyricSource=result.lyrics?'公开音乐服务':'';
   result.playbackSources = bases.map(base => new URL('/guest/playback?' + new URLSearchParams({ id, provider: String(GUEST_MUSIC_SERVICES.indexOf(base)) }), origin).href);
   return { ...result, playUrl: result.playbackSources[0], playUrlExpiresAt: Date.now() + 600000, playbackStatus: 'available', playbackMessage: '' };
 }
@@ -84,7 +114,7 @@ async function guestPlayback(request,url) {
 async function musicCover(requestUrl) {
   function source(raw) {
     let url; try { url = new URL(raw); } catch { return null; }
-    const meting = guestImageAddress(raw); if (meting) { meting.search = new URLSearchParams({ server: 'netease', type: 'pic', id: meting.searchParams.get('id') }); return meting; }
+    const meting = guestImageAddress(raw); if (meting) { meting.search = new URLSearchParams({ server: 'netease', type: meting.hostname==='api.moeyao.cn'?'cover':'pic', id: meting.searchParams.get('id') }); return meting; }
     if (!['http:', 'https:'].includes(url.protocol) || !/^p[1-9]\.music\.126\.net$/i.test(url.hostname) || url.username || url.password || url.port || !/^\/[a-z0-9_=-]{8,100}\/\d{5,25}\.(jpg|jpeg|png|webp)$/i.test(url.pathname)) return null;
     url.protocol = 'https:'; url.search = '?param=300y300'; url.hash = ''; return url;
   }
