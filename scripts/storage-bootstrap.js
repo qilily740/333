@@ -1,5 +1,5 @@
 (() => {
-  const query = (window.IRIS_RELEASE ? `?iris-release=${encodeURIComponent(window.IRIS_RELEASE)}` : '?v=6.0.0-r1') + '&ui=settings-refined-r132' + (window.location?.protocol === 'file:' ? '&iris-local=' + Date.now() : '');
+  const query = (window.IRIS_RELEASE ? `?iris-release=${encodeURIComponent(window.IRIS_RELEASE)}` : '?v=6.0.0-r2') + '&ui=settings-refined-r134' + (window.location?.protocol === 'file:' ? '&iris-local=' + Date.now() : '');
   const legacyKey = 'iris-v1';
   const databaseName = 'iris-local-data';
   const storeName = 'app-state';
