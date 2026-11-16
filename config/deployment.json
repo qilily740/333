@@ -1,0 +1,7 @@
+{
+  "serviceUrl": "https://iris-deploy.weishengrongqing.workers.dev",
+  "publicServices": {
+    "music": "https://music-api.suri.us.ci",
+    "background": "https://background-api.suri.us.ci"
+  }
+}

@@ -140,7 +140,7 @@ function drawCharacterEditor(index) {
       <div class="profile-fields">
         <label class="name-paper">名字 <span>NAME</span><input name="name" maxlength="80" required value="${esc(c.name||'')}" placeholder="角色名字"></label>
         <label class="nickname-paper">网名 <span>NICKNAME</span><input name="nickname" maxlength="80" value="${esc(c.nickname||'')}"></label>
-        <label>性别 <span>GENDER</span><input name="gender" maxlength="40" value="${esc(c.gender||'')}" placeholder="填写性别"></label>
+        <label>性别 <span>GENDER</span><select name="gender" aria-label="角色性别"><option value="" ${c.gender?'':'selected'}>请选择</option><option value="Male" ${['Male','男','男性'].includes(c.gender)?'selected':''}>男</option><option value="Female" ${['Female','女','女性'].includes(c.gender)?'selected':''}>女</option><option value="其他" ${c.gender==='其他'?'selected':''}>其他</option>${c.gender&&!['Male','Female','男','女','男性','女性','其他'].includes(c.gender)?`<option value="${esc(c.gender)}" selected>${esc(c.gender)}</option>`:''}</select></label>
         <label>生日 <span>BIRTHDAY</span><input name="birthday" maxlength="40" value="${esc(c.birthday||'')}" placeholder="YYYY-MM-DD / MM-DD"></label>
         <label class="profile-wide details-note">具体信息 <span>ABOUT CHAR</span><textarea name="details" maxlength="100000" rows="3" placeholder="性格、背景和角色设定…">${esc(c.details||c.desc||'')}</textarea></label>
       </div>
@@ -148,6 +148,10 @@ function drawCharacterEditor(index) {
       <div class="profile-save-actions"><button type="button" class="profile-confirm profile-save-only" id="saveCharacterOnly">保存资料</button>${c.builtinRole==='iris-assistant'?'<button type="button" class="profile-confirm" id="openAssistantChat">开启聊天</button>':''}<button type="submit" class="profile-confirm">${c.builtinRole==='iris-assistant'?'开启悬浮助手':'确认使用此角色'} <span aria-hidden="true">↗</span></button></div>
       <p class="character-feedback" role="status">${esc(characterImportNote||(c.builtinRole==='iris-assistant'?'开启伊里斯悬浮助手，保留当前聊天':'确认后保存资料并切换角色'))}</p>
     </form>`;
+  if(document.body.dataset.irisAppearance==='apple'){
+    const editor=document.getElementById('characterForm'),identity=editor?.querySelector('.profile-identity'),fields=editor?.querySelector('.profile-fields'),details=fields?.querySelector('.details-note');
+    if(identity&&fields){const top=document.createElement('div');top.className='ng-profile-editor-top';identity.before(top);top.append(identity,fields);if(details)top.after(details)}
+  }
   bindCharacterClose();refreshCharacterPortrait();
   document.getElementById('characterBack').onclick=drawCharacterList;
   document.getElementById('previousCharacter').onclick=()=>{drawCharacterEditor(index-1);document.getElementById('nextCharacter').focus()};

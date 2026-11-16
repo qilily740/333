@@ -144,7 +144,7 @@ function drawProfile() {
       <div class="profile-fields">
         <label class="name-paper">名字 <span>NAME</span><input name="name" maxlength="40" required autocomplete="off" placeholder="你的名字" value="${esc(user.name)}"></label>
         <label class="nickname-paper">网名 <span>NICKNAME</span><input name="nickname" maxlength="40" autocomplete="off" placeholder="怎么称呼你" value="${esc(user.nickname)}"></label>
-        <div class="profile-demographics"><label>性别 <span>GENDER</span><select name="gender"><option value="" ${user.gender?'':'selected'}>请选择</option><option value="Male" ${user.gender==='Male'?'selected':''}>Male</option><option value="Female" ${user.gender==='Female'?'selected':''}>Female</option></select></label><label>生日 <span>BIRTHDAY</span><input name="birthday" maxlength="40" value="${esc(user.birthday||'')}" placeholder="YYYY-MM-DD / MM-DD"></label></div>
+        <div class="profile-demographics"><label>性别 <span>GENDER</span><select name="gender" aria-label="用户性别"><option value="" ${user.gender?'':'selected'}>请选择</option><option value="Male" ${['Male','男','男性'].includes(user.gender)?'selected':''}>男</option><option value="Female" ${['Female','女','女性'].includes(user.gender)?'selected':''}>女</option><option value="其他" ${user.gender==='其他'?'selected':''}>其他</option>${user.gender&&!['Male','Female','男','女','男性','女性','其他'].includes(user.gender)?`<option value="${esc(user.gender)}" selected>${esc(user.gender)}</option>`:''}</select></label><label>生日 <span>BIRTHDAY</span><input name="birthday" maxlength="40" value="${esc(user.birthday||'')}" placeholder="YYYY-MM-DD / MM-DD"></label></div>
         <label class="profile-wide details-note">具体信息 <span>ABOUT YOU</span><span class="note-decoration" aria-hidden="true">${icon('music')}</span><textarea name="details" maxlength="2000" rows="3" placeholder="性格、喜好，或想被记住的小事…">${esc(user.details)}</textarea></label>
       </div>
       <div class="profile-pagination"><button type="button" id="previousProfile" ${profilePage === 0 ? 'disabled' : ''}><span aria-hidden="true">←</span> 上一页</button><span aria-live="polite">${number}<i>/</i>${String(profileDrafts.length).padStart(2, '0')}</span><button type="button" id="nextProfile" ${profilePage === profileDrafts.length - 1 ? 'disabled' : ''}>下一页 <span aria-hidden="true">→</span></button></div>
@@ -152,6 +152,10 @@ function drawProfile() {
       <p class="profile-footnote" id="profileFeedback" role="status">保存资料后无需切换用户</p>
     </form>`;
   profileDialog.querySelector('.profile-roster')?.remove();
+  if(document.body.dataset.irisAppearance==='apple'){
+    const editor=document.getElementById('profileForm'),identity=editor?.querySelector('.profile-identity'),fields=editor?.querySelector('.profile-fields'),details=fields?.querySelector('.details-note');
+    if(identity&&fields){const top=document.createElement('div');top.className='ng-profile-editor-top';identity.before(top);top.append(identity,fields);if(details)top.after(details)}
+  }
   updateProfilePreview();
   profileDialog.querySelector('.profile-close').onclick = closeProfiles;
   document.getElementById('profileBackToList').onclick = drawProfileList;

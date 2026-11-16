@@ -1,7 +1,8 @@
 /* Iris Music cloud API client. Login tokens stay out of the exportable app state. */
 (()=>{
 'use strict';
-const API=window.IRIS_MUSIC_API||'https://music-api.suri.us.ci';
+const DEFAULT_API=window.IRIS_MUSIC_API||'https://music-api.suri.us.ci';
+let API=DEFAULT_API;try{const value=JSON.parse(localStorage.getItem('iris-service-endpoints-v1')||'{}').music;if(value){const url=new URL(value);if(url.protocol==='https:')API=url.origin}}catch{}
 // Negotiate with the backend before adding non-legacy request headers.
 const STATS_ALLOWED=window.IRIS_MUSIC_STATISTICS!==false;
 let coverProxySupported=false,guestMusicSupported=false;
@@ -35,7 +36,7 @@ async function trackUse(action){try{
 }catch{} }
 let dbPromise;
 function openDb(){if(dbPromise)return dbPromise;dbPromise=new Promise((resolve,reject)=>{const req=indexedDB.open('iris-music-auth',1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('sessions'))req.result.createObjectStore('sessions')};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||Error('无法打开网易云登录存储'))});dbPromise.catch(()=>dbPromise=null);return dbPromise}
-async function storage(action,userId,value){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction('sessions',action==='get'?'readonly':'readwrite'),store=tx.objectStore('sessions');let result;const req=action==='get'?store.get(userId):action==='put'?store.put(value,userId):store.delete(userId);req.onsuccess=()=>result=req.result;tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(tx.error||Error('网易云登录信息保存失败'));tx.onabort=()=>reject(tx.error||Error('网易云登录信息保存失败'))})}
+async function storage(action,userId,value){if(API!==DEFAULT_API)userId=API+'|'+userId;const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction('sessions',action==='get'?'readonly':'readwrite'),store=tx.objectStore('sessions');let result;const req=action==='get'?store.get(userId):action==='put'?store.put(value,userId):store.delete(userId);req.onsuccess=()=>result=req.result;tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(tx.error||Error('网易云登录信息保存失败'));tx.onabort=()=>reject(tx.error||Error('网易云登录信息保存失败'))})}
 const getToken=userId=>storage('get',userId);
 const saveToken=(userId,token)=>storage('put',userId,token);
 async function request(path,{token,method='GET',body,signal}={}){

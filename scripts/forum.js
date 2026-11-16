@@ -236,7 +236,7 @@
    if(action==='send-comment-role-replies'){const id=target.dataset.commentId,comment=w?.comments.find(item=>item.id===id&&!item.deleted),post=w?.posts.find(item=>item.id===comment?.postId&&!item.deleted),selected=[...(commentRoleSelections.get(id)||[])];if(!comment||!post||!selected.length||commentRoleBusy.has(id))return;const top=runtime.content.scrollTop||0;commentRoleBusy.add(id);noticeText='';renderAtScroll(top);let sent=0,failed=0;for(const actorId of selected){if(await generateRoleComment(w,post,comment.id,actorId,{quiet:true}))sent++;else failed++}commentRoleBusy.delete(id);commentRoleReplyOpen.delete(id);commentRoleSelections.delete(id);if(failed)noticeText=sent?`已邀请 ${sent} 位角色回复，${failed} 位未能回复`:'角色暂时无法回复，请稍后重试';const finalTop=runtime.content.scrollTop||top;renderAtScroll(finalTop);return}
    if(action==='role-new-post'){await generateRolePost(w,target.dataset.actorId);return}
    if(action==='remove-member'){if((window.IrisSettingsAppearance?.isNingguang?.()?await window.IrisSettingsAppearance.confirm('从本论坛世界移除此成员？已有公开帖子会保留。'):window.confirm('从本论坛世界移除此成员？已有公开帖子会保留。'))){Core.removeMember(w,target.dataset.actorId);runtime.save();render()}return}
-   if(action==='toggle-npc'){const npc=w.npcs.find(item=>item.id===target.dataset.npcId);if(npc){npc.active=npc.active===false;runtime.save();render()}return}
+   if(action==='toggle-npc'){const npc=w.npcs.find(item=>item.id===target.dataset.npcId);if(npc){npc.active=npc.active===false;runtime.save();target.textContent=npc.active===false?'启用':'暂停';target.setAttribute('aria-label',(npc.active===false?'启用':'暂停')+' '+(npc.nickname||npc.name||'此成员'))}return}
    if(action==='read-all'){Core.markRead(w,personaActor());runtime.save();render();return}
   }catch(error){showError(error)}
  };

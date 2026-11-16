@@ -1,0 +1,29 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "iris-deploy",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-18",
+  "workers_dev": true,
+  "preview_urls": false,
+  "vars": {
+    "PUBLIC_URL": "https://iris-deploy.weishengrongqing.workers.dev",
+    "CF_CLIENT_ID": "cd633e8f6ca6c40f29e4be32bf0559d5",
+    "CF_OAUTH_SCOPES": "account-settings.read workers-scripts.admin workers-kv-storage.write workers-routes.write zone.read"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SESSIONS",
+        "class_name": "IrisDeploySession"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "deploy-v1",
+      "new_sqlite_classes": [
+        "IrisDeploySession"
+      ]
+    }
+  ]
+}

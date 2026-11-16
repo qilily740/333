@@ -8869,3 +8869,321 @@ body[data-iris-appearance="apple"] #sheet.ng-unified-sheet .chat-gift-line:last-
 body[data-iris-appearance="apple"] #sheet.ng-unified-sheet .chat-gift-item-copy strong{font-family:inherit;font-size:14px;font-weight:500;color:#333}
 body[data-iris-appearance="apple"] .gift-reaction-dialog blockquote{margin:14px 0;padding:12px;border:0;border-radius:14px;background:#f5f5f8;color:#555;font-family:inherit;font-size:13px;line-height:1.75}
 body[data-iris-appearance="apple"] .extras-story-settings .extras-settings-exports button{min-height:30px;margin:0;padding:5px 10px;border:0;border-radius:15px;background:#f3f3f6;color:#777;font-size:12px}
+
+/* Compact white backplates shared by every vertical function menu. */
+.function-button-column{display:contents}
+body:not([data-function-layout="horizontal"]) .function-button-column{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:max-content;max-width:100%;padding:8px;border-radius:20px;background:#fff;box-shadow:0 4px 18px #0000000d;box-sizing:border-box}
+body:not([data-function-layout="horizontal"]) .quick-features:not(.dock-feature-menu){width:max-content;max-width:calc(100vw - 40px);align-items:flex-start}
+body:not([data-function-layout="horizontal"]) .dock-feature-menu{left:auto;right:0;width:auto;max-width:100%;align-items:flex-end}
+body:not([data-function-layout="horizontal"]) .quick-action-row{width:max-content;max-width:100%;grid-template-columns:repeat(4,max-content);gap:10px;padding:8px;border-radius:20px;background:#fff;box-shadow:0 4px 18px #0000000d;box-sizing:border-box}
+body:not([data-function-layout="horizontal"]) .quick-action-row>button{flex-direction:row}
+body:not([data-function-layout="horizontal"]) :is(#quickFeatures:has(>[data-quick="退出"]),.if-story-tools-menu){width:max-content;padding:8px;background:#fff;border-radius:20px;box-shadow:0 4px 18px #0000000d;box-sizing:border-box}
+body:not([data-function-layout="horizontal"]) :is(.function-button-column,.quick-action-row,#quickFeatures:has(>[data-quick="退出"]),.if-story-tools-menu) :is(.quick-item>span:not(.quick-icon),.quick-action-item>span:not(.quick-icon),.if-story-tool-label){box-shadow:none}
+
+/* Keep the original anchors and join the online column to its action row. */
+body:not([data-function-layout="horizontal"]) .dock-feature-menu>.function-button-column{align-self:flex-end}
+body:not([data-function-layout="horizontal"]) .quick-features:has(>.quick-action-row){gap:0;overflow:visible}
+body:not([data-function-layout="horizontal"]) .quick-features:has(>.quick-action-row)>.function-button-column{border-bottom-left-radius:0;border-bottom-right-radius:0;box-shadow:none}
+body:not([data-function-layout="horizontal"]) .quick-features>.quick-action-row{border-top-left-radius:0;padding-top:0;box-shadow:none}
+body:not([data-function-layout="horizontal"]) #quickFeatures:has(>[data-quick="退出"])>[data-quick="退出"]{order:1}
+
+/* Self deployment local prototype: compact grouped rows, no live credentials. */
+.deploy-page{min-width:0;box-sizing:border-box;padding:18px;overflow:auto}
+.deploy-demo-note{margin:0 0 18px;color:#777;font-size:12px;line-height:1.6}
+.deploy-group{margin:0 0 16px;padding:0 14px;background:#fff;border:1px solid #e8e8ed;border-radius:18px;overflow:hidden}
+.deploy-page .deploy-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:50px;margin:0;padding:8px 0;box-sizing:border-box;border-bottom:1px solid #eeeeF2;font-size:14px;color:#222}
+.deploy-group>.deploy-row:last-child,.deploy-group form>.deploy-row:last-of-type{border-bottom:0}
+.deploy-page button{flex-shrink:0;min-height:32px;padding:6px 12px;border:0;border-radius:16px;background:#eef5ff;color:#007aff;font:inherit;font-size:13px;white-space:nowrap;cursor:pointer}
+.deploy-page button:disabled{opacity:.45;cursor:default}
+.deploy-row input:not([type=checkbox]){box-sizing:border-box;width:52%;min-width:0;margin:0;padding:7px 9px;border:0;border-radius:9px;background:#f5f5f8;font:inherit;text-align:right;color:#333}
+.deploy-row input[type=checkbox]{appearance:auto;width:18px;height:18px;margin:0;accent-color:#34c759}
+.deploy-intro{padding:22px 6px}.deploy-intro h3{margin:0 0 10px;font-size:18px}.deploy-intro p,.deploy-caption{font-size:13px;color:#888;line-height:1.6}
+.deploy-actions{display:flex;gap:8px;flex-wrap:wrap;padding:12px 0}.deploy-page .deploy-primary{background:#007aff;color:white}
+.deploy-status{color:#777;font-size:12px}.deploy-steps{list-style:none;margin:0;padding:12px 0;display:grid;gap:12px}.deploy-steps li{display:flex;align-items:center;gap:10px;font-size:13px;color:#999}.deploy-steps li span{display:grid;place-items:center;flex:none;width:24px;height:24px;border-radius:50%;background:#f3f3f6}.deploy-steps li.current{color:#007aff}.deploy-steps li.done{color:#248d4a}
+.deploy-endpoints>div{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-top:1px solid #eee;font-size:13px}.deploy-endpoints code{font-size:11px;overflow-wrap:anywhere;color:#777}.deploy-error,.deploy-domain-result{color:#b33;font-size:12px;line-height:1.6}.deploy-domain-result:empty{display:none}
+.deploy-auth-dialog{box-sizing:border-box;width:min(360px,calc(100vw - 40px));padding:22px;border:0;border-radius:22px;color:#222;background:#fff}.deploy-auth-dialog::backdrop{background:#0004}.deploy-auth-dialog h3{margin:0 0 14px;font-size:18px}.deploy-auth-dialog p{font-size:13px;line-height:1.7;color:#777}.deploy-auth-dialog footer{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.deploy-auth-dialog button{padding:9px 13px;border:0;border-radius:16px;background:#eef5ff;color:#007aff;font:inherit;font-size:13px}
+
+body[data-iris-appearance="apple"] .deploy-row .deploy-service-choice{appearance:none;flex:none;width:19px;height:19px;min-width:19px;border:1px solid #b8b8c0;border-radius:50%;background:#fff;cursor:pointer}
+body[data-iris-appearance="apple"] .deploy-row .deploy-service-choice:checked{border-color:#222;background:radial-gradient(circle,#222 0 5px,#fff 5.5px)}
+.deploy-row select{min-width:0;max-width:58%;padding:7px 4px;border:0;background:transparent;font:inherit;font-size:13px;color:#007aff;text-align:right}
+.deploy-page a{color:#007aff;font-size:13px;text-decoration:none}.deploy-intro code{display:block;overflow-wrap:anywhere;font-size:12px}.deploy-service-choice:focus-visible{outline:2px solid #007aff;outline-offset:3px}
+
+/* Category language and URL-loaded English script face, shared by both appearances. */
+@font-face{font-family:"Iris Category Script";src:url("assets/fonts/great-vibes/great-vibes-regular.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
+body[data-category-language="en"] .iris-category-label,body[data-category-language="en"] .iris-category-label :is(span,strong,small){font-family:"Iris Category Script","Great Vibes",cursive!important;font-weight:400!important;font-style:normal;letter-spacing:.1px}
+body[data-category-language="en"] .iris-category-label{font-size:clamp(10px,3.3vw,14px)!important;line-height:1.2}
+body[data-category-language="zh"] .iris-category-label{font-style:normal}
+#settingsScreen:not(.apple-settings) .system-setting-tabs{display:flex;flex-wrap:nowrap;align-items:stretch;gap:0;overflow-x:auto}
+#settingsScreen:not(.apple-settings) .system-setting-tabs>button{flex:1 0 0;min-width:0;padding-right:3px;padding-left:3px}
+#settingsScreen:not(.apple-settings) .deploy-page{padding:8px var(--app-page-gutter) 28px}
+#settingsScreen:not(.apple-settings) .deploy-group{padding:0;margin-bottom:20px;border:0;border-radius:0;background:transparent}
+#settingsScreen:not(.apple-settings) .deploy-row{min-height:44px;padding:10px 2px;font-size:12px;color:#555;border-bottom:1px solid #ededed}
+#settingsScreen:not(.apple-settings) .deploy-group>.deploy-row:last-child{border-bottom:1px solid #ededed}
+#settingsScreen:not(.apple-settings) .deploy-page button{min-height:30px;padding:5px 11px;border:1px solid #ddd;border-radius:5px;background:#fff;color:#555;font-size:11px}
+#settingsScreen:not(.apple-settings) .deploy-page .deploy-primary{background:#333;border-color:#333;color:#fff}
+#settingsScreen:not(.apple-settings) .deploy-row input:not([type=checkbox]),#settingsScreen:not(.apple-settings) .deploy-row select{background:transparent;border-radius:0;border-bottom:1px solid #e8e8e8;color:#555;font-size:12px}
+#settingsScreen:not(.apple-settings) .deploy-row input[type=checkbox]{accent-color:#333}
+#settingsScreen:not(.apple-settings) .deploy-page a{color:#555}
+#settingsScreen:not(.apple-settings) .deploy-steps li.current{color:#333}
+body[data-category-language="en"] #settingsScreen:not(.apple-settings) .system-setting-tabs>.iris-category-label{font-size:clamp(10px,3vw,13px)!important}
+#settingsScreen:not(.apple-settings) .system-setting-tabs>.system-setting-tab{flex:1 1 0;min-width:0}
+
+/* Keep settings category labels fully visible on narrow phone layouts. */
+#settingsScreen:not(.apple-settings) .system-setting-tabs{flex-wrap:nowrap;overflow-x:hidden;overflow-y:visible}
+#settingsScreen:not(.apple-settings) .system-setting-tabs>.system-setting-tab{flex:1 1 0;min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.25}
+#settingsScreen:not(.apple-settings) .online-setting-tabs{grid-template-columns:repeat(5,minmax(0,1fr));overflow-x:hidden;overflow-y:visible}
+#settingsScreen:not(.apple-settings) .online-setting-tab{min-width:0;padding-right:2px;padding-left:2px;white-space:normal;overflow-wrap:anywhere;line-height:1.25}
+#settingsScreen:not(.apple-settings) .offline-setting-tabs{grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}
+#settingsScreen:not(.apple-settings) .offline-setting-tabs button{min-width:0;padding-right:2px;padding-left:2px;white-space:normal;overflow-wrap:anywhere;line-height:1.25}
+
+/* Leave clear space beneath the appearance manager action in the iOS card. */
+#settingsScreen.apple-role-settings .role-online-appearance{padding-bottom:8px}
+#settingsScreen.apple-role-settings .role-online-appearance>.subtle-action{margin-bottom:8px}
+#settingsScreen:not(.apple-settings) .deploy-group{padding:0;border:0;border-radius:0;background:transparent;margin-bottom:20px}
+#settingsScreen:not(.apple-settings) .deploy-row input:not([type=checkbox]){padding:6px 3px;background:transparent;border:0;border-bottom:1px solid #ddd;border-radius:0;font-size:12px}
+#settingsScreen:not(.apple-settings) .deploy-row input[type=checkbox]{accent-color:#333}
+#settingsScreen:not(.apple-settings) .deploy-page :is(a,.deploy-steps li.current,.deploy-steps li.done){color:#555}
+#settingsScreen:not(.apple-settings) .deploy-steps li span{border-radius:3px;background:#f3f3f3}
+body[data-category-language="en"] .ng-sidebar .iris-category-label{font-size:10px!important}
+body[data-category-language="en"] .ng-sidebar .iris-category-label>span:last-child{max-width:100%;overflow-wrap:anywhere;line-height:1.15}
+
+/* Category rails stay fixed and fully visible in both language settings. */
+body[data-category-language] .iris-category-group[data-category-axis="horizontal"]{display:grid!important;grid-template-columns:repeat(var(--iris-category-count,1),minmax(0,1fr))!important;grid-auto-flow:row!important;align-items:stretch!important;box-sizing:border-box;width:100%!important;max-width:100%;min-width:0;gap:4px!important;overflow:visible!important;overscroll-behavior:contain}
+body[data-category-language] .iris-category-group[data-category-axis="horizontal"]>.iris-category-cell{display:flex!important;align-items:center!important;justify-content:center!important;box-sizing:border-box;flex:none!important;width:auto!important;min-width:0!important;height:auto!important;min-height:40px!important;max-height:none!important;margin:0!important;padding:4px 2px!important;line-height:1.2!important;white-space:normal!important;overflow-wrap:anywhere;word-break:normal;text-align:center}
+body[data-category-language] .iris-category-group[data-category-axis="vertical"]{display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;justify-content:flex-start!important;gap:4px!important;overflow:hidden!important;overscroll-behavior:contain}
+body[data-category-language] .iris-category-group[data-category-axis="vertical"]>.iris-category-cell{box-sizing:border-box;flex:0 0 auto!important;width:100%!important;height:auto!important;min-height:60px!important;max-height:none!important;padding:4px 0!important;gap:3px!important;white-space:normal!important}
+body[data-category-language] .iris-category-group[data-category-axis="vertical"]>.iris-category-cell>span:last-child{display:flex;align-items:center;justify-content:center;min-height:0;max-height:none;width:100%;padding:0 2px;line-height:1.15!important;text-align:center;white-space:normal!important;overflow-wrap:anywhere}
+body[data-category-language] .iris-category-group .iris-category-cell :is(span,strong,small){line-height:inherit}
+#settingsScreen.apple-settings .system-setting-tabs.iris-category-group[data-category-axis="vertical"]{overflow-x:hidden!important;overflow-y:hidden!important;scrollbar-width:none}
+#settingsScreen.apple-settings .system-setting-tabs.iris-category-group[data-category-axis="vertical"]>.system-setting-tab.iris-category-cell{flex:0 0 auto!important;min-height:60px!important;height:auto!important;max-height:none!important;padding:4px 0!important;gap:3px!important}
+#settingsScreen.apple-settings .system-setting-tabs.iris-category-group[data-category-axis="vertical"]>.system-setting-tab.iris-category-cell>span:last-child{min-height:0!important;max-height:none!important;padding:0 2px!important;white-space:normal!important;overflow-wrap:anywhere}
+
+/* Deployment flow: two connection paths, each with one clear primary action. */
+.deploy-section{margin:0 0 18px}
+.deploy-section-heading{display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:0 3px}
+.deploy-section-heading>span{display:grid;place-items:center;flex:none;width:20px;height:20px;border-radius:50%;background:#eef5ff;color:#007aff;font:500 11px/1 -apple-system,BlinkMacSystemFont,sans-serif}
+.deploy-section-heading h3{margin:0;font-size:13px;line-height:20px;font-weight:500;color:#555}
+.deploy-section>.deploy-group{margin:0}
+.deploy-choice{display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box;min-height:62px;padding:12px 0;border-bottom:1px solid #eeeef2;cursor:pointer}
+.deploy-choice:last-child{border-bottom:0}
+.deploy-choice>span{display:grid;gap:4px;min-width:0}
+.deploy-choice strong{font-size:14px;font-weight:500;color:#222;line-height:1.4}
+.deploy-choice small{font-size:11px;font-weight:400;color:#999;line-height:1.5}
+.deploy-choice>.deploy-service-choice{flex:none;width:19px;height:19px;margin:0;accent-color:#333}
+body[data-iris-appearance="apple"] .deploy-choice>.deploy-service-choice{appearance:none;border:1px solid #b8b8c0;border-radius:50%;background:#fff;cursor:pointer}
+body[data-iris-appearance="apple"] .deploy-choice>.deploy-service-choice:checked{border-color:#222;background:radial-gradient(circle,#222 0 5px,#fff 5.5px)}
+.deploy-domain-fields{border-top:1px solid #eeeef2}
+.deploy-bottom{padding:0 3px;margin:4px 0 20px}
+.deploy-bottom>.deploy-primary{display:block;width:100%;min-height:40px;font-size:13px}
+.deploy-short-note{margin:8px 3px 12px;color:#888;font-size:12px;line-height:1.6}
+.deploy-success{margin:10px 0;color:#279759;font-size:12px;line-height:1.5}
+.deploy-progress-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:34px;font-size:13px;color:#333}
+.deploy-progress-heading .deploy-success{margin:0;font-size:11px}
+.deploy-result{margin-top:12px;font-size:12px;color:#777}
+.deploy-result>summary{padding:8px 0;cursor:pointer}
+.deploy-result>div{display:grid;gap:4px;padding:9px 0;border-top:1px solid #eee}
+.deploy-result code{font-size:11px;overflow-wrap:anywhere}
+.deploy-bottom .deploy-actions>.deploy-primary{flex:1;min-height:38px}
+#settingsScreen:not(.apple-settings) .deploy-section-heading>span{border-radius:3px;background:#f0f0f0;color:#555}
+#settingsScreen:not(.apple-settings) .deploy-choice{min-height:58px;padding:11px 2px;border-color:#ededed}
+#settingsScreen:not(.apple-settings) .deploy-choice strong{font-size:12px;color:#555}
+#settingsScreen:not(.apple-settings) .deploy-choice small{font-size:10px}
+#settingsScreen:not(.apple-settings) .deploy-choice input{accent-color:#333}
+#settingsScreen:not(.apple-settings) .deploy-bottom>.deploy-primary{min-height:38px}
+
+/* Touch feedback must follow the rounded control, without the native gray overlay. */
+body[data-iris-appearance="apple"] :is(button,a,summary,[role="button"],label){-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+body[data-iris-appearance="apple"] :is(button,summary,[role="button"]){appearance:none;-webkit-appearance:none}
+body[data-iris-appearance="apple"] :is(button,summary,[role="button"]):focus:not(:focus-visible){outline:none;box-shadow:none}
+
+/* The four author pages share a bounded shell and an independently scrolling body. */
+#authorNoticeDialog{box-sizing:border-box;width:min(480px,calc(100vw - 28px));max-width:calc(100vw - 28px);max-height:calc(100dvh - 28px)}
+#authorNoticeDialog .author-notice-card{box-sizing:border-box;width:100%;min-width:0;height:min(650px,calc(100dvh - 30px));max-height:calc(100dvh - 30px);padding:clamp(20px,5vw,34px) clamp(18px,5vw,38px) 20px}
+#authorNoticeDialog :is(.author-notice-content,.author-notice-copy,.author-notice-confirm>span){min-width:0}
+#authorNoticeDialog .author-notice-content{padding-top:clamp(22px,5vh,42px)}
+#authorNoticeDialog .author-notice-top{gap:12px}
+#authorNoticeDialog .author-notice-brand{gap:10px;font-size:44px}
+#authorNoticeDialog .author-notice-brand>span{padding-left:10px;letter-spacing:1px}
+#authorNoticeDialog .author-notice-pagination{flex:none;white-space:nowrap}
+#authorNoticeDialog .author-notice-confirm .author-notice-qualification,#authorNoticeDialog .author-notice-refund{white-space:normal;overflow-wrap:anywhere}
+#authorNoticeDialog .author-notice-copy{outline:none}
+body[data-iris-appearance="apple"] #authorNoticeDialog{border-radius:22px}
+body[data-iris-appearance="apple"] #authorNoticeDialog .author-notice-confirm{border-radius:14px}
+body[data-iris-appearance="apple"] #authorNoticeDialog .author-notice-confirm input{appearance:none;flex:none;width:18px;height:18px;border:1px solid #c7c7cc;border-radius:50%;background:#fff}
+body[data-iris-appearance="apple"] #authorNoticeDialog .author-notice-confirm input:checked{border:5px solid #222}
+body[data-iris-appearance="apple"] #authorNoticeDialog .author-notice-next{border-radius:12px}
+
+/* Deployment actions share the row equally, regardless of label length. */
+.deploy-bottom .deploy-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));flex-wrap:nowrap}
+.deploy-bottom .deploy-actions>button{box-sizing:border-box;width:100%;min-width:0;min-height:38px;margin:0;white-space:normal}
+.deploy-bottom .deploy-actions>button:only-child{grid-column:1/-1}
+
+/* Compact Ningguang navigation, independent from classic category rails. */
+#featureScreen.apple-extras .ng-extras-sidebar{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;grid-auto-flow:row!important;gap:4px!important;overflow:hidden!important}
+#featureScreen.apple-extras .ng-extras-sidebar>button{flex:0 0 auto!important;min-height:60px!important;width:100%!important;flex-direction:column!important;padding:4px 0!important}
+#featureScreen:is(.apple-experiences,.apple-beautify,.apple-market,.apple-business)>.feature-page-topbar{box-sizing:border-box;min-height:60px;height:auto;margin:0;padding:10px 16px;border-bottom:1px solid #ededf1}
+#featureScreen.apple-business .perfumery-dock{position:fixed;left:50%;right:auto;bottom:var(--app-viewport-bottom,0px);z-index:9;display:flex;box-sizing:border-box;width:min(var(--app-shell-max-width,780px),100vw);max-width:100%;height:auto;min-height:60px;margin:0;padding:5px 12px max(8px,env(safe-area-inset-bottom));border:0;border-top:1px solid #e3e7ed;border-radius:0;background:#fafafcee;box-shadow:none;transform:translateX(-50%);backdrop-filter:blur(18px)}
+#featureScreen.apple-business .perfumery-dock :is(.perfumery-dock-tab,.perfumery-dock-add){height:44px;min-height:44px;border-radius:0;background:transparent;gap:3px}
+#featureScreen.apple-business .perfumery-dock :is(.perfumery-dock-tab,.perfumery-dock-add).is-active{color:#007aff;background:transparent}
+#featureScreen.apple-business .perfumery-dock :is(.perfumery-dock-tab,.perfumery-dock-add)>svg{box-sizing:content-box;width:21px;height:21px;padding:3px;border-radius:50%}
+#featureScreen.apple-business .perfumery-dock .is-active>svg{background:#eaf3ff}
+#featureScreen.apple-market .market-nav{min-height:60px}
+#featureScreen.apple-market .market-nav-capsule{height:44px}
+#featureScreen.apple-market .market-nav :is(.market-dock-tab,.market-dock-my){height:44px}
+#featureScreen:is(.apple-experiences,.apple-beautify) :is(.experiences-tabs,.beautify-tabs){box-sizing:border-box;min-height:48px!important;margin:0;padding:4px 0!important;overscroll-behavior:none}
+#featureScreen:is(.apple-experiences,.apple-beautify,.apple-market,.apple-business) .iris-category-group[data-category-axis="horizontal"]>.iris-category-cell{min-height:36px!important;padding:4px!important;border-radius:18px!important}
+#featureScreen:is(.apple-experiences,.apple-beautify,.apple-market,.apple-business) .iris-category-group[data-category-axis="horizontal"]>.iris-category-cell:is(.active,.is-active,[aria-pressed="true"],[aria-selected="true"]){background:#eaf3ff!important;color:#007aff!important;box-shadow:none!important}
+#featureScreen.apple-beautify>.feature-page-content{overscroll-behavior-y:none}
+#featureScreen.apple-experiences .people-subtabs{margin:0 0 8px;padding:0;background:transparent;border:0}
+#featureScreen.apple-experiences .people-subtabs>button{border-radius:16px!important}
+#featureScreen.apple-experiences .people-header-tools{display:flex;align-items:center;flex-wrap:wrap;gap:8px;width:100%;margin:0 0 10px;padding:8px 0;border-bottom:1px solid #ededf1}
+#featureScreen.apple-experiences .people-header-tools label{display:flex;align-items:center;gap:5px;min-width:0;font-size:11px;color:#86868e}
+#featureScreen.apple-experiences .people-header-tools select{width:auto;max-width:130px;min-height:30px;padding:4px 7px;border:0;border-radius:8px;background:#f5f5f7;color:#333;font-size:12px}
+#featureScreen.apple-experiences .people-header-tools>button{margin-left:auto;padding:5px 9px;border:0;border-radius:15px;background:#eaf3ff;color:#007aff;font-size:11px}
+#featureScreen.apple-experiences .people-award-heading{display:flex;align-items:center;justify-content:space-between;box-sizing:border-box;min-height:44px;margin:0;padding:6px 0;border:0;border-bottom:1px solid #ededf1;background:transparent}
+#featureScreen.apple-experiences .people-award-heading[hidden]{display:none}
+#featureScreen.apple-experiences .people-award-heading>span{display:flex;align-items:center;gap:8px;color:#333;font-size:13px}
+#featureScreen.apple-experiences .people-award-heading small{margin:0;font-family:inherit;font-size:12px;line-height:1.4;color:#86868e}
+#featureScreen.apple-experiences .people-award-heading>button{min-width:88px;min-height:30px;margin:0;padding:5px 9px;border:0;border-radius:15px;background:#eaf3ff;color:#007aff;font-size:11px}
+#featureScreen.apple-forum .forum-member-card{display:flex;flex-direction:column;align-items:stretch;gap:0;min-width:0;padding:12px 0}
+#featureScreen.apple-forum .ng-forum-member-head{display:flex;align-items:center;gap:10px;width:100%;min-width:0}
+#featureScreen.apple-forum .ng-forum-member-head>.forum-member-details{flex:1;min-width:0}
+#featureScreen.apple-forum .ng-forum-member-head>[data-forum-action="remove-member"]{flex:none;min-height:30px;margin:0;padding:5px 9px;border:0;border-radius:15px;background:#fff0ef;color:#e45555;font-size:11px;white-space:nowrap}
+#featureScreen.apple-forum .ng-forum-member-actions{display:flex;justify-content:flex-end;gap:8px;margin:8px 0 0}
+#featureScreen.apple-forum .ng-forum-member-actions:empty{display:none}
+#featureScreen.apple-forum .forum-member-participation{grid-column:1/-1;margin:0;border:0}
+#featureScreen.apple-forum .forum-member-participation>summary{min-height:36px;padding:7px 0;border-bottom:1px solid #ededf1;border-radius:0;background:transparent;color:#333}
+#featureScreen.apple-forum .forum-member-participation-body{box-sizing:border-box;max-height:55dvh;padding:8px 0;background:#fff;border-radius:0;overflow:auto}
+#featureScreen.apple-forum .forum-member-participation-body .forum-member-setting{display:flex;align-items:center;justify-content:space-between;min-height:40px;padding:5px 0;border-bottom:1px solid #ededf1;color:#333;font-size:12px}
+#featureScreen.apple-forum .forum-member-participation-body select{max-width:65%;padding:6px 8px;border:0;border-radius:9px;background:#f5f5f7;color:#007aff}
+#featureScreen.apple-forum .forum-member-participation-body .forum-permissions{grid-template-columns:1fr}
+#featureScreen.apple-forum .forum-member-participation-body .forum-permissions label{display:flex;flex-direction:row-reverse;justify-content:space-between;min-height:40px;font-size:12px;color:#333}
+#featureScreen.apple-forum .forum-member-participation-body .forum-story-summary textarea{box-sizing:border-box;width:100%;height:100px;min-height:100px;padding:10px;border:1px solid #ededf1;border-radius:12px;background:#fafafa;font-family:inherit;line-height:1.7}
+#featureScreen.apple-forum .forum-member-post-link{grid-column:2/-1;justify-self:end;padding:5px 10px;border:0;border-radius:15px;background:#eaf3ff;color:#007aff}
+
+/* Business uses the same edge-to-edge bottom navigation as the marketplace. */
+#featureScreen.apple-business .perfumery-dock{position:fixed;left:50%;right:auto;bottom:var(--app-viewport-bottom,0px);z-index:9;width:min(var(--app-shell-max-width,780px),100vw);max-width:100%;height:auto;min-height:60px;margin:0;padding:4px 12px max(6px,env(safe-area-inset-bottom));border:0;border-top:1px solid #e3e7ed;border-radius:0;background:#fafafcee;box-shadow:none;transform:translateX(-50%)}
+#featureScreen.apple-business .perfumery-dock :is(.perfumery-dock-tab,.perfumery-dock-add){height:48px;border-radius:0;background:transparent}
+#featureScreen.apple-business .perfumery-dock :is(.perfumery-dock-tab,.perfumery-dock-add).is-active{color:#007aff;background:transparent}
+#featureScreen.apple-business .perfumery-dock :is(.perfumery-dock-tab,.perfumery-dock-add).is-active>svg{background:#eaf3ff;border-radius:50%}
+#featureScreen.apple-business .perfumery-dock :is(.ng-perfumery-ledger-label,.perfumery-dock-tab>span){font-size:9px;line-height:1.3}
+#featureScreen.apple-market .market-nav{min-height:60px;padding-top:4px;padding-bottom:max(6px,env(safe-area-inset-bottom))}
+#featureScreen:is(.apple-experiences,.apple-beautify,.apple-market,.apple-business)>.feature-page-topbar{box-sizing:border-box;min-height:60px;margin:0;padding:10px 16px;border-bottom:1px solid #ededf1}
+
+#featureScreen.apple-business .perfumery-dock>.perfumery-dock-capsule{display:contents!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+#featureScreen.apple-forum .forum-member-name-row{display:flex;align-items:center;flex-wrap:wrap;gap:5px;min-width:0}
+#featureScreen.apple-forum .forum-member-details strong{overflow-wrap:anywhere;color:#333}
+#featureScreen.apple-forum .forum-member-participation{width:100%;min-width:0;margin-top:8px}
+#featureScreen.apple-forum .forum-member-participation>summary{height:auto;line-height:20px;box-sizing:border-box}
+#featureScreen.apple-forum .forum-member-participation-body .forum-permissions input{width:32px;height:20px;min-width:32px;min-height:20px;flex:0 0 32px}
+#featureScreen.apple-forum .forum-member-participation-body .forum-permissions input::after{width:16px;height:16px;top:2px;left:2px}
+#featureScreen.apple-forum .forum-member-participation-body .forum-permissions input:checked::after{left:14px}
+
+/* Product categories are a horizontal scroller, rather than equal-width tabs. */
+body[data-iris-appearance="apple"] #featureScreen.apple-market :is(.market-categories,.market-category-pills).iris-category-group{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:6px!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none;padding:6px 0!important;overscroll-behavior-x:contain}
+body[data-iris-appearance="apple"] #featureScreen.apple-market :is(.market-categories,.market-category-pills).iris-category-group>button.iris-category-cell{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;min-height:34px!important;padding:6px 12px!important;white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important;border:0!important;border-radius:18px!important;background:transparent;color:#777}
+body[data-iris-appearance="apple"] #featureScreen.apple-market :is(.market-categories,.market-category-pills)>button:is(.is-active,.active,[aria-pressed="true"]){background:#eaf3ff!important;color:#007aff!important}
+#featureScreen.apple-sms>.feature-page-topbar,#featureScreen.apple-sms:has(.sms-inbox)>.feature-page-topbar{box-sizing:border-box;min-height:60px;height:auto;margin:0;padding:8px 16px;border-bottom:1px solid #ededf1}
+#featureScreen.apple-sms .sms-feature-heading .feature-page-brand{min-height:40px}
+#featureScreen.apple-sms .sms-feature-heading .feature-page-wordmark{font-size:18px;line-height:24px}
+
+/* Profile editor: portrait capsule at left, four straight fields at right. */
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm){display:grid;grid-template-columns:minmax(94px,.8fr) minmax(0,1.4fr);gap:10px 12px;align-items:stretch}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm)>.profile-identity{grid-column:1;grid-row:1/5;display:flex;flex-direction:column;justify-content:center;align-items:center;box-sizing:border-box;width:100%;height:auto;min-height:0;margin:0;padding:16px 8px;gap:12px;border-radius:50px;background:#fff}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .portrait-control{position:relative;inset:auto;flex:none;width:72px;height:72px;margin:0;transform:none}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-portrait{box-sizing:border-box;width:72px;height:72px;margin:0;border-radius:50%;transform:none}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-preview{position:static;width:100%;text-align:center;transform:none}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-preview h3{font-size:15px;overflow-wrap:anywhere}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-preview p{margin:4px 0;overflow-wrap:anywhere}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-preview button{margin:6px 0 0;padding:5px 7px;color:#007aff;font-size:11px}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields,body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-demographics{display:contents}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields label{position:static;grid-column:2;box-sizing:border-box;min-width:0;width:100%;margin:0;padding:9px 10px;border:0;border-radius:12px;background:#fff;transform:none;rotate:none;box-shadow:none;font-size:11px}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields label:has([name="name"]){grid-row:1}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields label:has([name="nickname"]){grid-row:2}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields label:has([name="gender"]){grid-row:3}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields label:has([name="birthday"]){grid-row:4}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields label.details-note{grid-column:1/-1;grid-row:5;padding:12px;border-radius:14px}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields :is(input,select,textarea){position:static;box-sizing:border-box;width:100%;min-width:0;margin:5px 0 0;padding:6px 0;border:0;border-bottom:1px solid #ededf1;border-radius:0;background:transparent;transform:none;rotate:none;box-shadow:none;font-family:inherit;font-size:12px}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm)>:is(.profile-pagination,.profile-save-actions,.profile-footnote,.character-feedback){grid-column:1/-1}
+body[data-iris-appearance="apple"] :is(#profileDialog,#characterDialog) :is(.profile-user-row,.character-row){display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+body[data-iris-appearance="apple"] :is(#profileDialog,#characterDialog) :is(.profile-user-select,.character-row-main){flex:1 0 100%;width:100%}
+body[data-iris-appearance="apple"] :is(#profileDialog,#characterDialog) :is(.profile-user-edit,.profile-phone-action,.profile-roster-delete,.character-phone-action,.character-row-delete){flex:0 0 auto;min-height:30px;margin:0;padding:5px 10px;white-space:nowrap}
+body[data-iris-appearance="apple"] :is(#profileDialog,#characterDialog) .profile-phone-editor{flex:1 0 100%;box-sizing:border-box;min-width:0}
+
+/* Five business destinations each occupy one fifth of the full bar. */
+body[data-iris-appearance="apple"] #featureScreen.apple-business .perfumery-dock{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:0!important}
+body[data-iris-appearance="apple"] #featureScreen.apple-business .perfumery-dock>.perfumery-dock-capsule{display:contents!important}
+body[data-iris-appearance="apple"] #featureScreen.apple-business .perfumery-dock :is(.perfumery-dock-tab,.perfumery-dock-add){box-sizing:border-box;width:100%!important;min-width:0!important;max-width:none!important;margin:0!important;justify-self:stretch;flex:none!important}
+.market-mine-label{display:none}
+#featureScreen.apple-market .market-nav .market-mine-label{display:block;font-size:9px;line-height:1.3}
+#featureScreen.apple-forum .ng-forum-member-head>.forum-member-post-link{flex:none;min-height:30px;margin:0;padding:5px 8px;border:0;border-radius:15px;background:#eaf3ff;color:#007aff;font-size:11px;white-space:nowrap}
+#featureScreen.apple-forum .ng-forum-member-head>.forum-member-details{flex:1;min-width:0}
+/* Roster actions stay on the right; the list itself remains scrollable. */
+body[data-iris-appearance="apple"] :is(#profileDialog,#characterDialog) :is(.character-list,.profile-roster){max-height:min(58dvh,480px);overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+body[data-iris-appearance="apple"] :is(#profileDialog,#characterDialog) :is(.profile-user-row,.character-row){display:flex;flex-wrap:nowrap;align-items:center;gap:5px;min-width:0}
+body[data-iris-appearance="apple"] :is(#profileDialog,#characterDialog) :is(.profile-user-select,.character-row-main){flex:1 1 0;width:auto;min-width:0}
+body[data-iris-appearance="apple"] :is(#profileDialog,#characterDialog) :is(.profile-user-edit,.profile-phone-action,.profile-roster-delete,.character-phone-action,.character-row-delete){flex:0 0 auto;padding:5px 6px;font-size:10px}
+body[data-iris-appearance="apple"] :is(#profileDialog,#characterDialog) :is(.profile-user-info,.character-row-info){min-width:0}
+body[data-iris-appearance="apple"] :is(#profileDialog,#characterDialog) .profile-user-current:empty{display:none}
+body[data-iris-appearance="apple"] #profileDialog .profile-user-row:has(.profile-phone-editor){flex-wrap:wrap}
+body[data-iris-appearance="apple"] #profileDialog .profile-user-row:has(.profile-phone-editor)>.profile-user-select{flex:1 1 0}
+/* The two upper profile cards share the same height; right-hand fields form one group. */
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm){gap:0 12px;grid-template-columns:minmax(94px,.8fr) minmax(0,1.4fr)}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm)>.profile-identity{border-radius:18px;align-self:stretch;padding:14px 8px}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields label:not(.details-note){display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;padding:8px 10px;border-radius:0;font-size:11px;white-space:nowrap}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields label:has([name="name"]){border-radius:14px 14px 0 0}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields label:has([name="birthday"]){border-radius:0 0 14px 14px}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields label:not(.details-note)>:is(input,select){flex:1;min-width:0;width:0;margin:0;padding:5px 0;border:0;background:transparent;text-align:right;font-size:12px}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .profile-fields label.details-note{margin-top:12px}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm)>.profile-pagination{margin-top:12px}
+
+/* Equal-sized profile panels share one grid row. */
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm){display:block}
+body[data-iris-appearance="apple"] .ng-profile-editor-top{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:12px;min-width:0}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .ng-profile-editor-top>.profile-identity{grid-column:auto;grid-row:auto;box-sizing:border-box;width:100%;min-width:0;height:auto;min-height:216px;margin:0;border-radius:16px;align-self:stretch}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .ng-profile-editor-top>.profile-fields{display:flex;flex-direction:column;box-sizing:border-box;width:100%;min-width:0;gap:0;margin:0;padding:0 10px;border-radius:16px;background:#fff;overflow:hidden}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .ng-profile-editor-top .profile-demographics{display:contents}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .ng-profile-editor-top .profile-fields label{display:flex;flex:1;align-items:center;box-sizing:border-box;width:100%;min-height:54px;margin:0;padding:8px 0;border:0;border-bottom:1px solid #ededf1;border-radius:0;background:transparent}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .ng-profile-editor-top .profile-fields label:has([name="birthday"]){border-bottom:0}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm)>.details-note{display:block;box-sizing:border-box;width:100%;margin:12px 0 0;padding:12px;border:0;border-radius:16px;background:#fff;font-size:11px;transform:none}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm)>.details-note>span{display:none}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm)>.details-note textarea{box-sizing:border-box;display:block;width:100%;margin-top:8px;padding:8px 0;border:0;background:transparent;font-family:inherit;font-size:12px;line-height:1.7}
+body[data-iris-appearance="apple"] #featureScreen.apple-business .perfumery-dock :is(.perfumery-dock-tab,.perfumery-dock-add).is-active{color:#303c50!important;background:transparent!important}
+body[data-iris-appearance="apple"] #featureScreen.apple-business .perfumery-dock :is(.perfumery-dock-tab,.perfumery-dock-add)>svg{box-sizing:content-box;width:21px;height:21px;padding:4px;border:0;border-radius:50%;background:transparent;stroke-width:1.5}
+body[data-iris-appearance="apple"] #featureScreen.apple-business .perfumery-dock :is(.perfumery-dock-tab,.perfumery-dock-add).is-active>svg{background:#e8ecf2!important}
+
+/* Profile identity is a vertical stack; values begin beside their labels. */
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .ng-profile-editor-top>.profile-identity{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .ng-profile-editor-top .profile-preview{display:flex;flex-direction:column;align-items:center;gap:5px;width:100%;text-align:center}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .ng-profile-editor-top .profile-preview>:is(.profile-number,#profileBoundRoleCount){display:none}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .ng-profile-editor-top .profile-preview>:is(h3,p,button){position:static;max-width:100%;margin:0;transform:none;white-space:normal;overflow-wrap:anywhere}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .ng-profile-editor-top .profile-fields label{justify-content:flex-start;gap:8px}
+body[data-iris-appearance="apple"] :is(#profileForm,#characterForm) .ng-profile-editor-top .profile-fields label>:is(input,select){text-align:left;flex:1;min-width:0;margin:0;padding:5px 0}
+
+/* Keep character management chrome fixed; only its roster scrolls. */
+body[data-iris-appearance="apple"] #characterDialog[open]:has(>.character-list){display:flex;flex-direction:column;box-sizing:border-box;height:min(680px,calc(100dvh - 28px));max-height:calc(100dvh - 28px);overflow:hidden}
+body[data-iris-appearance="apple"] #characterDialog:has(>.character-list)>:not(.character-list){flex:none}
+body[data-iris-appearance="apple"] #characterDialog:has(>.character-list)>.character-list{flex:1 1 0;min-height:0;max-height:none;margin:6px 0 12px;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+body[data-iris-appearance="apple"] #characterDialog:has(>.character-list)>.character-import-actions{margin-top:0}
+body[data-iris-appearance="apple"] #characterDialog:has(>.character-list)>.character-header-arrange{margin-top:8px}
+body[data-iris-appearance="apple"] #characterDialog:has(>.character-list)>:is(.character-formats,.character-feedback){margin:6px 0 0}
+
+/* Ningguang deployment choices and forum member controls. */
+body[data-iris-appearance="apple"] .deploy-page .deploy-service-choice:checked{border-color:#007aff;background:radial-gradient(circle,#007aff 0 5px,#fff 5.5px);accent-color:#007aff}
+#featureScreen.apple-forum .ng-forum-member-head>.forum-npc-toggle{display:inline-flex;align-items:center;justify-content:center;flex:none;min-height:30px;margin:0;padding:5px 12px;border:0;border-radius:15px;background:#eaf3ff;color:#007aff;font-family:inherit;font-size:11px;line-height:20px;box-shadow:none;white-space:nowrap}
+
+.deploy-repository{margin:0 0 20px;padding:14px;border:1px solid #ededf1;border-radius:14px;background:#fff}
+.deploy-repository h3{margin:0 0 8px;color:#333;font-size:14px;font-weight:600;line-height:1.5}
+.deploy-repository p{margin:8px 0;color:#888;font-size:12px;line-height:1.7}
+.deploy-repository-links{display:flex;flex-wrap:wrap;gap:8px 14px;margin:10px 0}
+.deploy-page .deploy-repository-links a{font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+#settingsScreen:not(.apple-settings) .deploy-repository{padding:12px 0;border:0;border-bottom:1px solid #ededed;border-radius:0;background:transparent}
+
+/* Place character chat categories directly below the management title. */
+body[data-iris-appearance="apple"] #characterDialog:has(>.character-conversation-tabs)>.profile-title-row{margin-bottom:4px}
+body[data-iris-appearance="apple"] #characterDialog>.character-conversation-tabs{margin-top:0;margin-bottom:0;min-height:34px}
+body[data-iris-appearance="apple"] #characterDialog>.character-conversation-tabs>button{padding-top:5px;padding-bottom:5px;min-height:32px}
+
+.version-repository{margin:12px 0;padding:0;border:1px solid #ededf1;border-radius:12px;background:#fff}
+.version-repository>a{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;color:#007aff;font-size:13px;text-decoration:none}
+.release-repository-link{display:inline-block;margin:10px 0;color:#007aff;font-size:12px;line-height:1.7;text-decoration:none}

@@ -1,0 +1,5 @@
+# Maintainer only; never copied to users' frontends.
+# 32 random bytes encoded as base64url.
+DEPLOY_VAULT_KEY=
+# Optional: only for a confidential OAuth client using client_secret_post.
+CF_CLIENT_SECRET=

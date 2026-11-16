@@ -33,8 +33,8 @@ test('settings appearance controls render Chinese sidebar categories and preserv
  try{
   const d=f.w.document;d.querySelector('[data-settings-appearance="apple"]').click();f.w.openSettings();
   assert.ok(d.querySelector('#settingsScreen').classList.contains('apple-settings'));
-  assert.deepEqual(Array.from(d.querySelectorAll('[data-settings-route]'),button=>button.textContent),['接口','向量','备份','同步','后台','关于']);
-  assert.equal(d.querySelectorAll('.ng-sidebar .ng-symbol svg').length,6);
+  assert.deepEqual(Array.from(d.querySelectorAll('[data-settings-route]'),button=>button.textContent),['接口','向量','备份','同步','后台','部署','关于']);
+  assert.equal(d.querySelectorAll('.ng-sidebar .ng-symbol svg').length,7);
   d.querySelector('[data-settings-route="background"]').click();assert.ok(d.querySelector('#keepAlive'));
   d.querySelector('[data-settings-route="api/vector"]').click();assert.ok(d.querySelector('[data-vector-form] .ng-field-group'));assert.equal(d.querySelectorAll('[data-api-connection]').length,0);
   d.querySelector('[data-settings-route="storage/local"]').click();assert.ok(d.querySelector('#exportData'));assert.equal(d.querySelectorAll('[data-storage-connection]').length,0);
@@ -43,7 +43,7 @@ test('settings appearance controls render Chinese sidebar categories and preserv
   d.querySelector('#apiName').value='测试连接';d.querySelector('#apiUrl').value='https://example.com/v1';d.querySelector('#apiModel').value='test-model';d.querySelector('#apiForm').dispatchEvent(new f.w.Event('submit',{bubbles:true,cancelable:true}));
   assert.equal(f.w.eval('state.settings.apiConfigs.at(-1).name'),'测试连接');assert.ok(d.querySelector('[data-api-profile-card]'));assert.equal(d.querySelectorAll('.api-saved-url-tabs').length,0);
   f.w.setSettingsAppearance('classic');assert.equal(d.querySelector('#settingsScreen').classList.contains('apple-settings'),false);
-  assert.deepEqual(Array.from(d.querySelectorAll('[data-system-tab]'),button=>button.textContent),['API','Storage','Background','Version']);
+  await flush();assert.deepEqual(Array.from(d.querySelectorAll('[data-system-tab]'),button=>button.textContent),['接口','存储','后台','部署','版本']);
   f.w.setSettingsAppearance('apple');f.w.openModeSettings();assert.equal(d.querySelector('#settingsScreen').classList.contains('apple-role-settings'),true);
   assert.deepEqual(f.errors,[]);
  }finally{await flush();f.w.close()}
