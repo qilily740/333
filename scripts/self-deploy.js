@@ -35,7 +35,7 @@ function paint(){if(!host?.isConnected)return;const running=busy(),ready=state.p
  if(state.error)content+=`<p class="deploy-error" role="alert">${escape(state.error)}</p>`;
  if(!brokerReady&&state.phase!=='loading')content+='<div class="deploy-actions"><button data-retry>重新检测部署服务</button></div>';
  }
- host.innerHTML=`<section class="deploy-repository"><h3>Iris小手机 · 自助部署</h3><p>先 Fork 仓库并部署自己的小手机前端，再从自己的小手机打开「全局设置 → 部署」，选择「自己搭建」，登录 Cloudflare 后点击「搭建并连接」。</p><div class="deploy-repository-links"><a href="https://github.com/weishengrongqing-commits/Iris" target="_blank" rel="noopener noreferrer">查看 GitHub 仓库</a><a href="https://github.com/weishengrongqing-commits/Iris/fork" target="_blank" rel="noopener noreferrer">Fork 到我的账号 ↗</a></div><p>仅使用公共服务时，无需 Fork 或登录 Cloudflare。</p></section>`+modes+content;
+ host.innerHTML=`<section class="deploy-repository"><h3>Iris小手机 · 自助部署</h3><p>先 Fork 仓库并部署自己的小手机前端，再从自己的小手机打开「全局设置 → 部署」，选择「自己搭建」，登录 Cloudflare 后点击「搭建并连接」。</p><p>仓库与 Fork 入口：全局设置 → 关于 Iris → Iris小手机 GitHub 仓库。</p><p>仅使用公共服务时，无需 Fork 或登录 Cloudflare。</p></section>`+modes+content;
  host.querySelectorAll('[name=deploy-mode]').forEach(input=>input.onchange=()=>{draft.mode=input.value;remember();paint()});
  host.querySelectorAll('[name=deploy-address]').forEach(input=>input.onchange=()=>{draft.address=input.value;remember();paint()});
  host.querySelector('[data-name]')?.addEventListener('input',e=>{draft.name=e.target.value;remember()});
