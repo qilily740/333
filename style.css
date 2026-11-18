@@ -5287,7 +5287,7 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 .github-backup-location{color:#888;font-size:10px;text-underline-offset:3px}.github-backup-location[hidden]{display:none}
 
 .iris-tasks-entry{border:1px solid #e5e5e5;border-radius:14px;background:#fff;color:#777;font:inherit;font-size:10px;padding:5px 8px;white-space:nowrap}.iris-tasks-entry[hidden]{display:none}.iris-tasks-entry.has-errors{color:#a35d50;border-color:#ead8d4}
-.iris-task-dialog{width:min(360px,calc(100vw - 36px));max-height:75dvh;padding:18px;border:1px solid #e8e8e8;border-radius:12px;background:#fff;color:#555}.iris-task-dialog::backdrop{background:rgba(0,0,0,.18)}.iris-task-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:14px}.iris-task-dialog h3{margin:0;font-size:14px;font-weight:400}.iris-task-dialog button{background:none;border:0;padding:5px;color:#777;font:inherit;font-size:11px;cursor:pointer}.iris-task-dialog [data-task-list]{overflow:auto;max-height:58dvh;margin-top:10px}.iris-task-row{padding:12px 0;border-top:1px solid #eee}.iris-task-row h4{margin:0 0 6px;font-size:12px;font-weight:400}.iris-task-row p{margin:5px 0;font-size:11px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}.iris-task-row .iris-task-help{color:#999}.iris-task-actions{display:flex;justify-content:flex-end;gap:10px}.iris-task-actions button:disabled{opacity:.5}
+.iris-task-dialog{width:min(360px,calc(100vw - 36px));max-height:75dvh;padding:18px;border:1px solid #e8e8e8;border-radius:12px;background:#fff;color:#555}.iris-task-dialog::backdrop{background:rgba(0,0,0,.18)}.iris-task-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:14px}.iris-task-dialog h3{margin:0;font-size:14px;font-weight:400}.iris-task-dialog button:not(:where(.iris-guide-widget *)){background:none;border:0;padding:5px;color:#777;font:inherit;font-size:11px;cursor:pointer}.iris-task-dialog [data-task-list]{overflow:auto;max-height:58dvh;margin-top:10px}.iris-task-row{padding:12px 0;border-top:1px solid #eee}.iris-task-row h4{margin:0 0 6px;font-size:12px;font-weight:400}.iris-task-row p{margin:5px 0;font-size:11px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}.iris-task-row .iris-task-help{color:#999}.iris-task-actions{display:flex;justify-content:flex-end;gap:10px}.iris-task-actions button:disabled{opacity:.5}
 .github-sync-remedy{padding:7px 0;border-top:1px solid #eee}.github-sync-remedy[hidden]{display:none}.github-sync-remedy p{margin:0;color:#888;font-size:10px;line-height:1.7}.github-sync-remedy button{border:0;background:none;color:#666;padding:6px 0;font:inherit;font-size:10px;text-decoration:underline;text-underline-offset:3px}
 
 .storage-media-info{margin:0 0 10px;color:#999;font-size:10px;line-height:1.6}
@@ -5311,7 +5311,7 @@ body:has(.music-dialog[open]) .iris-guide-widget{visibility:hidden!important;poi
 
 /* Assistant routes share the ordinary chat bubble. */
 .iris-assistant-links{display:inline;margin-left:5px}.iris-assistant-links button{display:inline;border:0;border-radius:0;background:transparent;padding:0;margin:0 8px 0 0;font:inherit;color:#3978c6;text-align:left;cursor:pointer;white-space:normal}.iris-assistant-links button:hover{text-decoration:underline}.iris-assistant-links button:focus-visible{outline:1px solid currentColor;outline-offset:3px}.iris-assistant-links button span{margin-left:2px;color:inherit}
-.iris-assistant-role-dialog{width:min(300px,85vw);border:1px solid #e7e7e7;border-radius:18px;padding:18px;background:#fff;color:#333}.iris-assistant-role-dialog::backdrop{background:#0005}.iris-assistant-role-dialog header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.iris-assistant-role-dialog strong{font-weight:500;font-size:14px}.iris-assistant-role-dialog button{font:inherit;font-size:12px;background:#f5f5f5;border:0;border-radius:8px;padding:10px}.iris-assistant-role-dialog>div{display:grid;gap:8px;max-height:50dvh;overflow:auto}
+.iris-assistant-role-dialog{width:min(300px,85vw);border:1px solid #e7e7e7;border-radius:18px;padding:18px;background:#fff;color:#333}.iris-assistant-role-dialog::backdrop{background:#0005}.iris-assistant-role-dialog header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.iris-assistant-role-dialog strong{font-weight:500;font-size:14px}.iris-assistant-role-dialog button:not(:where(.iris-guide-widget *)){font:inherit;font-size:12px;background:#f5f5f5;border:0;border-radius:8px;padding:10px}.iris-assistant-role-dialog>div{display:grid;gap:8px;max-height:50dvh;overflow:auto}
 .character-dialog .profile-save-actions:has(#openAssistantChat){gap:6px}.character-dialog .profile-save-actions:has(#openAssistantChat)>.profile-confirm{padding:12px 5px;letter-spacing:0;white-space:nowrap;font-size:10px}.character-dialog .profile-save-actions:has(#openAssistantChat)>.profile-confirm>span{margin-left:3px;font-size:12px}
 
 .assistant-entry-target{outline:1px solid #aaa;outline-offset:5px;border-radius:8px}
@@ -8841,7 +8841,7 @@ body[data-iris-appearance="apple"] .reading-copyright-welcome-card button{min-he
 body[data-iris-appearance="apple"] :is(.iris-task-dialog,.author-feedback-dialog,.author-notice-dialog,.release-notice-dialog,.iris-assistant-role-dialog,.gift-reaction-dialog){font-size:13px;line-height:1.7}
 body[data-iris-appearance="apple"] .iris-task-dialog article{margin:10px 0;padding:12px;border:1px solid #ededf1;border-radius:14px;background:#fafafa}
 body[data-iris-appearance="apple"] .iris-task-dialog progress{width:100%;accent-color:#007aff}
-body[data-iris-appearance="apple"] :is(.iris-task-dialog,.author-feedback-dialog,.iris-assistant-role-dialog,.gift-reaction-dialog) button:not([aria-label*="关闭"]){min-height:32px;padding:6px 11px;border:0;border-radius:16px;background:#eaf3ff;color:#007aff;font-family:inherit;font-size:12px;line-height:20px}
+body[data-iris-appearance="apple"] :is(.iris-task-dialog,.author-feedback-dialog,.iris-assistant-role-dialog,.gift-reaction-dialog) button:not([aria-label*="关闭"]):not(:where(.iris-guide-widget *)){min-height:32px;padding:6px 11px;border:0;border-radius:16px;background:#eaf3ff;color:#007aff;font-family:inherit;font-size:12px;line-height:20px}
 body[data-iris-appearance="apple"] dialog[data-experiences-leave]{padding:16px;border:1px solid #e5e5ea;border-radius:20px;background:#fff;font-family:inherit}
 body[data-iris-appearance="apple"] dialog[data-experiences-leave]>p{margin:12px 0;color:#777;font-size:13px;line-height:1.7}
 body[data-iris-appearance="apple"] dialog[data-experiences-leave]>footer{display:flex;flex-wrap:wrap;gap:8px}
@@ -9198,3 +9198,61 @@ body[data-iris-appearance="apple"] #characterDialog>.character-conversation-tabs
 .release-repository-link{display:inline-block;margin:10px 0;font-family:inherit;font-size:12px;line-height:1.7;text-decoration:none;overflow-wrap:anywhere}
 body:not([data-iris-appearance="apple"]) .release-repository-link{color:#666;text-decoration:underline;text-underline-offset:3px}
 body[data-iris-appearance="apple"] .release-repository-link{color:#007aff}
+
+/* 凝光：最外层导航统一保留状态栏空间，覆盖各功能页的紧凑顶栏。 */
+body[data-iris-appearance="apple"] #featureScreen.feature-screen>.feature-page-topbar{
+ box-sizing:border-box;
+ flex-shrink:0;
+ height:auto;
+ min-height:0;
+ padding-top:max(18px,var(--app-safe-top,env(safe-area-inset-top,0px)));
+ padding-bottom:15px;
+}
+/* 与设置页 18px / 1.4 的标题行一致，去掉功能页遗留的 40–44px 按钮高度。 */
+body[data-iris-appearance="apple"] #featureScreen.feature-screen>.feature-page-topbar :is(button,#featureBack){
+ box-sizing:border-box;
+ height:25.2px;
+ min-height:25.2px;
+ padding-top:0;
+ padding-bottom:0;
+}
+body[data-iris-appearance="apple"] #featureScreen.feature-screen>.feature-page-topbar .feature-page-brand{
+ line-height:25.2px;
+}
+/* 论坛居中的图标也必须相对标题行定位，不能相对含安全区的整个顶栏。 */
+body[data-iris-appearance="apple"] #featureScreen.apple-forum .ng-forum-mark{
+ top:calc(max(18px,var(--app-safe-top,env(safe-area-inset-top,0px))) + 12.6px);
+}
+/* 番外、经营的标题是顶栏伪元素，和按钮使用同一个安全区起点。 */
+body[data-iris-appearance="apple"] #featureScreen:is(.apple-extras,.apple-business)>.feature-page-topbar::after{
+ top:max(18px,var(--app-safe-top,env(safe-area-inset-top,0px)));
+ bottom:15px;
+}
+/* 一起聊会隐藏外层导航；全屏主题编辑器也有独立顶栏。 */
+body[data-iris-appearance="apple"] #featureScreen.apple-music .music-chat-page-header{
+ flex-shrink:0;
+ min-height:calc(64px + var(--app-safe-top,env(safe-area-inset-top,0px)));
+ padding-top:calc(10px + var(--app-safe-top,env(safe-area-inset-top,0px)));
+}
+body[data-iris-appearance="apple"] #sheet.ng-unified-sheet.is-reflection-editor-fullscreen .reflection-editor-topbar{
+ padding-top:calc(12px + var(--app-safe-top,env(safe-area-inset-top,0px)));
+}
+/* 通话容器已承担顶部留白，只补齐独立运行时的状态栏回退值。 */
+.video-call-screen.apple-video-call{
+ padding-top:var(--app-safe-top,env(safe-area-inset-top,0px));
+}
+
+/* 论坛头像随标题行缩放时保持等宽等高，防止被顶栏按钮规则压成椭圆。 */
+body[data-iris-appearance="apple"] #featureScreen.apple-forum .ng-forum-account{
+ flex:none;
+ width:25.2px;
+ min-width:25.2px;
+ height:25.2px;
+ aspect-ratio:1;
+ border-radius:50%;
+}
+.iris-guide-fab>img{
+ display:block;
+ aspect-ratio:1;
+ border-radius:inherit;
+}
