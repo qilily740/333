@@ -82,3 +82,20 @@ test('Ningguang SMS keeps the same full-width shell in the inbox, thread and mes
   }
  }finally{dom.window.close()}
 });
+test('business avatar stays circular and title sizing does not compress other topbar controls',{skip:!JSDOM},()=>{
+ const dom=fixture(44),d=dom.window.document,screen=d.querySelector('#featureScreen'),computed=node=>dom.window.getComputedStyle(node);
+ try{
+  screen.classList.add('apple-business');
+  const user=d.createElement('div');user.className='perfumery-topbar-user';
+  user.innerHTML='<button class="perfumery-current-avatar"><img src="avatar.png" alt=""></button><div class="perfumery-mask-menu"><button data-p-mask-option="1"><span class="perfumery-mask-avatar">乙</span><span>另一个用户</span></button></div>';
+  screen.firstElementChild.append(user);
+  const avatar=user.firstElementChild,style=computed(avatar);
+  assert.equal(style.width,style.height);assert.equal(style.minWidth,style.height);assert.equal(style.borderRadius,'50%');assert.equal(style.flexShrink,'0');assert.equal(style.overflow,'hidden');
+  assert.equal(computed(avatar.firstElementChild).objectFit,'cover');assert.equal(computed(user).top,'0px');
+  const option=user.querySelector('[data-p-mask-option]');
+  assert.notEqual(computed(option).height,'25.2px');
+  for(const value of ['<span>甲</span>','<img src="another-avatar.png" alt="">']){
+   avatar.innerHTML=value;assert.equal(computed(avatar).width,computed(avatar).height);
+  }
+ }finally{dom.window.close()}
+});

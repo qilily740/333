@@ -9213,7 +9213,7 @@ body[data-iris-appearance="apple"] #featureScreen.feature-screen>.feature-page-t
  padding-bottom:15px;
 }
 /* 与设置页 18px / 1.4 的标题行一致，去掉功能页遗留的 40–44px 按钮高度。 */
-body[data-iris-appearance="apple"] #featureScreen.feature-screen>.feature-page-topbar :is(button,#featureBack){
+body[data-iris-appearance="apple"] #featureScreen.feature-screen>.feature-page-topbar :is(.feature-page-brand,#featureBack){
  box-sizing:border-box;
  height:25.2px;
  min-height:25.2px;
@@ -9246,8 +9246,9 @@ body[data-iris-appearance="apple"] #sheet.ng-unified-sheet.is-reflection-editor-
  padding-top:var(--app-safe-top,env(safe-area-inset-top,0px));
 }
 
-/* 论坛头像随标题行缩放时保持等宽等高，防止被顶栏按钮规则压成椭圆。 */
-body[data-iris-appearance="apple"] #featureScreen.apple-forum .ng-forum-account{
+/* 顶栏头像使用独立的等宽等高尺寸，不跟随标题按钮压缩。 */
+body[data-iris-appearance="apple"] #featureScreen.apple-forum .ng-forum-account,
+body[data-iris-appearance="apple"] #featureScreen.apple-business .perfumery-current-avatar{
  flex:none;
  width:25.2px;
  min-width:25.2px;
@@ -9259,4 +9260,8 @@ body[data-iris-appearance="apple"] #featureScreen.apple-forum .ng-forum-account{
  display:block;
  aspect-ratio:1;
  border-radius:inherit;
+}
+
+body[data-iris-appearance="apple"] #featureScreen.apple-business .perfumery-topbar-user{
+ top:0;
 }
