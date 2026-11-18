@@ -7523,7 +7523,11 @@ body[data-iris-appearance="apple"] :is(.api-model-dialog,.github-password-dialog
 #featureScreen.apple-novels [hidden]{display:none!important}
 
 /* 凝光 · SMS chrome and inbox only. Conversation bubbles and composer retain their existing styles. */
-#featureScreen.apple-sms:has(.sms-inbox){--app-page-gutter:0px;padding:0;background:#f2f2f7}
+#featureScreen.apple-sms{--app-page-gutter:0px;padding:0}
+#featureScreen.apple-sms:has(.sms-inbox){background:#f2f2f7}
+#featureScreen.apple-sms>.feature-page-topbar{width:100%;max-width:100%}
+#featureScreen.apple-sms>.feature-page-content:has(.sms-thread-view){width:100%;max-width:100%;min-width:0;margin:0;padding:0 16px;align-self:stretch}
+#featureScreen.apple-sms .sms-thread-view{min-width:0}
 #featureScreen.apple-sms:has(.sms-inbox) .feature-page-topbar{width:100%;min-height:0;margin:0;padding:max(18px,env(safe-area-inset-top)) 16px 14px;border:0;border-bottom:1px solid #e6e9ef;background:#fafafc}
 #featureScreen.apple-sms .feature-page-brand{display:flex;align-items:center;gap:10px}
 #featureScreen.apple-sms .feature-page-brand::before{content:'';flex:none;width:8px;height:8px;border-left:1.8px solid #718097;border-bottom:1.8px solid #718097;transform:rotate(45deg)}

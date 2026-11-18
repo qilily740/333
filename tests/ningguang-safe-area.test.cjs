@@ -66,3 +66,19 @@ test('forum account stays circular and the floating assistant keeps its style in
   }
  }finally{dom.window.close()}
 });
+test('Ningguang SMS keeps the same full-width shell in the inbox, thread and message selection views',{skip:!JSDOM},()=>{
+ const dom=fixture(44),d=dom.window.document,screen=d.querySelector('#featureScreen'),computed=node=>dom.window.getComputedStyle(node);
+ try{
+  screen.classList.add('apple-sms');
+  screen.innerHTML='<header class="feature-page-topbar"></header><div id="featurePageContent" class="feature-page-content"></div>';
+  const header=screen.firstElementChild,content=screen.lastElementChild;
+  for(const view of ['<section class="sms-inbox"></section>','<section class="sms-thread-view"><div class="sms-thread-messages"></div><form class="sms-composer"></form></section>','<section class="sms-thread-view is-selecting"><div class="sms-thread-messages"></div><div class="sms-selection-bar"></div></section>']){
+   content.innerHTML=view;
+   assert.equal(computed(screen).getPropertyValue('--app-page-gutter'),'0px');
+   assert.equal(computed(screen).paddingLeft,'0px');assert.equal(computed(screen).paddingRight,'0px');
+   assert.equal(computed(header).width,'100%');assert.equal(computed(header).marginLeft,'0px');assert.equal(computed(header).marginRight,'0px');
+   assert.equal(computed(content).width,'100%');assert.equal(computed(content).marginLeft,'0px');assert.equal(computed(content).marginRight,'0px');
+   assert.equal(computed(content).paddingLeft,computed(content).paddingRight);
+  }
+ }finally{dom.window.close()}
+});
